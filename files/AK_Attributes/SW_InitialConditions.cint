@@ -1,0 +1,250 @@
+int MAXSTRLEN = 512;
+// ################################# main #####################################
+void get_relarea_info()
+{
+	FILE *fpOut;
+  char s[1000*MAXSTRLEN];
+  char ProjectDir[1000*MAXSTRLEN];
+  char RelInfoFile[1000*MAXSTRLEN];
+  char cuRelArea[512];
+  char MinPart[512], MaxPart[512];
+  char fname[512];
+  char cuPart[512];
+  char CuRelArea[512];
+  int NRelAreas;
+  char projHa[512], trueHa[512];
+  char meanInc[512];
+  char bbox[512];
+  int i, n,j, k;
+  int prev;
+  int len;
+
+  get("/", "ProjectDir", ProjectDir);
+  // printf("\n[GetRelAreaInfo] ProjectDir %s\n",ProjectDir);
+
+  // Get ReleaseAreas
+  get("", "GetComponentList", s);
+
+  NRelAreas = list_size(s);
+  // printf("\n[GetRelAreaInfo] Number of ReleaseAreas %d\n",NRelAreas);
+
+  strcpy(RelInfoFile, ProjectDir);
+  sprintf(fname,"ReleaseAreaInfo.txt");
+  add_name(RelInfoFile, fname);
+
+  printf("\n[GetRelAreaInfo] RelInfoFile %s\n",RelInfoFile);
+
+  fpOut = fopen(RelInfoFile, "w");
+
+  if(!fpOut){
+    set_error("cannot open output file");
+    fclose(fpOut);
+    return;
+  }
+
+
+  fprintf(fpOut,"Anb;MaxZ[m];MinZ[m];Neigung[deg];FL(planar)[ha];FL[ha]\n");
+
+  n = 0;
+
+  // FSO--- Loop through all release areas
+  for(i = 0; i < NRelAreas; i++){
+    // for(i = 0; i < 1; i++){
+
+    get_list_element(s, i, cuRelArea);
+
+    // printf("[GetRelAreaInfo] RelArea %s\n", cuRelArea);
+
+    set("", "LoadComponent", cuRelArea);
+    get(cuRelArea,"ProjectedAreaHa",projHa);
+
+    set("","UpdateTrueArea",cuRelArea);
+    get(cuRelArea,"TrueAreaHa",trueHa);
+    // printf("\n[GetRelAreaInfo] true area %s\n",trueHa);
+    get(cuRelArea,"MeanInclination",meanInc);
+
+    // printf("\n[GetRelAreaInfo] mean inclination %s\n",meanInc);
+
+
+    // FSO--- get Bounding box
+    set(cuRelArea,"BoundingBox",bbox); // update bounding box
+    get(cuRelArea,"BoundingBox",bbox);
+    prev = 0;
+    len = strlen(bbox);
+
+    // FSO--- split into minimum part and macuRelAreaimum part
+		j = istrstr(bbox, ",");
+    strncpy(MinPart,bbox,j);
+    strncpy(MaxPart,bbox[j+1],len);
+
+    // FSO--- extract last part
+    k = istrrchr(MinPart,' ');
+    sprintf(MinPart,"%s", MinPart[k+1]);
+    k = istrrchr(MaxPart,' ');
+    sprintf(MaxPart,"%s", MaxPart[k+1]);
+
+
+    fprintf(fpOut, "%s;",cuRelArea);
+    fprintf(fpOut, "%s;",MaxPart);
+    fprintf(fpOut, "%s;",MinPart);
+    fprintf(fpOut, "%s;",meanInc);
+    fprintf(fpOut, "%s;",projHa);
+    fprintf(fpOut, "%s\n",trueHa);
+  }
+  fclose(fpOut);
+}
+
+void create_rel_ent(char sin[])
+{
+	char l1[1];
+	char l2[1];
+	char s1[64];
+	char s2[64];
+	char id[64];
+	int i1;
+	int i2;
+	int n1;
+	int n2;
+
+	resize(l1, 4096);
+	resize(l2, 4096);
+	get("", "GetComponentList", l1);
+  get("", "Id", id);
+
+  set("", "Create", sin);
+
+  get("", "GetComponentList", l2);
+  get("", "Id", id);
+
+	if(strcmp(id, "EntrainmentAreas") == 0){
+		// modify created areas depth and density;
+		// the new area is in l2 and not in l1
+		n1 = list_size(l1);
+		n2 = list_size(l2);
+    for(i2 = 0; i2 < n2; i2++){
+      get_list_element(l2, i2, s2);
+			for(i1 = 0; i1 < n1; i1++){
+				get_list_element(l1, i1, s1);
+				if(strcmp(s1, s2) == 0) break;
+			}
+			if(i1 == n1){
+				set(s2, "Depth", "0.3");
+				set(s2, "Density", "100.0");
+        set(s1, "UpdateMass", "");
+      }
+		}
+		resize(l1, 1);
+		resize(l2, 1);
+	}
+
+}
+
+void import_release_entrainment(
+	char sin[])
+{
+	char l1[1];
+	char l2[1];
+	char s1[64];
+	char s2[64];
+	char id[64];
+	int i1;
+	int i2;
+	int n1;
+	int n2;
+  int i;
+  int windows = 0;
+	char x[1024+0];
+	char cmd[1024+0];
+	char s[1024+0];
+	char val[256], argv[256*10];
+	int argc;
+  int lastSlash;
+  char parent[1024];
+  char allp[1024];
+  char defname[1024];
+
+
+  // FSO--- get path of executable
+  // find out if we are on windows
+  strcpy(x, "a");
+  add_name(x, "b");
+  if(istrchr(x, '/') < 0) windows = 1;
+
+	get("/", "ArglistSep", argv);
+	argc = list_size(argv);
+
+  // get first element of the first argv list (as this might include
+  // -project or similar)
+  get_list_element(argv[0], 0, allp);
+
+  if(windows){
+    lastSlash = istrrchr(allp, '\\');
+  }else{
+    lastSlash = istrrchr(allp, '/');
+  }
+
+  // FSO--- get string up to lastSlash
+  strncpy(parent, allp,lastSlash+1);
+
+  // FSO--- copy necessary as filename is modified
+  strcpy(s,sin);
+
+	get("", "Id", id);
+  printf("ID %s\n", id);
+	resize(l1, 4096);
+	resize(l2, 4096);
+	get("", "GetComponentList", l1);
+	get("", "Id", id);
+
+
+  if(istrstr(s, ".shp")> 0) {
+    printf("Found Shape, converting: %s \n", s);
+
+    strcpy(defname, "Rel");
+
+    if(strcmp(id, "EntrainmentAreas") == 0){
+      printf("should be entrainment: \n ");
+      strcpy(defname, "Ent");
+    }
+
+    // FSO--- construct command
+    strcpy(x,parent);
+    add_name(x, "SHPConv.exe");
+    sprintf(cmd, "%s -a import -i %s -n %s ",x, s, defname);
+    printf("CMD: %s\n",cmd);
+
+    // FSO--- execute command
+    system(cmd);
+    // FSO--- replace dot with underscore
+    // for(i = 0; i < strlen(s); i++) if(
+    //                                   s[i] == '.')
+    //                                  s[i] = '_';
+    strcat(s,".nxyz");
+  }
+
+  printf("Import %s\n", s);
+  set("", "Import", s);
+	get("", "GetComponentList", l2);
+	get("", "Id", id);
+
+	if(strcmp(id, "EntrainmentAreas") == 0){
+		// modify imported release areas depth and density;
+		// imported areas are components in l2 and not in l1
+		n1 = list_size(l1);
+		n2 = list_size(l2);
+    for(i2 = 0; i2 < n2; i2++){
+      get_list_element(l2, i2, s2);
+			for(i1 = 0; i1 < n1; i1++){
+				get_list_element(l1, i1, s1);
+				if(strcmp(s1, s2) == 0) break;
+			}
+			if(i1 == n1){
+				set(s2, "Depth", "0.3");
+				set(s2, "Density", "100.0");
+        set(s1, "UpdateMass", "");
+        }
+		}
+		resize(l1, 1);
+		resize(l2, 1);
+	}
+}

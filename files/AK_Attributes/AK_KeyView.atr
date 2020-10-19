@@ -1,0 +1,24 @@
+obj.KeyView
+	german:Schlüsselansicht
+	doc:A viewing position in the drawing area can be stored as key view\
+		so that it can be re-applied later.
+		german:Eine Ansicht in der Zeichenfläche kann als Schlüsselansicht\
+			gespeichert und später wiederverwendet werden.
+	string.transformation:Transformation
+		set:Transformation
+		german:Transformation
+		doc:The 4x4 model-view and projection transformation matrix\
+			that describe the view (together with some redundant\
+			rotation-quaternions).
+			german:Die 4x4 Modell- und Projektionsmatrizen, die die Ansicht\
+				beschrieben (zusammen mit redundanten Rotations-Quarternionen).
+	apply.save current view
+		set:Set
+		german:aktuelle Ansicht speichern
+		doc:Store the current view as key view.
+			german:Aktuelle Ansicht als Schlüsselansicht speichern.
+	apply.apply
+		set:Apply
+		german:anwenden
+		doc:Make the key view the current view.
+			german:Schlüsselansicht zur aktuellen Ansicht machen.

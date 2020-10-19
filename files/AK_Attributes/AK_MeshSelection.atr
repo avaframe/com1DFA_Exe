@@ -1,0 +1,44 @@
+obj.MeshSelection
+	german:Netz-Untermenge
+	doc:A subset of cells, faces or nodes of the mesh.
+		german:Eine Untermenge von Zellen, Flächen oder Knoten\
+			im Netz.
+	color3.color:Color
+		set:Color
+		german:Farbe
+	int.number of cells:NumCells
+		german:Anzahl der Zellen
+	int.number of faces:NumFaces
+		german:Anzahl der Flächen
+	int.number of nodes:NumNodes
+		german:Anzahl der Knoten
+	string.Rename
+		set:Rename
+	bool.display indices:$labelled
+		set:$labelled
+	apply.fit quadric surface
+		german:passe quadrische Flaeche ein
+		set:fit_quadric_load_grf
+	float.patch angle (deg):PatchAngle
+	float.set patch angle (deg)
+		set:PatchAngle
+	apply.add patch selection
+		set:AddPatchSelection
+		pick world
+	string.add surface as selection
+		set:AddSurfaceSelection
+	grp.define orientation
+		apply.define orientation normal to surface
+			set:orientation_surface_normal
+			pick world
+		apply.define orientation start
+			set:orientation_start
+			pick world
+		apply.define orientation end
+			set:orientation_end
+			pick world
+		apply.define closed channel orientation 
+			set:orientation_channel
+			pick world
+		apply.compute orientation
+			set:compute_orientation

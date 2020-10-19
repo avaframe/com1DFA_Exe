@@ -1,0 +1,92 @@
+
+
+
+void get_cuts_field_vis(
+	char s[])
+{
+	get("", "Id", s);
+  // printf("%s \n",s);
+  
+	if(
+		!strcmp(s, "PsaCuts") ||
+		!strcmp(s, "EntrainmentMass") ){
+		get("", "VisNone", s);
+	}else{
+		get("", "VisWrite", s);
+	}
+}
+
+
+void polyline_z_cut_vis(
+	char value[])
+{
+	get("/", "GetComponentList", value);
+	if(istrstr(value, "Project") < 0){
+		strcpy(value, "-");
+		return;
+	}
+	get("/Project", "GetComponentList", value);
+	if(istrstr(value, "Polylines") < 0){
+		strcpy(value, "-");
+		return;
+	}
+	strcpy(value, "w");
+	return;
+}
+
+void polyline_options(
+	char value[])
+{
+	get("/Project/Polylines", "GetComponentList", value);
+}
+
+
+
+void create_polyline_z_cut(
+	char value[])
+{
+	int i;
+	char formula[1];
+	char name[256];
+
+	resize(formula, 4096);
+	sprintf(name, "/Project/Polylines/%s", value);
+
+	formula[0] = 0;
+	strcat(formula, "int np;");
+	strcat(formula, "double xp[1][2];");
+	strcat(formula, "$$init");
+	strcat(formula, "char val[256];");
+	strcat(formula, "char pl[256];");
+	strcat(formula, "int i;");
+	strcat(formula, "double d[2]; double q[2];");
+	strcat(formula, "strcpy(pl, '"); strcat(formula, name); strcat(formula, "');");
+	strcat(formula, "get(pl, 'NumVertices', val);");
+	strcat(formula, "sscanf(val, '%d', np);");
+	strcat(formula, "if(np < 2) return;");
+	strcat(formula, "resize(xp, np+4);");
+	strcat(formula, "for(i = 0; i < np; i++){");
+	strcat(formula, "   sprintf(val, '%d', i+1);");
+	strcat(formula, "   set(pl, 'SelectedVertex', val);");
+	strcat(formula, "   get(pl, 'CoordsOfSelectedVertex', val);");
+	strcat(formula, "   sscanf(val, ' %lf %lf', xp[i][0], xp[i][1]);");
+	strcat(formula, "}");
+	strcat(formula, "d = 10.0 * (xp[np-1] - xp[0]);");
+	strcat(formula, "q = {d[1], d[0]};");
+	strcat(formula, "xp[i++] = xp[np-1] + d;");
+	strcat(formula, "xp[i++] = xp[np-1] + d + q;");
+	strcat(formula, "xp[i++] = xp[0] - d + q;");
+	strcat(formula, "xp[i++] = xp[0] - d;");
+	strcat(formula, "np += 4;");
+	strcat(formula, "$$formula");
+	strcat(formula, "return Polygon2D(np, xp, x);");
+	i = strlen(formula);
+	while(i--) { if(formula[i] == 39) formula[i] = 34; }
+
+	i = istrrchr(value, '/');
+	sprintf(name, "cutAlong_%s", value[i+1]);
+	set("", "CreateFormulaCut", name);
+	set(name, "FormulaFileName", formula);
+
+	resize(formula, 1);
+}

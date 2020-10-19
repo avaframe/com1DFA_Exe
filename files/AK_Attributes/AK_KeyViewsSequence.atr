@@ -1,0 +1,79 @@
+obj.KeyViewsSequence
+	german:Schlüsselansichtenfolge
+	doc:A sequence of key views ->KeyView., that can be used\
+		to store a number of views or to generate animations.\
+		The views are ordered according to their names.
+		german:Eine Folge von Schlüsselansichten ->KeyView., die\
+			verwendet werden kann, um eine Anzahl von Ansichten zu speichern\
+			oder um eine Animation zu erstellen. Die Ansichten werden nach Namen\
+			geordnet.
+	string.add current view
+		set:Create
+		german:aktuelle Ansicht anfügen
+		doc:Add the current view as new key view to this sequence.
+			german:Aktuelle Ansicht als neue Schlüsselansicht einfügen.
+	string.apply key view
+		set:Apply
+		options:GetComponentList
+		german:Schlüsselansicht anwenden
+		doc:Use one of the contained key views as current view.
+			german:Eine der enthaltenen Schlüsselansichten als\
+				aktuelle Ansicht verwenden.
+	string.key view 1:KeyView1
+		set:KeyView1
+		options:GetComponentList
+		german:Schlüsselansicht 1
+		doc:Key-view-1 for interpolation.
+			german:Schlüsselansicht 1 für Interpolation.
+	string.key view 2:KeyView2
+		set:KeyView2
+		options:GetComponentList
+		german:Schlüsselansicht 2
+		doc:Key-view-2 for interpolation.
+			german:Schlüsselansicht 2 für Interpolation.
+	float.interpolation factor
+		set:Interpolate
+		german:Interpolationsfaktor
+		doc:Interpolation factor [0,1] between key view 1 and key view 2.
+			german:Interpolationsfaktor [0,1] zwischen Schlüsselansicht\
+				1 und 2.
+	int.number of animation frames between views:NumFrames
+		set:NumFrames
+		german:Anzahl der Animationsbilder zwischen Ansichten
+		doc:Number of interpolated frames between two successive key views\
+			during animation.
+			german:Anzahl der interpolierten Positionen zwischen zwei\
+				aufeinanderfolgenden Schlüsselansichten in einer Animation.
+	bool.write image files:WriteImages
+		set:WriteImages
+		volatile
+		german:Bilddateien schreiben
+		doc:If on, images are saved as files after each animation frame.
+			german:Wenn an, werden Bilder nach jedem Animationsschritt\
+				als Datei gespeichert.
+	string.image file base name:ImageFileName
+		german:Bilddatei-Basisnamen
+		doc:Base-name for the image files generated during animation (->FOX_Viewer.ImageFileName).\
+			A number (->FOX_Viewer.ImageFileNumber) is appended to the file name and incremented\
+			after each frame.
+			german:Basisname (->FOX_Viewer.ImageFileName) für die Bilddateien, die während einer Animation\
+				erzeugt werden. Eine Nummer (->FOX_Viewer.ImageFileName) wird an den Namen angefügt und\
+				nach jedem Bild erhöht.
+	apply.animate from key view 1 to key view 2
+		set:Animate
+		german:animieren von Schlüsselposition 1 zu 2
+		doc:Interpolate current view between key-vew-1 and key-view-2\
+			in ->KeyViewsSequence.NumFrames frames.
+			german:Aktuelle Ansicht in ->KeyViewsSequence.NumFrames Schritten\
+				zwischen Schlüsselpositionen 1 und 2 interpolieren.
+	apply.animate over all views
+		set:AnimateAll
+		german:über alle Ansichten animieren
+		doc:Do animation over all contained key views in the order as they appear in the\
+			object-tree. ->KeyViewsSequence.NumFrames views are interpolated\
+			between successive key views. The order of the key views is alphabetically,\
+			according to their names. By changing their names (->Object.Id), the order\
+			can be changed. This is simpler, if the frames are named e.g. "f10, f20" etc..
+			german:Animation über alle Schlüsselansichten durchführen. Eine Anzahl von\
+				->KeyViewsSequence.NumFrames Ansichten werden zwischen zwei aufeinanderfolgenden\
+				Schlüsselansichten interpoliert.

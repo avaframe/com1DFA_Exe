@@ -1,0 +1,14 @@
+obj.VisObj2d
+	german:SichtObj2d
+	doc:Two-dimensional visible object.
+		german:Zweidimensionales sichtbares Objekt.
+	float2.screen position:Position
+		set:Position
+		pick screen
+		german:Bildschirmposition
+		doc:Origin of the object in coordinates relative to the\
+			screen-width and -height of the drawing area\
+			(x, y in [0,1]).
+			german:Position des Objektes in Koordinaten relativ\
+				zur Bildschirmbreite/-höhe der Zeichenfläche\
+				(x, y in [0,1]).

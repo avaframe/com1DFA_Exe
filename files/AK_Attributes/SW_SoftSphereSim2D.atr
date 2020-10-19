@@ -1,0 +1,29 @@
+obj.SoftSphereSimulation2D
+	float.particle diameter:ParticleDiameter
+		set:ParticleDiameter
+	float.particle density:ParticleDensity
+		set:ParticleDensity
+	float.spring constant:SpringConstant
+		set:SpringConstant
+	float.damping factor:DampingFactor
+		set:DampingFactor
+	float.collision time:CollTime
+	float.restitution coefficient:RestCoeff
+	float.friction coefficient:Mue
+		set:Mue
+	float2.acceleration:Acceleration
+		set:Acceleration
+	int.nx:Nx
+		set:Nx
+	int.ny:Ny
+		set:Ny
+	float.end time:EndTime
+		set:EndTime
+	float.time step:DeltaT
+		set:DeltaT
+	float.output step:OutputDeltaT
+		set:OutputDeltaT
+	apply.run
+		set:Run
+	apply.continue
+		set:Continue

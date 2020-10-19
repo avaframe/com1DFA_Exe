@@ -1,0 +1,13 @@
+
+void get_spray_field_vis(
+	char s[])
+{
+	get("", "Id", s);
+  
+	if(
+		!strcmp(s, "Powder") ){
+		get("", "VisNone", s);
+	}else{
+		get("", "VisWrite", s);
+	}
+}

@@ -1,0 +1,32 @@
+obj.Impress
+	string.new result
+		set:CreateResult
+	opr.new cut
+		string.surface
+			set:CreateSurfaceCut
+		string.plane cut
+			set:CreatePlaneCut
+		string.formula cut
+			set:CreateFormulaCut
+		string.isosurface cut
+			set:CreateIsoSurfaceCut
+	string.new text
+		set:CreateText2d
+	string.new connector
+		set:CreateConnector2d
+	string.new spray
+		set:CreateSpray
+	string.new group
+		set:CreateGroup
+	string.new user object
+		set:CreateUserObject
+	string.new sphere
+		set:CreateSphere
+	string.new cube
+		set:CreateCube
+	opr.delete object
+		string.selected object:SelectedObject
+			options:GetComponentList
+			set:SelectedObject
+		apply.delete
+			set:DeleteObject

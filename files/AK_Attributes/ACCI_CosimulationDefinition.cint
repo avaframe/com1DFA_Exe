@@ -1,0 +1,373 @@
+
+
+
+char OM_MappingType()
+{
+	char cplModels[0];
+	char model[0];
+	char type = 0;
+	int i, n;
+	resize(cplModels, 4096);
+	resize(model, 128);
+	get("", "OM_CouplingModels", cplModels);
+	n = list_size(cplModels);
+	for(i = 0; i < n; i++){
+		get_list_element(cplModels, i, model);
+		if(istrstr(model, "offline mapping heat") == 0){
+			if(type == 0 || type == 'H')
+				type = 'H'; // heat transfer
+			else
+				type = 'X'; // mixed
+		}else if(
+			istrstr(model, "offline mapping volume temperature") == 0 ||
+			istrstr(model, "offline mapping volume T") == 0 ){
+			if(type == 0 || type == 'T')
+				type = 'T'; // temperature
+			else
+				type = 'X'; // mixed
+		}else if(istrstr(model, "offline mapping pressure nodes") == 0){
+			if(type == 0 || type == 'p')
+				type = 'p'; // pressure at nodes
+			else
+				type = 'X'; // mixed
+		}else if(istrstr(model, "offline mapping pressure") == 0){
+			if(type == 0 || type == 'P')
+				type = 'P'; // pressure
+			else
+				type = 'X'; // mixed
+		}
+	}
+	resize(cplModels, 0);
+	resize(model, 0);
+	return type;
+}
+
+
+
+// return averaging cfdDerive-formula for the current OM writeonly client
+void OM_AveragingFormula(
+	char value[])
+{
+	char type = OM_MappingType();
+	value[0] = 0;
+	if(type == 'H'){
+		strcat(value,
+			"-frml average_HTC_weighted_T_over_time.frml "
+			"-frml average_HTC_over_time.frml"
+			);
+	}else if(type == 'T'){
+		strcat(value, "-frml average_T_over_time_at_nodes.frml");
+	}else if(type == 'P'){
+		strcat(value, "-frml average_P_over_time.frml");
+	}else if(type == 'p'){
+		strcat(value, "-frml average_P_over_time_at_nodes.frml");
+	}
+}
+
+
+
+// return OM export format options depending on available export formulas
+void OM_ExportFormatOptions(
+	char value[])
+{
+	char type;
+	set("", "$curr_writeonly_client", "");
+	type = OM_MappingType();
+	value[0] = 0;
+	strcat(value, "none"); strcat(value, AK_SEP);
+	if(type == 'H'){
+		strcat(value, "inp"); strcat(value, AK_SEP);
+		strcat(value, "txt"); strcat(value, AK_SEP);
+		strcat(value, "xyzv"); strcat(value, AK_SEP);
+	}else if(type == 'T'){
+		strcat(value, "txt"); strcat(value, AK_SEP);
+	}else if(type == 'P' || type == 'p'){
+		strcat(value, "txt"); strcat(value, AK_SEP);
+	}
+}
+
+
+
+// return export cfdIntegrate-formula for the current OM writeonly client
+void OM_ExportFormula(
+	char value[])
+{
+	char type = OM_MappingType();
+	char fmt[16];
+	get("", "OM_ExportFormat", fmt);
+	value[0] = 0;
+	if(type == 'H'){
+		if(!strcmp(fmt, "txt"))
+			strcat(value, "-frml HTC_and_T_to_txt.frml");
+		else if(!strcmp(fmt, "inp"))
+			strcat(value, "-frml HTC_and_T_to_inp.frml");
+		else
+			strcat(value, "-frml HTC_and_T_to_xyzv.frml");
+	}else if(type == 'T'){
+		strcat(value, "-frml T_to_txt.frml");
+	}else if(type == 'P'){
+		strcat(value, "-frml P_to_txt.frml");
+	}
+}
+
+
+
+void ExportFMU(
+	char value[])
+{
+	char ACCI_FMU2_ACCI_PORT[16] = "4294967293";
+	char ACCI_FMU2_ACCI_PID[16]  = "4294967292";
+	char ACCI_FMU2_ACCI_CMD[16]  = "4294967291";
+	char fmu2fpr[16] = "fmu2.fpr";
+	char fire_vers[16];
+	char fire_args[16];
+	FILE *fp;
+	FILE *fpc;
+	char def[1024*64], cases[32*64];
+	char ex[1*32], dir[1*32], qty[1*256], itf[1*256], fmuDir[1*256];
+	char q = '"';
+	int valRef = 0, i, j, k;
+	int windows = 0;
+	int nQtyDescriptions = 0;
+	char qtyDescription[0][128];
+	int dim;
+	char FMI_dt[64] = 0, FMI_tend[64] = 0, start[64] = 0;
+
+	// use value as creation-dir; if value empty, use FIRE project dir
+	if(strlen(value) > 0)
+		strcpy(fmuDir, value);
+	else
+		get("", "FIRE_ProjectDir", fmuDir);
+
+	// append file separator to fmuDir if not present yet
+	i = strlen(fmuDir) - 1;
+	if(fmuDir[i] != '/' && fmuDir[i] != '\\') add_name(fmuDir, "");
+
+	get("", "$fire_fmu_vers", fire_vers);
+	if(strlen(fire_vers) < 2) strcpy(fire_vers, "v2017.1");
+	get("", "$fire_fmu_args", fire_args);
+
+	get("", "FIRE_ProjectDir", itf);
+	add_name(itf, fmu2fpr);
+	fp = fopen(itf, "r");
+	if(!fp){
+		fp = fopen(itf, "w");
+		if(!fp){
+			sprintf(def, "cannot create project file\n%s\n", itf);
+			set_error(def);
+			return;
+		}
+	}
+	fclose(fp);
+
+	// pointer to xml file
+	strcpy(itf, fmuDir);
+	add_name(itf, "modelDescription.xml");
+	fp = fopen(itf, "w");
+	if(!fp){ error("cannot open modelDescription.xml file"); return; }
+
+	// pointer to ACCI-FMU config file
+	strcpy(itf, fmuDir);
+	add_name(itf, "resources");
+	make_directory(itf);
+	add_name(itf, "acci_fmu_config.txt");
+	fpc = fopen(itf, "w");
+	if(!fpc){ set_error("cannot write acci_fmu_config.txt"); fclose(fp); return; }
+
+	fprintf(fp, "<?xml version=%c1.0%c encoding=%cISO-8859-1%c?>\n", q, q, q, q);
+	fprintf(fp, "<fmiModelDescription\n");
+	fprintf(fp, "  fmiVersion=%c2.0%c\n", q, q);
+	get("", "Id", qty);
+	fprintf(fp, "  modelName=%c%s%c\n", q, qty, q);
+	fprintf(fp, "  description=%cAVL FIRE model%c\n", q, q);
+	fprintf(fp, "  guid=%cACCI_CosimulationDefinition.1%c\n", q, q);
+	fprintf(fp, "  version=%c1.0%c\n", q, q);
+	fprintf(fp, "  generationTool=%cAVL FIRE %s%c\n", q, fire_vers, q);
+	strftime(ex, 32, "GM:%Y-%m-%dT%H:%M:%SZ");
+	fprintf(fp, "  generationDateAndTime=\"%s\"\n", ex);
+	fprintf(fp, "  variableNamingConvention=%cstructured%c\n", q, q);
+	fprintf(fp, "  needsExecutionTool=%ctrue%c\n", q, q);
+	fprintf(fp, "  >\n");
+	fprintf(fp, "  <CoSimulation\n");
+	fprintf(fp, "    modelIdentifier=%cACCI_FMU2%c\n", q, q);
+	fprintf(fp, "    canHandleVariableCommunicationStepSize=%ctrue%c\n", q, q);
+	fprintf(fp, "    canNotUseMemoryManagementFunctions=%ctrue%c\n", q, q);
+	fprintf(fp, "  />\n");
+	fprintf(fp, "  <VendorAnnotations>\n");
+	fprintf(fp, "     <Tool name=\"AVL\">\n");
+	fprintf(fp, "       <Annotation name=\"product\" value=\"FIRE\" />\n");
+	fprintf(fp, "     </Tool>\n");
+	fprintf(fp, "  </VendorAnnotations>\n");
+
+
+	strcpy(itf, fmuDir);
+	fprintf(fpc, "acci_pid=%sacci_fmu2.acci.pid\n", itf);
+if(0){
+	fprintf(fpc, "acci_cmd=%sacci_fmu2.bat\n", itf);
+}
+
+	get("", "DefinitionString", def);
+	cases[0] = 0;
+	i = 0;
+	fprintf(fp, "  <ModelVariables>\n");
+	while(strlen(def[i])){
+		j = istrchr(def[i], '\n');
+		if(j >= 0){
+			j += i;
+			def[j] = 0;
+			j++;
+		}else{
+			j = strlen(def[i]) + i ;
+		}
+		// check for quantity description in format
+		// #quantity <name> <dim> intensive|extensive|string channel|data|string_data
+		if(sscanf(def[i], "#quantity %s %d %s %s", qty, dim, ex, itf) == 4){
+			// quantity description
+			for(k = 0; k < nQtyDescriptions; k++){
+				if(istrstr(qtyDescription[k], qty) == 0 &&
+					qtyDescription[k][strlen(qty)] == ' ') break;
+			}
+			if(k == nQtyDescriptions){
+				resize(qtyDescription, nQtyDescriptions + 1);
+				sprintf(qtyDescription[nQtyDescriptions], "%s %d %s %s", qty, dim, ex, itf);
+				nQtyDescriptions++;
+			}
+		}else if(sscanf(def[i], " FMU at %s sets deltaTC at %s", ex, itf) == 2){
+			sprintf(FMI_dt, "%s deltaTC 1 FMI_dt string_data", itf);
+		}else if(sscanf(def[i], " FMU at %s sets endITC at %s", ex, itf) == 2){
+			sprintf(FMI_tend, "%s endITC 1 FMI_tend string_data", itf);
+		}else if(sscanf(def[i], " FMU at %s %s %s at %s", ex, dir, qty, itf) == 4){
+			if(strcmp(ex, "time_step_set") == 0 || strcmp(ex, "time_step_get") == 0){
+				for(k = 0; k < nQtyDescriptions; k++){
+					if(istrstr(qtyDescription[k], qty) == 0 &&
+						qtyDescription[k][strlen(qty)] == ' ') break;
+				}
+				if(k < nQtyDescriptions){
+					fprintf(fpc, "%s %s\n", itf, qtyDescription[k]);
+					sscanf(qtyDescription[k], " %s %d", qty, dim);
+				}else{
+					fprintf(fpc, "%s %s 1 intensive channel\n", itf, qty);
+					dim = 1;
+				}
+				if(strcmp(dir, "sets")){
+					dir = "output";
+					start = "";
+				}else{
+					dir = "input";
+					start = " start=\"0\"";
+				}
+				if(dim == 1){
+					fprintf(fp, "    <ScalarVariable"
+						" name=%c%s.%s%c"
+						" valueReference=%c%d%c"
+						" causality=%c%s%c>\n",
+						q, itf, qty, q,
+						q, valRef++, q,
+						q, dir, q);
+					fprintf(fp, "      <Real%s/>\n", start);
+					fprintf(fp, "    </ScalarVariable>\n");
+				}else for(k = 0; k < dim; k++){
+					fprintf(fp, "    <ScalarVariable"
+						" name=%c%s.%s.%d%c"
+						" valueReference=%c%d%c"
+						" causality=%c%s%c>\n",
+						q, itf, qty, k + 1, q,
+						q, valRef++, q,
+						q, dir, q);
+					fprintf(fp, "      <Real%s/>\n", start);
+					fprintf(fp, "    </ScalarVariable>\n");
+				}
+			}
+		}else if(sscanf(def[i], " %s at %s %s", itf, ex, dir) == 3){
+			if(strcmp(itf, "FMU") != 0 && (strcmp(dir, "gets") == 0 || strcmp(dir, "sets") == 0) ){
+				strcat(itf, ";");
+				k = istrstr(cases, itf);
+				if(k < 0 || (k > 0 && cases[k-1] != ';')) strcat(cases, itf);
+			}
+		}
+		i = j;
+	}
+	fprintf(fp, "    <ScalarVariable name=%cACCI.port%c valueReference=%c%s%c"
+		" causality=%cparameter%c variability=%cfixed%c>\n",
+		q, q, q, ACCI_FMU2_ACCI_PORT, q, q, q, q, q);
+	fprintf(fp, "      <String start=%c%c/>\n", q, q);
+	fprintf(fp, "    </ScalarVariable>\n");
+	strcpy(itf, fmuDir);
+	fprintf(fp, "    <ScalarVariable name=%cACCI.pid%c valueReference=%c%s%c"
+		" causality=%cparameter%c variability=%cfixed%c>\n",
+		q, q, q, ACCI_FMU2_ACCI_PID, q, q, q, q, q);
+	fprintf(fp, "      <String start=%c%sacci_fmu2.acci.pid%c/>\n", q, itf, q);
+	fprintf(fp, "    </ScalarVariable>\n");
+if(0){ // start command does not work yet with new installation structure!
+	fprintf(fp, "    <ScalarVariable name=%cACCI.cmd%c valueReference=%c%s%c"
+		" causality=%cparameter%c variability=%cfixed%c>\n",
+		q, q, q, ACCI_FMU2_ACCI_CMD, q, q, q, q, q);
+	fprintf(fp, "      <String start=%c%sacci_fmu2.bat%c/>\n", q, itf, q);
+	fprintf(fp, "    </ScalarVariable>\n");
+}
+
+	if(strlen(FMI_dt)) fprintf(fpc, "%s\n", FMI_dt);
+	if(strlen(FMI_tend)) fprintf(fpc, "%s\n", FMI_tend);
+
+	fprintf(fp, "  </ModelVariables>\n");
+	fprintf(fp, "  <ModelStructure/>\n");
+	fprintf(fp, "</fmiModelDescription>\n");
+	fclose(fp);
+	fclose(fpc);
+	resize(qtyDescription, 0);
+
+
+        // find out if we are on windows
+        strcpy(itf, "a"); add_name(itf, "b"); if(istrchr(itf, '/') < 0) windows = 1;
+
+	// save ACCI file
+	strcpy(itf, fmuDir);
+	strcat(itf, "acci_fmu2.acci");
+	set("", "SaveDefinitionString", itf);
+
+	// create start script
+if(0){ // start command does not work yet with new installation structure!
+	strcpy(itf, fmuDir);
+	strcat(itf, "acci_fmu2.bat");
+	fp = fopen(itf, "w");
+	if(!fp){
+		set_error("cannot write start script acci_fmu2.bat");
+		return;
+	}
+	strcpy(itf, fmuDir);
+	if(windows){
+		fprintf(fp, "del %c%sacci_fmu2.acci.pid%c\n", q, itf, q);
+		fprintf(fp, "START /B fire_acci_server.exe -v=%s 0 %c%sacci_fmu2.acci%c %c%sacci_fmu2.acci.pid%c"
+		" > %c%sacci_fmu2.acci.log%c 2>&1\n", fire_vers, q, itf, q, q, itf, q, q, itf, q);
+	}else{
+		fprintf(fp, "rm '%sacci_fmu2.acci.pid'\n", itf);
+		fprintf(fp, "fire_acci_server -v=%s 0 '%sacci_fmu2.acci' '%sacci_fmu2.acci.pid'"
+		" >& '%sacci_fmu2.acci.log' &\n", fire_vers, itf, itf, itf);
+	}
+	i = 0;
+	get("", "FIRE_ProjectDir", qty);
+	// remove trailing backslash in path
+	j = strlen(qty) - 1; if(j >= 0 && qty[j] == '\\') qty[j] = 0;
+	while(strlen(cases[i])){
+		j = istrchr(cases[i], ';') + i;
+		if(j <= i) break;
+		cases[j] = 0;
+		if(windows){
+			fprintf(fp, "START /B fire_cmd.exe -v=%s -project_dir=%c%s%c -project=%s -case=%s"
+				" %s -1dcpl_cmd=cfdci -1dcpl_host=localhost -1dcpl_port=0"
+				" -1dcpl_project=%c%sacci_fmu2.acci%c -1dcpl_attach 2>&1\n",
+				fire_vers, q, qty, q, fmu2fpr, cases[i], fire_args, q, itf, q);
+		}else{
+			fprintf(fp, "fire_cmd -v=%s -project_dir='%s' -project=%s -case=%s"
+				" %s -1dcpl_cmd=cfdci -1dcpl_host=localhost -1dcpl_port=0"
+				" -1dcpl_project='%sacci_fmu2.acci' -1dcpl_attach &\n",
+				fire_vers, qty, fmu2fpr, cases[i], fire_args, itf);
+		}
+		i = j + 1;
+	}
+	fclose(fp);
+}
+
+}
+
+

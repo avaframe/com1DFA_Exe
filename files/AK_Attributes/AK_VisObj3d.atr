@@ -1,0 +1,63 @@
+obj.VisObj3d
+	german:SichtObj3d
+	doc:Three-dimensional visible object.
+		german:Dreidimensionales sichtbares Objekt.
+	float3.origin:Position
+		set:Position
+		pick world
+		german:Ursprung
+		doc:Coordinates of the origin of the object.
+			german:Koordinaten des Ursprunges des Objektes.
+	float3.x-axis:LocalX
+		set:LocalX
+		german:x-Achse
+		doc:X-axis of the object.
+			german:X-Achse des Objektes.
+	float3.y-axis:LocalY
+		set:LocalY
+		german:y-Achse
+		doc:Y-axis of the object.
+			german:Y-Achse des Objektes.
+	float.scale:Scale
+		set:Scale
+		german:Skalierung
+		doc:Scaling factor for the object.
+			german:Vergrößerungsfaktor für das Objekt.
+	opr.rotated copies
+		german:rotierte Kopien
+		vis:VisNone
+		int.number of rotated copies:NumberOfRotatedCopies
+			set:NumberOfRotatedCopies
+			german:Anzahl rotierter Kopien
+			doc:Number of rotated copies to be displayed. Each copy\
+				will be rotated incrementally by the angle 360/number [deg].
+				german:Anzahl rotierter Kopien, die gezeichnet werden sollen. Jede Kopie\
+					wird inkrementell um den Winkel 360/Anzahl [deg] gedreht.
+		float3.axis point for rotated copies:RotatedCopiesAxisPoint
+			set:RotatedCopiesAxisPoint
+			pick world
+			vis:RotatedCopiesAxisVis
+			doc:Point on the rotation axis for rotated copies.
+				german:Punkt auf der Rotationsachse für rotierte Kopien.
+		float3.axis direction for rotated copies:RotatedCopiesAxisDir
+			set:RotatedCopiesAxisDir
+			vis:RotatedCopiesAxisVis
+			doc:Direction of the rotation axis for rotated copies.
+				german:Richtung der Rotationsachse für rotierte Kopien.
+	text.virtual transformed duplicates:CloneTrafos
+		german:virtuelle transformierte Duplikate
+		set:CloneTrafos
+		doc:Newline separated list of virtual transformation and duplication operations. Each\
+			duplication ("cp <n>") may be followed by an arbitrary number of individual\
+			transformations of each copy.\
+			 trans <x> <y> <z> (translate along <x>,<y>,<z>)\
+			 scale <x> <y> <z> (scale with direction factors <x>,<y>,<z>)\
+			 rot <alfa> <x> <y> <z> (rotate by angle <alfa> (deg) about axis <x>,<y>,<z> through origin)\
+			 rot <alfa> <a> <b> <c> <x> <y> <z> (rotate by angle <alfa> (deg) about axis <x>,<y>,<z> through point <a>,<b>,<c>)\
+			 mirror <x> <y> <z> (mirror in direction <x>,<y>,<z> through origin)\
+			 mirror <a> <b> <c> <x> <y> <z> (mirror in direction <x>,<y>,<z> through point <a>,<b>,<c>)\
+			 cp <n> (duplicate object n times)\
+			 <i>:trans <x> <y> <z> (translate <i>th of <n> duplicates along <x>,<y>,<z>)\
+			 <i>:scale <x> <y> <z> (scale <i>th of <n> duplicates with direction factors <x>,<y>,<z>)\
+			 <i>:rot ... (rotate <i>th of <n> duplicates, ... as in rot-commands above)\
+			 <i>:mirror ... (mirror <i>th of <n> duplicates, ... as in mirror-commands above)

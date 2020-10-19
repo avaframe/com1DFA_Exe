@@ -1,0 +1,9 @@
+obj.WallLines
+	german:Dämme
+	doc:A container for wall lines (->WallLine.).
+		german:Ein Behälter für Dammlinien (->WallLine.).
+	string.new wall line
+		set:AddWallLine
+		german:neuer Damm
+		doc:Append a new, empty wall line.
+			german:Neuen, leeren Damm anfügen.

@@ -1,0 +1,43 @@
+obj.Attribute derivator
+	apply.show formula signature
+		set:ShowFormulaSignature
+	filename.dat file:
+		set:DatFileName
+		pattern:*.dat
+	filename.asix file:
+		set:AsixFileName
+		pattern:*.asix
+	filename.mesh file:MeshFileName
+		set:MeshFileName
+		pattern:*.flm,*.fmo
+	filename.result file:ResultFileName
+		set:ResultFileName
+		pattern:*.fl3
+	filename.output result file:OutputFileName
+		set:OutputFileName
+		pattern:*.fl3
+	apply.list steps (iterations / times / angles)
+		set:ListSteps
+	string.steps:Steps
+		set:Steps
+		options:StepOptions
+	float.start step (iteration/time/angle):MinStep
+		set:MinStep
+		options:StepsList
+		vis:StepVisibility
+	float.end step (iteration/time/angle):MaxStep
+		set:MaxStep
+		options:StepsList
+		vis:StepVisibility
+	filename.examples formula path:ExampleFormulasPath
+	apply.list example formulas
+		set:ListExampleFormulas
+	filename.add formula
+		set:AddFormula
+		pattern:*.frml
+	string.formulas:FormulasList
+	string.remove formula
+		options:FormulasList
+		set:RemoveFormula
+	apply.derive attributes
+		set:DeriveAttributes

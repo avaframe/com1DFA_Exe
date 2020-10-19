@@ -1,0 +1,14 @@
+obj.TerminalController
+	german:Terminal-Steuerung
+	doc:Controls the application in a terminal window.
+		german:Steuerung der Anwendung in einem Terminal-Fenster.
+	directory.save as
+		german:speichern unter
+		set:SaveProjectAs
+		doc:Set object directory and save (->Object.SaveProject).
+			german:Objektverzeichnis setzen und speichern (->Object.SaveProject).
+	directory.load
+		german:laden
+		set:LoadProject
+		doc:Load the object with all sub-objects from the selected directoy.
+			german:Objekt mit allen Unterobjekten vom gewählten Verzeichnis laden.

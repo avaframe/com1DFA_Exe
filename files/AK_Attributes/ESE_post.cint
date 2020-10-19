@@ -1,0 +1,874 @@
+
+char viewer[32];
+char bg_col[48];
+
+char meshFileName[256];
+char resultFileName[256];
+char datFileName[256];
+char imageFileDir[256];
+
+int nDataSteps;
+char dataset[1][16];
+
+char autoposition[16];
+char viewerAspectRatio[16];
+char marginFactor[16];
+char bore[16];
+char stroke[16];
+char conRodLen[16];
+char bowlDepth[16];
+char nInjectionHoles[16];
+
+char x_cut_origin[48];
+char x_cut_scale[16];
+char y_cut_origin[48];
+char y_cut_scale[16];
+char z_cut_origin[48];
+char z_cut_scale[16];
+char vec_len_scale[16];
+char vec_bg_surf[16];
+char vec_line_wid[16];
+char vec_pt_size[16];
+char droplet_size_scale[16];
+char spray_size_attr[256];
+char colorbar_visible[16];
+char font[64];
+char rotatedCopies[16];
+
+int nCutAttributes;
+char cAttr[1][256];
+char cAutoscale[1][16];
+char cMin[1][16];
+char cMax[1][16];
+char cVectors[1][16];
+
+int nXCuts;
+char xCutDist[1][16];
+
+int nYCuts;
+char yCutDist[1][16];
+
+int nZCuts;
+char zCutDist[1][16];
+
+int nPlaneCuts;
+char cPlaneCut[1][48];
+char nPlaneCut[1][48];
+char oPlaneCut[1][48];
+char xPlaneCut[1][48];
+char yPlaneCut[1][48];
+char sPlaneCut[1][16];
+char namePlaneCut[1][256];
+char rotCopiesPlaneCut[1][256];
+
+char surfaceCut[16];
+char s_cut_X[48];
+char s_cut_Y[48];
+char s_cut_origin[48];
+char s_cut_scale[16];
+
+int nIsoCuts;
+char isoCutIsoAttr[1][256];
+char isoCutIsoValue[1][16];
+char isoCutAttr[1][256];
+char isoCutAutoscale[1][16];
+char isoCutMin[1][16];
+char isoCutMax[1][16];
+char isoCutVectors[1][16];
+
+int nSprays;
+char sprAttr[1][256];
+char sprAutoscale[1][16];
+char sprMin[1][16];
+char sprMax[1][16];
+
+
+
+char value[256];
+char line[512];
+
+
+
+void ReplaceSpecialChars(
+	char s[])
+{
+	int i;
+	while((i = istrchr(s, ' ')) > -1) s[i] = '_';
+	while((i = istrchr(s, '/')) > -1) s[i] = '_';
+	while((i = istrchr(s, ':')) > -1) s[i] = '_';
+	while((i = istrchr(s, '^')) > -1) s[i] = '_';
+	while((i = istrchr(s, '-')) > -1) s[i] = '_';
+	while((i = istrchr(s, '.')) > -1) s[i] = '_';
+	while((i = istrchr(s, '%')) > -1) s[i] = '_';
+}
+
+// remove first occurrence of substring x from s
+int RemoveFromString(
+	char s[],
+	char x[])
+{
+	int n = strlen(x);
+	int m = strlen(s);
+	int i;
+	if(n < 1 || m < n) return 0;
+	i = istrstr(s, x);
+	if(i == -1) return 0;
+	while(i + n <= m){
+		s[i] = s[i+n];
+		i++;
+	}
+	return 1;
+}
+
+void Init()
+{
+	nDataSteps = 0;
+	nCutAttributes = 0;
+	nXCuts = 0;
+	nYCuts = 0;
+	nZCuts = 0;
+	nPlaneCuts = 0;
+	nIsoCuts = 0;
+	nSprays = 0;
+	strcpy(surfaceCut, "0");
+	strcpy(imageFileDir, "");
+	strcpy(viewer, "root");
+	strcpy(rotatedCopies, "0");
+
+	strcpy(autoposition, "0");
+	sprintf(viewerAspectRatio, "%f", 800/1000.0);
+	sprintf(marginFactor, "0.85");
+}
+
+
+
+void Update()
+{
+	print "ESE-Update() called.";
+}
+
+
+
+void ProcessDataSteps();
+void ProcessDataStep(char datastep[]);
+void ProcessAllCuts();
+void ProcessAllSprays();
+
+
+
+int scan(
+	char key[],
+	char val[])
+{
+	int i;
+	int j;
+	if(!strncmp(line, key, strlen(key))){
+		i = istrchr(line, '=');
+		if(i < 0) return 0;
+		strcpy(val, line[i+1]);
+		j = strlen(val)-1;
+		if(val[j] < 32) val[j] = 0;
+		return 1;
+	}
+	return 0;
+}
+
+int ReadParameterFile(
+	char parFileName[])
+{
+	int i;
+	FILE *fp = fopen(parFileName, "r");
+	if(!fp){
+		print "ReadParameterFile: cannot read ESE parameter file", parFileName;
+		return 0;
+	}
+
+	nCutAttributes = 0;
+	nZCuts = 0;
+	nSprays = 0;
+
+	datFileName[0] = 0;
+	while(fgets(line, 512-1, fp)){
+		if(scan("bg_col", bg_col)) continue;
+		if(scan("autoposition", autoposition)) continue;
+		if(scan("bore", bore)) continue;
+		if(scan("stroke", stroke)) continue;
+		if(scan("conRodLen", conRodLen)) continue;
+		if(scan("bowlDepth", bowlDepth)) continue;
+		if(scan("nInjectionHoles", nInjectionHoles)) continue;
+		if(scan("viewerAspectRatio", viewerAspectRatio)) continue;
+		if(scan("marginFactor", marginFactor)) continue;
+
+		if(scan("x_cut_scale", x_cut_scale)) continue;
+		if(scan("x_cut_origin", x_cut_origin)) continue;
+		if(scan("y_cut_scale", y_cut_scale)) continue;
+		if(scan("y_cut_origin", y_cut_origin)) continue;
+		if(scan("z_cut_scale", z_cut_scale)) continue;
+		if(scan("z_cut_origin", z_cut_origin)) continue;
+		if(scan("vec_len_scale", vec_len_scale)) continue;
+		if(scan("vec_bg_surf", vec_bg_surf)) continue;
+		if(scan("vec_line_wid", vec_line_wid)) continue;
+		if(scan("vec_pt_size", vec_pt_size)) continue;
+		if(scan("spray_size_attr", spray_size_attr)) continue;
+		if(scan("droplet_size_scale", droplet_size_scale)) continue;
+		if(scan("colorbar_visible", colorbar_visible)) continue;
+		if(scan("font", font)) continue;
+		if(scan("rotatedCopies", rotatedCopies)) continue;
+
+		if(scan("meshFileName", meshFileName)) continue;
+		if(scan("resultFileName", resultFileName)) continue;
+		if(scan("datFileName", datFileName)) continue;
+		if(scan("imageFileDir", imageFileDir)) continue;
+
+		if(scan("datastep", value)){
+			nDataSteps++;
+			resize(dataset, nDataSteps);
+			dataset[nDataSteps-1] = value;
+		}
+
+		if(scan("cAttr", value)){
+			nCutAttributes++;
+			resize(cAttr, nCutAttributes);
+			resize(cVectors, nCutAttributes);
+			resize(cAutoscale, nCutAttributes);
+			resize(cMin, nCutAttributes);
+			resize(cMax, nCutAttributes);
+			strcpy(cVectors[nCutAttributes-1], "0");
+			strcpy(cAutoscale[nCutAttributes-1], "1");
+			strcpy(cMin[nCutAttributes-1], "0");
+			strcpy(cMax[nCutAttributes-1], "1");
+		}
+
+		if(nCutAttributes){
+			if(scan("cAttr", cAttr[nCutAttributes-1])) continue;
+			if(scan("cVectors", cVectors[nCutAttributes-1])) continue;
+			if(scan("cAutoscale", cAutoscale[nCutAttributes-1])) continue;
+			if(scan("cMin", cMin[nCutAttributes-1])) continue;
+			if(scan("cMax", cMax[nCutAttributes-1])) continue;
+		}
+
+		if(scan("surfaceCut", surfaceCut)) continue;
+		if(scan("s_cut_X", s_cut_X)) continue;
+		if(scan("s_cut_Y", s_cut_Y)) continue;
+		if(scan("s_cut_origin", s_cut_origin)) continue;
+		if(scan("s_cut_scale", s_cut_scale)) continue;
+
+		if(scan("xCutDist", value)){
+			nXCuts++;
+			resize(xCutDist, nXCuts);
+		}
+		if(nXCuts && scan("xCutDist", xCutDist[nXCuts-1])) continue;
+
+		if(scan("yCutDist", value)){
+			nYCuts++;
+			resize(yCutDist, nYCuts);
+		}
+		if(nYCuts && scan("yCutDist", yCutDist[nYCuts-1])) continue;
+
+		if(scan("zCutDist", value)){
+			nZCuts++;
+			resize(zCutDist, nZCuts);
+		}
+		if(nZCuts && scan("zCutDist", zCutDist[nZCuts-1])) continue;
+
+		if(scan("planeCutName", value)){
+			nPlaneCuts++;
+			resize(namePlaneCut, nPlaneCuts);
+			resize(cPlaneCut, nPlaneCuts);
+			resize(nPlaneCut, nPlaneCuts);
+			resize(oPlaneCut, nPlaneCuts);
+			resize(xPlaneCut, nPlaneCuts);
+			resize(yPlaneCut, nPlaneCuts);
+			resize(sPlaneCut, nPlaneCuts);
+			resize(rotCopiesPlaneCut, nPlaneCuts);
+			strcpy(cPlaneCut[nPlaneCuts-1], "0 0 0");
+			strcpy(nPlaneCut[nPlaneCuts-1], "0 0 1");
+			strcpy(oPlaneCut[nPlaneCuts-1], "0 0 0");
+			strcpy(xPlaneCut[nPlaneCuts-1], "1 0 0");
+			strcpy(yPlaneCut[nPlaneCuts-1], "0 1 0");
+			strcpy(sPlaneCut[nPlaneCuts-1], "1");
+			strcpy(rotCopiesPlaneCut[nPlaneCuts-1], "0");
+		}
+		if(nPlaneCuts){
+			if(scan("planeCutName", namePlaneCut[nPlaneCuts-1])) continue;
+			if(scan("planeCutCenter", cPlaneCut[nPlaneCuts-1])) continue;
+			if(scan("planeCutNormal", nPlaneCut[nPlaneCuts-1])) continue;
+			if(scan("planeCutOrigin", oPlaneCut[nPlaneCuts-1])) continue;
+			if(scan("planeCutLocX", xPlaneCut[nPlaneCuts-1])) continue;
+			if(scan("planeCutLocY", yPlaneCut[nPlaneCuts-1])) continue;
+			if(scan("planeCutScale", sPlaneCut[nPlaneCuts-1])) continue;
+			if(scan("planeCutRotatedCopies", rotCopiesPlaneCut[nPlaneCuts-1])) continue;
+		}
+
+		if(scan("isoCutIsoAttr", value)){
+			nIsoCuts++;
+			resize(isoCutIsoAttr, nIsoCuts);
+			resize(isoCutIsoValue, nIsoCuts);
+			resize(isoCutAttr, nIsoCuts);
+			resize(isoCutVectors, nIsoCuts);
+			resize(isoCutAutoscale, nIsoCuts);
+			resize(isoCutMin, nIsoCuts);
+			resize(isoCutMax, nIsoCuts);
+			strcpy(isoCutVectors[nIsoCuts-1], "0");
+			strcpy(isoCutAutoscale[nIsoCuts-1], "1");
+			strcpy(isoCutMin[nIsoCuts-1], "0");
+			strcpy(isoCutMax[nIsoCuts-1], "1");
+		}
+
+		if(nIsoCuts){
+			if(scan("isoCutIsoAttr", isoCutIsoAttr[nIsoCuts-1])) continue;
+			if(scan("isoCutIsoValue", isoCutIsoValue[nIsoCuts-1])) continue;
+			if(scan("isoCutAttr", isoCutAttr[nIsoCuts-1])) continue;
+			if(scan("isoCutVectors", isoCutVectors[nIsoCuts-1])) continue;
+			if(scan("isoCutAutoscale", isoCutAutoscale[nIsoCuts-1])) continue;
+			if(scan("isoCutMin", isoCutMin[nIsoCuts-1])) continue;
+			if(scan("isoCutMax", isoCutMax[nIsoCuts-1])) continue;
+		}
+
+		if(scan("sprAttr", value)){
+			nSprays++;
+			resize(sprAttr, nSprays);
+			resize(sprAutoscale, nSprays);
+			resize(sprMin, nSprays);
+			resize(sprMax, nSprays);
+			strcpy(sprAutoscale[nSprays-1], "1");
+			strcpy(sprMin[nSprays-1], "0");
+			strcpy(sprMax[nSprays-1], "1");
+		}
+		if(nSprays){
+			if(scan("sprAttr", sprAttr[nSprays-1])) continue;
+			if(scan("sprAutoscale", sprAutoscale[nSprays-1])) continue;
+			if(scan("sprMin", sprMin[nSprays-1])) continue;
+			if(scan("sprMax", sprMax[nSprays-1])) continue;
+		}
+	}
+	fclose(fp);
+
+	print "ESE-ReadParameterFile:";
+	print "\tautoposition:", autoposition;
+	print "\tnDataSteps:", nDataSteps;
+	print "\tnCutAttributes:", nCutAttributes;
+	print "\tnXCuts:", nXCuts;
+	print "\tnYCuts:", nYCuts;
+	print "\tnZCuts:", nZCuts;
+	print "\tnPlaneCuts:", nPlaneCuts;
+	print "\tsurfaceCut:", surfaceCut;
+	print "\tnIsoCuts:", nIsoCuts;
+	print "\tnSprays:", nSprays;
+
+	return 1;
+}
+
+
+
+double strk;
+double bor;
+double crl;
+double bwlDep;
+int nInjHls;
+double vart;
+double margFac;
+
+void ComputeAutoposition(double crankAngle)
+{
+	double zBottom;
+	double y_width;
+	double xScale;
+	double yScale;
+	double zScale;
+	double sScale;
+	y_width = bor * sin(Pi/nInjHls);
+	zBottom = 0.0 - bwlDep - 0.5*strk*(1.0-cos(crankAngle))
+		- crl*(1.0-sqrt(1.0-pow(0.5*strk/crl*sin(crankAngle), 2.0)));
+
+	sprintf(x_cut_origin, "%lf %lf %lf", 0.25*bor, 0.0, 0.5*zBottom);
+	sprintf(y_cut_origin, "%lf %lf %lf", 0.25*bor, 0.0, 0.5*zBottom);
+	sprintf(z_cut_origin, "%lf %lf %lf", 0.25*bor, 0.0, 0.5*zBottom);
+	sprintf(s_cut_origin, "%lf %lf %lf", 0.25*bor, 0.0, 0.5*zBottom);
+
+	xScale = 4.0/bor;
+	yScale = 2.0*vart/y_width;
+	zScale = 2.0*vart/(-zBottom);
+
+	if(strcmp(rotatedCopies, "0")){
+		xScale /= 2.0;
+		yScale /= 2.0;
+		yScale = vart*xScale;
+		sprintf(x_cut_origin, "%lf %lf %lf", 0.0, 0.0, 0.5*zBottom);
+		sprintf(y_cut_origin, "%lf %lf %lf", 0.0, 0.0, 0.5*zBottom);
+		sprintf(z_cut_origin, "%lf %lf %lf", 0.0, 0.0, 0.5*zBottom);
+		sprintf(s_cut_origin, "%lf %lf %lf", 0.0, 0.0, 0.5*zBottom);
+	}
+
+	if(xScale < yScale)
+		sprintf(z_cut_scale, "%lf", margFac*xScale);
+	else
+		sprintf(z_cut_scale, "%lf", margFac*yScale);
+	if(zScale < xScale)
+		sprintf(y_cut_scale, "%lf", margFac*zScale);
+	else
+		sprintf(y_cut_scale, "%lf", margFac*xScale);
+	if(yScale < zScale)
+		sprintf(x_cut_scale, "%lf", margFac*yScale);
+	else
+		sprintf(x_cut_scale, "%lf", margFac*zScale);
+
+	sScale = 1.0/sqrt(1.0/xScale/xScale+1.0/yScale/yScale+1.0/zScale/zScale);
+	sprintf(s_cut_scale, "%lf", margFac*sScale);
+}
+
+
+
+
+int Run(char dummy[])
+{
+	char parFileName[256];
+
+	get("", "$parFileName", parFileName);
+	if(!ReadParameterFile(parFileName)) return 0;
+
+	set(viewer, "BgColor", bg_col);
+	set(viewer, "ImageFileDir", imageFileDir);
+	//set(viewer, "LightModelBound", "0");
+	set(viewer, "LightPosition", "1 1 1");
+
+// compute autoposition parameter
+
+	if(!strcmp(autoposition, "1")){
+		sscanf(stroke, "%lf", strk);
+		sscanf(bore, "%lf", bor);
+		sscanf(bowlDepth, "%lf", bwlDep);
+		sscanf(conRodLen, "%lf", crl);
+		sscanf(nInjectionHoles, "%d", nInjHls);
+		sscanf(viewerAspectRatio, "%lf", vart);
+		sscanf(marginFactor, "%lf", margFac);
+	}
+
+// load result
+	set("../Cases", "Create", "case");
+	if(datFileName[0] == 0){
+		set("../Cases/case", "MeshFileName", meshFileName);
+		set("../Cases/case", "ResultFileName", resultFileName);
+	}else{
+		set("../Cases/case", "DatFileName", datFileName);
+	}
+	set("../Cases/case", "Load", "");
+
+// mesh props
+	set("../Cases/case/Mesh", "LocalY", "0 0 1");
+	set("../Cases/case/Mesh", "PolygonsFilled", "0");
+	set("../Cases/case/Mesh", "DrawEdges", "0");
+	set("../Cases/case/Mesh", "Shaded", "1");
+	set("../Cases/case/Mesh", "Blending", "0");
+	set("../Cases/case/Mesh", "Color", "0 0 0");
+	set("../Cases/case/Mesh", "Visibility", "0");
+	if(strcmp(rotatedCopies, "0"))
+		set("../Cases/case/Mesh", "NumberOfRotatedCopies", "2");
+// mesh label
+	set("../Labels", "Create", "meshLabel");
+	set("../Labels/meshLabel", "Position", "0.99 0.01");
+	set("../Labels/meshLabel", "HorizontalAlignment", "right");
+	set("../Labels/meshLabel", "Font", font);
+	set("../Labels/meshLabel", "Visibility", "0");
+
+
+// create the formula_cut at half-stroke
+	set("../Cuts", "CreateFormulaCut", "cut_at_half_stroke");
+	set("../Cuts/cut_at_half_stroke", "FormulaFileName", "half_stroke_cut.frml");
+	set("../Cuts/cut_at_half_stroke", "Extrapolate", "1");
+	set("../Cuts/cut_at_half_stroke", "VectorLengthScale", vec_len_scale);
+	set("../Cuts/cut_at_half_stroke", "DisplaySurface", vec_bg_surf);
+	set("../Cuts/cut_at_half_stroke", "LineWidth", vec_line_wid);
+	set("../Cuts/cut_at_half_stroke", "PointSize", vec_pt_size);
+	set("../Cuts/cut_at_half_stroke", "Visibility", "0");
+	set("../Cuts/cut_at_half_stroke", "NumberOfRotatedCopies", rotatedCopies);
+
+// create the x_cut
+	set("../Cuts", "CreatePlaneCut", "x_cut");
+	set("../Cuts/x_cut", "PlaneNormal", "1 0 0");
+	set("../Cuts/x_cut", "SetPlane", "");
+	set("../Cuts/x_cut", "Extrapolate", "1");
+	set("../Cuts/x_cut", "LocalX", "0 -1 0");
+	set("../Cuts/x_cut", "LocalY", "0 0 1");
+	set("../Cuts/x_cut", "VectorLengthScale", vec_len_scale);
+	set("../Cuts/x_cut", "VectorProjected", "1");
+	set("../Cuts/x_cut", "DisplaySurface", vec_bg_surf);
+	set("../Cuts/x_cut", "LineWidth", vec_line_wid);
+	set("../Cuts/x_cut", "PointSize", vec_pt_size);
+	set("../Cuts/x_cut", "Visibility", "0");
+	//set("../Cuts/x_cut", "NumberOfRotatedCopies", rotatedCopies);
+
+// create the y_cut
+	set("../Cuts", "CreatePlaneCut", "y_cut");
+	set("../Cuts/y_cut", "PlaneNormal", "0 1 0");
+	set("../Cuts/y_cut", "SetPlane", "");
+	set("../Cuts/y_cut", "Extrapolate", "1");
+	set("../Cuts/y_cut", "LocalY", "0 0 1");
+	set("../Cuts/y_cut", "VectorLengthScale", vec_len_scale);
+	set("../Cuts/y_cut", "VectorProjected", "1");
+	set("../Cuts/y_cut", "DisplaySurface", vec_bg_surf);
+	set("../Cuts/y_cut", "LineWidth", vec_line_wid);
+	set("../Cuts/y_cut", "PointSize", vec_pt_size);
+	set("../Cuts/y_cut", "Visibility", "0");
+	if(strcmp(rotatedCopies, "0"))
+		set("../Cuts/y_cut", "NumberOfRotatedCopies", "2");
+
+// create the z_cut
+	set("../Cuts", "CreatePlaneCut", "z_cut");
+	set("../Cuts/z_cut", "PlaneNormal", "0 0 1");
+	set("../Cuts/z_cut", "SetPlane", "");
+	set("../Cuts/z_cut", "Extrapolate", "1");
+	set("../Cuts/z_cut", "VectorLengthScale", vec_len_scale);
+	set("../Cuts/z_cut", "VectorProjected", "1");
+	set("../Cuts/z_cut", "DisplaySurface", vec_bg_surf);
+	set("../Cuts/z_cut", "LineWidth", vec_line_wid);
+	set("../Cuts/z_cut", "PointSize", vec_pt_size);
+	set("../Cuts/z_cut", "Visibility", "0");
+	set("../Cuts/z_cut", "NumberOfRotatedCopies", rotatedCopies);
+
+// create the plane cut
+	set("../Cuts", "CreatePlaneCut", "p_cut");
+	set("../Cuts/p_cut", "Extrapolate", "1");
+	set("../Cuts/p_cut", "VectorLengthScale", vec_len_scale);
+	set("../Cuts/p_cut", "VectorProjected", "1");
+	set("../Cuts/p_cut", "DisplaySurface", vec_bg_surf);
+	set("../Cuts/p_cut", "LineWidth", vec_line_wid);
+	set("../Cuts/p_cut", "PointSize", vec_pt_size);
+	set("../Cuts/p_cut", "Visibility", "0");
+	set("../Cuts/p_cut", "NumberOfRotatedCopies", rotatedCopies);
+
+// create the surface cut
+	set("../Cuts", "CreateSurfaceCut", "s_cut");
+	set("../Cuts/s_cut", "Extrapolate", "1");
+	set("../Cuts/s_cut", "LocalX", s_cut_X);
+	set("../Cuts/s_cut", "LocalY", s_cut_Y);
+	set("../Cuts/s_cut", "VectorLengthScale", vec_len_scale);
+	set("../Cuts/s_cut", "DisplaySurface", vec_bg_surf);
+	set("../Cuts/s_cut", "LineWidth", vec_line_wid);
+	set("../Cuts/s_cut", "PointSize", vec_pt_size);
+	set("../Cuts/s_cut", "Visibility", "0");
+	set("../Cuts/s_cut", "NumberOfRotatedCopies", rotatedCopies);
+
+// create the isosurface cut
+	set("../Cuts", "CreateIsoSurfaceCut", "isoCut");
+	set("../Cuts/isoCut", "Extrapolate", "1");
+	set("../Cuts/isoCut", "LocalX", s_cut_X);
+	set("../Cuts/isoCut", "LocalY", s_cut_Y);
+	set("../Cuts/isoCut", "VectorLengthScale", vec_len_scale);
+	set("../Cuts/isoCut", "DisplaySurface", vec_bg_surf);
+	set("../Cuts/isoCut", "LineWidth", vec_line_wid);
+	set("../Cuts/isoCut", "PointSize", vec_pt_size);
+	set("../Cuts/isoCut", "Visibility", "0");
+	set("../Cuts/isoCut", "Shaded", "1");
+	set("../Cuts/isoCut", "VectorProjected", "0");
+	set("../Cuts/isoCut", "NumberOfRotatedCopies", rotatedCopies);
+
+// create the spray
+	set("../SprayClouds", "Create", "spray");
+	set("../SprayClouds/spray", "SizeAttribute", spray_size_attr);
+	set("../SprayClouds/spray", "DropletSizeScale", droplet_size_scale);
+	set("../SprayClouds/spray", "Visibility", "0");
+	set("../SprayClouds/spray", "Shaded", "1");
+	set("../SprayClouds/spray", "NumberOfRotatedCopies", rotatedCopies);
+
+// switch on/off colorbars, set font
+	set("../Cuts/cut_at_half_stroke/Colorbar", "Visibility", colorbar_visible);
+	set("../Cuts/x_cut/Colorbar", "Visibility", colorbar_visible);
+	set("../Cuts/y_cut/Colorbar", "Visibility", colorbar_visible);
+	set("../Cuts/z_cut/Colorbar", "Visibility", colorbar_visible);
+	set("../Cuts/p_cut/Colorbar", "Visibility", colorbar_visible);
+	set("../Cuts/s_cut/Colorbar", "Visibility", colorbar_visible);
+	set("../Cuts/isoCut/Colorbar", "Visibility", colorbar_visible);
+	set("../SprayClouds/spray/Colorbar", "Visibility", colorbar_visible);
+	set("../Cuts/cut_at_half_stroke/Colorbar", "Font", font);
+	set("../Cuts/x_cut/Colorbar", "Font", font);
+	set("../Cuts/y_cut/Colorbar", "Font", font);
+	set("../Cuts/z_cut/Colorbar", "Font", font);
+	set("../Cuts/s_cut/Colorbar", "Font", font);
+	set("../Cuts/p_cut/Colorbar", "Font", font);
+	set("../Cuts/isoCut/Colorbar", "Font", font);
+	set("../SprayClouds/spray/Colorbar", "Font", font);
+
+
+// process all datasteps
+	ProcessDataSteps();
+
+	return 1;
+}
+
+
+
+void ProcessDataSteps()
+{
+	int i;
+	for(i = 0; i < nDataSteps; i++){
+		ProcessDataStep(dataset[i]);
+	}
+}
+
+
+
+void ProcessDataStep(
+	char dataset[])
+{
+	double crankAngle;
+
+	set("../Cases/case", "LoadDatasetNumber", dataset);
+	get("../Cases/case", "CurrentDataset", value);
+
+	if(!strcmp(autoposition, "1")){
+		sscanf(value, "AN_%lf", crankAngle);
+		ComputeAutoposition(crankAngle*Pi/180.0);
+	}
+
+	set("../Cases/case/Mesh", "Position", y_cut_origin);
+	set("../Cases/case/Mesh", "Scale", y_cut_scale);
+	set("../Cuts/cut_at_half_stroke", "Scale", z_cut_scale);
+	set("../Cuts/cut_at_half_stroke", "Position", z_cut_origin);
+	set("../Cuts/x_cut", "Position", x_cut_origin);
+	set("../Cuts/x_cut", "Scale", x_cut_scale);
+	set("../Cuts/y_cut", "Position", y_cut_origin);
+	set("../Cuts/y_cut", "Scale", y_cut_scale);
+	set("../Cuts/z_cut", "Position", z_cut_origin);
+	set("../Cuts/z_cut", "Scale", z_cut_scale);
+	set("../Cuts/s_cut", "Position", s_cut_origin);
+	set("../Cuts/s_cut", "Scale", s_cut_scale);
+	set("../Cuts/isoCut", "Position", s_cut_origin);
+	set("../Cuts/isoCut", "Scale", s_cut_scale);
+
+	set("../Cases/case/Mesh", "PolygonsFilled", "0");
+	set("../Cases/case/Mesh", "Blending", "0");
+	set("../Cases/case/Mesh", "AutoColored", "1");
+
+	set("../Cases/case/Mesh", "Visibility", "1");
+	set("../Labels/meshLabel", "Visibility", "1");
+	sprintf(line, "Mesh at position %s", value);
+	set("../Labels/meshLabel", "Text", line);
+	set(viewer, "ImageFileNameEvaluator", "ImpressAK/Cases/case:CurrentDataset");
+	set(viewer, "WriteImageFile", "");
+	set("../Labels/meshLabel", "Visibility", "0");
+	set("../Cases/case/Mesh", "Visibility", "0");
+
+	set("../Cases/case/Mesh", "PolygonsFilled", "1");
+	set("../Cases/case/Mesh", "Blending", "1");
+	set("../Cases/case/Mesh", "Opacity", "0.3");
+	set("../Cases/case/Mesh", "AutoColored", "0");
+	set("../Cases/case/Mesh", "Color", "0 0.5 1");
+
+	ProcessAllCuts();
+	ProcessAllSprays();
+}
+
+
+
+void ProcessAllCuts()
+{
+	int i;
+	int j;
+	for(i = 0; i < nCutAttributes; i++){
+		// cut at half stroke
+		set("../Cuts/cut_at_half_stroke", "Visibility", "1");
+		set(viewer, "ImageFileNameEvaluator", "ImpressAK/Cuts/cut_at_half_stroke:IdString");
+		set("../Cuts/cut_at_half_stroke", "SetAttribute", cAttr[i]);
+		set("../Cuts/cut_at_half_stroke/Colorbar", "Autoscale", cAutoscale[i]);
+		set("../Cuts/cut_at_half_stroke/Colorbar", "Min", cMin[i]);
+		set("../Cuts/cut_at_half_stroke/Colorbar", "Max", cMax[i]);
+		set("../Cuts/cut_at_half_stroke", "Vectors", cVectors[i]);
+		set("../Cuts/cut_at_half_stroke", "VectorLengthScale", vec_len_scale);
+		set("../Cuts/cut_at_half_stroke", "DisplaySurface", vec_bg_surf);
+		set(viewer, "WriteImageFile", "");
+		set("../Cuts/cut_at_half_stroke", "Visibility", "0");
+
+		//  y_cut
+		//set("../Cuts/y_cut", "Visibility", "1");
+		//set(viewer, "ImageFileNameEvaluator", "ImpressAK/Cuts/y_cut:IdString");
+		//set("../Cuts/y_cut", "SetAttribute", cAttr[i]);
+		//set("../Cuts/y_cut/Colorbar", "Autoscale", cAutoscale[i]);
+		//set("../Cuts/y_cut/Colorbar", "Min", cMin[i]);
+		//set("../Cuts/y_cut/Colorbar", "Max", cMax[i]);
+		//set("../Cuts/y_cut", "Vectors", cVectors[i]);
+		//set("../Cuts/y_cut", "VectorLengthScale", vec_len_scale);
+		//set("../Cuts/y_cut", "DisplaySurface", vec_bg_surf);
+		//set(viewer, "WriteImageFile", "");
+		//set("../Cuts/y_cut", "Visibility", "0");
+
+		//  s_cut
+		if(!strcmp(surfaceCut, "1")){
+			set("../Cuts/s_cut", "Visibility", "1");
+			set(viewer, "ImageFileNameEvaluator", "ImpressAK/Cuts/s_cut:IdString");
+			set("../Cuts/s_cut", "SetAttribute", cAttr[i]);
+			set("../Cuts/s_cut/Colorbar", "Autoscale", cAutoscale[i]);
+			set("../Cuts/s_cut/Colorbar", "Min", cMin[i]);
+			set("../Cuts/s_cut/Colorbar", "Max", cMax[i]);
+			set("../Cuts/s_cut", "Vectors", cVectors[i]);
+			set("../Cuts/s_cut", "VectorLengthScale", vec_len_scale);
+			set("../Cuts/s_cut", "DisplaySurface", vec_bg_surf);
+			set(viewer, "WriteImageFile", "");
+			set("../Cuts/s_cut", "Visibility", "0");
+		}
+
+		// all x_cuts
+		for(j = 0; j < nXCuts; j++){
+			set("../Cuts/x_cut", "Visibility", "1");
+			set("../Cuts/x_cut", "CutDistance", xCutDist[j]);
+			set(viewer, "ImageFileNameEvaluator", "ImpressAK/Cuts/x_cut:IdString");
+			set("../Cuts/x_cut", "SetAttribute", cAttr[i]);
+			set("../Cuts/x_cut/Colorbar", "Autoscale", cAutoscale[i]);
+			set("../Cuts/x_cut/Colorbar", "Min", cMin[i]);
+			set("../Cuts/x_cut/Colorbar", "Max", cMax[i]);
+			set("../Cuts/x_cut", "Vectors", cVectors[i]);
+			set(viewer, "WriteImageFile", "");
+			set("../Cuts/x_cut", "Visibility", "0");
+		}
+
+		// all y_cuts
+		for(j = 0; j < nYCuts; j++){
+			set("../Cuts/y_cut", "Visibility", "1");
+			set("../Cuts/y_cut", "CutDistance", yCutDist[j]);
+			set(viewer, "ImageFileNameEvaluator", "ImpressAK/Cuts/y_cut:IdString");
+			set("../Cuts/y_cut", "SetAttribute", cAttr[i]);
+			set("../Cuts/y_cut/Colorbar", "Autoscale", cAutoscale[i]);
+			set("../Cuts/y_cut/Colorbar", "Min", cMin[i]);
+			set("../Cuts/y_cut/Colorbar", "Max", cMax[i]);
+			set("../Cuts/y_cut", "Vectors", cVectors[i]);
+			set(viewer, "WriteImageFile", "");
+			set("../Cuts/y_cut", "Visibility", "0");
+		}
+
+		// all z_cuts
+		for(j = 0; j < nZCuts; j++){
+			set("../Cuts/z_cut", "Visibility", "1");
+			set("../Cuts/z_cut", "CutDistance", zCutDist[j]);
+			set(viewer, "ImageFileNameEvaluator", "ImpressAK/Cuts/z_cut:IdString");
+			set("../Cuts/z_cut", "SetAttribute", cAttr[i]);
+			set("../Cuts/z_cut/Colorbar", "Autoscale", cAutoscale[i]);
+			set("../Cuts/z_cut/Colorbar", "Min", cMin[i]);
+			set("../Cuts/z_cut/Colorbar", "Max", cMax[i]);
+			set("../Cuts/z_cut", "Vectors", cVectors[i]);
+			set(viewer, "WriteImageFile", "");
+			set("../Cuts/z_cut", "Visibility", "0");
+		}
+
+		// all plane cuts
+		for(j = 0; j < nPlaneCuts; j++){
+			set("../Cuts/p_cut", "PlaneCenter", cPlaneCut[j]);
+			set("../Cuts/p_cut", "PlaneNormal", nPlaneCut[j]);
+			set("../Cuts/p_cut", "SetPlane", "");
+			set("../Cuts/p_cut", "Position", oPlaneCut[j]);
+			set("../Cuts/p_cut", "LocalX", xPlaneCut[j]);
+			set("../Cuts/p_cut", "LocalY", yPlaneCut[j]);
+			set("../Cuts/p_cut", "Scale", sPlaneCut[j]);
+			// for Phi_cut_'s, apply origin/scaling of y-cuts!
+			if(!strcmp(autoposition, "1") &&
+				istrstr(namePlaneCut[j], "Phi_cut_") == 0){
+				set("../Cuts/p_cut", "Position", y_cut_origin);
+				set("../Cuts/p_cut", "Scale", y_cut_scale);
+			}
+			set("../Cuts/p_cut", "NumberOfRotatedCopies", rotCopiesPlaneCut[j]);
+			set("../Cuts/p_cut", "Visibility", "1");
+			line[0] = 0;
+			ReplaceSpecialChars(namePlaneCut[j]);
+			strcat(line, namePlaneCut[j]);
+			strcat(line, "_");
+			strcat(line, cAttr[i]);
+			strcat(line, "_");
+			get("../Cases/case", "CurrentDataset", value);
+			strcat(line, value);
+			ReplaceSpecialChars(line);
+			RemoveFromString(line, "ElementData_");
+			strcat(line, ".png");
+			strcpy(value, line);
+			strcpy(line, imageFileDir);
+			strcat(line, value);
+			set(viewer, "ImageFileNameEvaluator", "explicit");
+			set(viewer, "ImageFileName", line);
+			set("../Cuts/p_cut", "SetAttribute", cAttr[i]);
+			set("../Cuts/p_cut/Colorbar", "Autoscale", cAutoscale[i]);
+			set("../Cuts/p_cut/Colorbar", "Min", cMin[i]);
+			set("../Cuts/p_cut/Colorbar", "Max", cMax[i]);
+			set("../Cuts/p_cut", "Vectors", cVectors[i]);
+			set("../Cuts/p_cut", "Id", namePlaneCut[j]);
+			set(viewer, "WriteImageFile", "");
+			sprintf(value, "../Cuts/%s", namePlaneCut[j]);
+			set(value, "Id", "p_cut");
+			set("../Cuts/p_cut", "Visibility", "0");
+		}
+
+	}
+	set("../Cuts/isoCut", "Visibility", "1");
+	set("../Cases/case/Mesh", "Visibility", "1");
+	set("../Cases/case/Mesh", "Position", s_cut_origin);
+	set("../Cases/case/Mesh", "Scale", s_cut_scale);
+	set("../Cases/case/Mesh", "LocalX", s_cut_X);
+	set("../Cases/case/Mesh", "LocalY", s_cut_Y);
+	set("../Cases/case/Mesh", "NumberOfRotatedCopies", rotatedCopies);
+	set(viewer, "ImageFileNameEvaluator", "ImpressAK/Cuts/isoCut:IdString");
+	for(i = 0; i < nIsoCuts; i++){
+		set("../Cuts/isoCut", "IsoAttribute", isoCutIsoAttr[i]);
+		set("../Cuts/isoCut", "IsoValue", isoCutIsoValue[i]);
+		set("../Cuts/isoCut", "SetAttribute", isoCutAttr[i]);
+		set("../Cuts/isoCut/Colorbar", "Autoscale", isoCutAutoscale[i]);
+		set("../Cuts/isoCut/Colorbar", "Min", isoCutMin[i]);
+		set("../Cuts/isoCut/Colorbar", "Max", isoCutMax[i]);
+		set("../Cuts/isoCut", "Vectors", isoCutVectors[i]);
+		set(viewer, "WriteImageFile", "");
+	}
+	set("../Cuts/isoCut", "Visibility", "0");
+	set("../Cases/case/Mesh", "Visibility", "0");
+	set("../Cases/case/Mesh", "LocalX", "1 0 0");
+	set("../Cases/case/Mesh", "LocalY", "0 0 1");
+	if(strcmp(rotatedCopies, "0"))
+		set("../Cases/case/Mesh", "NumberOfRotatedCopies", "2");
+}
+
+
+
+void ProcessAllSprays()
+{
+	int i;
+
+//	display mesh-wireframe
+	set("../Cases/case/Mesh", "Visibility", "1");
+
+   set("../SprayClouds/spray", "Visibility", "1");
+   set("../SprayClouds/spray", "AdaptiveResolution", "0");
+	for(i = 0; i < nSprays; i++){
+		set(viewer, "ImageFileNameEvaluator", "ImpressAK/SprayClouds/spray:IdString");
+		set("../SprayClouds/spray", "SetAttribute", sprAttr[i]);
+		set("../SprayClouds/spray/Colorbar", "Autoscale", sprAutoscale[i]);
+		set("../SprayClouds/spray/Colorbar", "Min", sprMin[i]);
+		set("../SprayClouds/spray/Colorbar", "Max", sprMax[i]);
+
+		set("../Cases/case/Mesh", "LocalY", "0 1 0");
+		set("../Cases/case/Mesh", "Position", z_cut_origin);
+		set("../Cases/case/Mesh", "Scale", z_cut_scale);
+
+		set("../SprayClouds/spray", "LocalY", "0 1 0");
+		set("../SprayClouds/spray", "Position", z_cut_origin);
+		set("../SprayClouds/spray", "Scale", z_cut_scale);
+
+		set("../Cases/case/Mesh", "NumberOfRotatedCopies", rotatedCopies);
+		set("../SprayClouds/spray", "NumberOfRotatedCopies", rotatedCopies);
+
+		set(viewer, "WriteImageFile", "");
+
+		set("../SprayClouds/spray", "Shaded", "1");
+		set("../Cases/case/Mesh", "LocalY", "0 0 1");
+		set("../Cases/case/Mesh", "Position", y_cut_origin);
+		set("../Cases/case/Mesh", "Scale", y_cut_scale);
+
+		set("../SprayClouds/spray", "LocalY", "0 0 1");
+		set("../SprayClouds/spray", "Position", y_cut_origin);
+		set("../SprayClouds/spray", "Scale", y_cut_scale);
+		if(strcmp(rotatedCopies, "0")){
+			set("../SprayClouds/spray", "NumberOfRotatedCopies", "2");
+			set("../Cases/case/Mesh", "NumberOfRotatedCopies", "2");
+		}
+		set(viewer, "WriteImageFile", "");
+	}
+	set("../SprayClouds/spray", "Visibility", "0");
+
+	set("../Cases/case/Mesh", "Visibility", "0");
+	if(strcmp(rotatedCopies, "0"))
+		set("../Cases/case/Mesh", "NumberOfRotatedCopies", "2");
+}

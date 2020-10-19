@@ -1,0 +1,45 @@
+double d0 = 0.77; // schneemaechtigkeit
+double altitude = 2400; // referenzseehoehe
+double deltad = 6; // hoehengradient in cm / 100 m
+
+double zwind = 2000; // ab welcher seehoehe ist windeinfluss bemerkbar?
+double deltadwind = 50; // wie stark ist der einfluss? cm / 100 m
+double phiwind = 0.0; // wind kommt aus: 0 = west, 90 = sued, 180 = ost, 270 = nord
+
+void init()
+{
+}
+
+void get_par(
+	char s[])
+{
+	double phi = rad2deg(phiwind);
+	sprintf(s, "d0=%g deltad=%g altitude=%g wind_start_altitude=%g"
+		" wind_dir_deg=%g (0=west,90=south) deltawind=%g",
+		d0, deltad, altitude, zwind, phi, deltadwind);
+}
+
+void set_par(
+	char s[])
+{
+	double phi;
+	sscanf(s, "d0=%lf deltad=%lf altitude=%lf wind_start_altitude=%lf"
+		" wind_dir_deg=%lf (0=west,90=south) deltawind=%lf",
+		d0, deltad, altitude, zwind, phi, deltadwind);
+	phiwind = deg2rad(phi);
+}
+
+
+double depth(
+	double x[3],
+	double n[3])
+{
+	double dwind = 0.0;
+	double dmsc = d0 + 1.0e-4 * deltad * (x[2]-altitude);
+	if(x[2] > zwind){
+		dwind = (x[2]-zwind) * 1.0e-4 * deltadwind;
+		if(dwind > dmsc) dwind = dmsc;
+		dwind = dwind * cos(acos(n[0]) - phiwind);
+	}
+	return (dmsc + dwind) * n[2];
+}

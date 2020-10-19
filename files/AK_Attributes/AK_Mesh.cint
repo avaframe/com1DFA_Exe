@@ -1,0 +1,95 @@
+
+
+
+// set id to ASCII file content
+void set_from_file(char id[], char fname[])
+{
+	int txt_len = 1024;
+	char line[0], txt[0];
+	FILE *fp = fopen(fname, "r");
+	if(!fp){
+		resize(line, strlen(fname) + 32);
+		sprintf(line, "ERROR: cannot open file '%s' for setting '%s'", fname, id);
+		message(line, "AK_Mesh:set_from_file");
+		resize(line, 0);
+		return;
+	}
+	resize(line, 256);
+	resize(txt, txt_len);
+	txt[0] = 0;
+	while(fgets(line, 256, fp)){
+		if(strlen(line) + strlen(txt) >= txt_len){
+			txt_len *= 2;
+			resize(txt, txt_len);
+		}
+		strcat(txt, line);
+	}
+	resize(line, 0);
+	fclose(fp);
+	set("", id, txt);
+	resize(txt, 0);
+}
+
+// write value of id to ASCII file
+void get_to_file(char id[], char fname[])
+{
+	char txt[256*1024];
+	FILE *fp = fopen(fname, "w");
+	if(fp){
+		get("", id, txt);
+		fprintf(fp, "%s", txt);
+		fclose(fp);
+	}else{
+		sprintf(txt, "ERROR: cannot open file '%s' for saving content of '%s'", fname, id);
+		message(txt, "AK_Mesh:get_to_file");
+	}
+}
+
+void load_selection_formula(char s[])
+{
+	set_from_file("SelectionFormula", s);
+}
+
+void load_node_movement_formula(char s[])
+{
+	set_from_file("$move_nodes_frml", s);
+}
+
+void save_node_movement_formula(char s[])
+{
+	get_to_file("$move_nodes_frml", s);
+}
+
+void move_nodes_by_formula(char s[])
+{
+	set("", "MoveNodes", "$move_nodes_frml");
+}
+
+void edges_vis(char s[])
+{
+	get("", "DrawEdges", s);
+	if(s[0] == '1')
+		get("", "VisWrite", s);
+	else
+		get("", "VisNone", s);
+}
+
+void not_edges_vis(char s[])
+{
+	get("", "DrawEdges", s);
+	if(s[0] == '0')
+		get("", "VisWrite", s);
+	else
+		get("", "VisNone", s);
+}
+
+void vis_movement(char s[])
+{
+	get("..", "Id", s);
+	if(strcmp(s, "Parts") == 0){
+		get("", "VisWrite", s);
+	}else{
+		get("", "VisNone", s);
+	}
+}
+

@@ -1,0 +1,11 @@
+obj.SurfaceCut
+	german:Oberfl&chenschnitt
+	doc:Cut surface at the boundary of the 3D result space,\
+		i.e. the mesh-surface.
+		german:Schnittfläche an der Grenze des 3D-Ergebnissraumes,\
+			d.h. die Netz-Oberfläche.
+	string.active selection:$active_selection
+		set:$active_selection
+		options:SelectionOptions
+		doc:Display element values at surface of active selection.
+			german:Elementwerte an Oberflaeche der aktive Selektion anzeigen.

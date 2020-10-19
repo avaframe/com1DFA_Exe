@@ -1,0 +1,47 @@
+obj.result writer
+	directory.project directory:ProjectDir
+		set:ProjectDir
+	directory.meshes directory:MeshesDir
+	string.file format:FileFormat
+		set:FileFormat
+		options:FileFormatOptions
+	string.mode:Mode
+	string.mesh file name:MeshFile
+		set:MeshFile
+		options:MeshFileOptions
+	string.full mesh file name:MeshFileFull
+	string.step mode:StepType
+		set:StepType
+		options:StepTypeOptions
+	string.open case
+		set:OpenCase
+		doc:For FIRE M in format: project_id.set_id.case_id
+	string.case name:CaseName
+	directory.results directory:ResultDir
+	directory.log directory:LogDir
+	float.open step
+		set:OpenStep
+	string.write data
+		set:Write
+		doc:Format: 'id;data_type;num_values;value1;value2;...;'\
+			\
+			data_type: 'int' or 'float'\
+			\
+			id:\
+			\
+			'ElementData:group:qty:unit'\
+			\
+			'VertexData:group:qty:unit'\
+			\
+			'DropletData:group:qty:unit'
+	float.delete steps after
+		set:DeleteStepsAfter
+	apply.close
+		set:Close
+	string.delete case
+		set:DeleteCase
+		doc:For FIRE M in format: project_id.set_id.case_id
+	apply.test write results coords
+		set:test_write_results_coords
+	string.test2 case name
+		set:test2

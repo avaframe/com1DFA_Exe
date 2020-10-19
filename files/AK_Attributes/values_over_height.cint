@@ -1,0 +1,42 @@
+char iso_start_value[32];
+void set_iso_start_value( char value[]) { strcpy(iso_start_value, value); }
+void get_iso_start_value( char value[]) { strcpy(value, iso_start_value); }
+char iso_end_value[32];
+void set_iso_end_value( char value[]) { strcpy(iso_end_value, value); }
+void get_iso_end_value( char value[]) { strcpy(value, iso_end_value); }
+
+void export_values_at_point_over_iso_value(
+	char value[])
+{
+	char isoVal[32];
+	char val[32];
+	char aux[1];
+	double isoStart;
+	double isoEnd;
+	double iso;
+	sscanf(isoStart, " %lf", isoStart);
+	sscanf(isoEnd, " %lf", isoEnd);
+	set("", "IsoValue", iso_start_value)
+	set("", "IsoValueIncrement", "1")
+	fp = fopen(value, "w");
+	if(!fp){
+		resize(aux, 512);
+		sprintf(aux, "cannot open file %s!", value);
+		set_error(aux);
+		resize(aux, 1);
+		return;
+	}
+	sscanf(isoEnd, " %lf", isoEnd);
+	iso = isoStart;
+print "isoStart:", isoStart;
+print "isoEnd:", isoEnd;
+	while(iso <= isoEnd){
+		get("", "IsoValue", isoVal);
+		get("", "ValueAtPoint", val);
+		fprintf(fp, "%s\t%s\n", isoVal, val);
+printf("%s\t%s\n", isoVal, val);
+		sscanf(isoVal, " %lf", iso);
+		set("", "IncrementIsoValue", "");
+	}
+	fclose(fp);
+}

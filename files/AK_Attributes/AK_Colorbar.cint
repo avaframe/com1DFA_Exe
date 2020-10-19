@@ -1,0 +1,73 @@
+int MAXSTRLEN = 256;
+
+
+void apply_scaling_to_all_of_same_unit(
+	char s[])
+{
+	int i;
+	int n;
+	char x[MAXSTRLEN];
+	char list[1000*MAXSTRLEN];
+	char cb[MAXSTRLEN];
+	char unit[32];
+	char vMin[16];
+	char vMax[16];
+	char autoscale[16];
+	char arbisteps[16];
+	char stepvalues[128];
+
+	get("", "Min", vMin);
+	get("", "Max", vMax);
+	get("", "Autoscale", autoscale);
+	get("", "ArbitrarySteps", arbisteps);
+	get("", "StepValues", stepvalues);
+	get("", "Unit", unit);
+
+	set("/", "CreateGroup", "tmp");
+	set("/tmp", "SelectedObjectType", "Colorbar");
+	set("/tmp", "AppendAllObjectsOfType", "");
+	get("/tmp", "ContainedObjectsList", list);
+	n = list_size(list);
+	for(i = 0; i < n; i++){
+		get_list_element(list, i, x);
+		sprintf(cb, "/tmp/%s", x);
+		get(cb, "Unit", x);
+		if(!strcmp(unit, x)){
+			set(cb, "Min", vMin);
+			set(cb, "Max", vMax);
+			set(cb, "Autoscale", autoscale);
+			set(cb, "ArbitrarySteps", arbisteps);
+			set(cb, "StepValues", stepvalues);
+		}
+	}
+	set("/", "DeleteComponent", "tmp");
+}
+
+
+
+void AttributeShort(
+	char s[])
+{
+	get("", "Attribute", s);
+	if(!strcmp(s, "DynamicPeakPressure")){
+		strcpy(s, "ppr");
+	}else if(!strcmp(s, "PeakForcePerWidth")){
+		strcpy(s, "pfw");
+	}else if(!strcmp(s, "DynamicPressure")){
+		strcpy(s, "p");
+	}else if(!strcmp(s, "VolumeFraction")){
+		strcpy(s, "vf");
+	}else if(!strcmp(s, "Velocity")){
+		strcpy(s, "v");
+	}else if(!strcmp(s, "peak flow depth")){
+		strcpy(s, "pfd");
+	}else if(!strcmp(s, "flow depth")){
+		strcpy(s, "fd");
+	}else if(!strcmp(s, "dynamic peak pressure")){
+		strcpy(s, "ppr");
+	}else if(!strcmp(s, "peak force per width")){
+		strcpy(s, "pfw");
+	}else if(!strcmp(s, "velocity")){
+		strcpy(s, "v");
+	}
+}

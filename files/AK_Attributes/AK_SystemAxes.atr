@@ -1,0 +1,18 @@
+obj.SystemAxes
+	german:Systemachsen
+	doc:Axes of the coordinate system.
+		german:Achsen des Koordinatensystems.
+	float.relative length:RelativeLength
+		set:RelativeLength
+		german:relative Laenge
+		doc:Displayed length of the axes relative to the screen.
+			german:Laenge der dargestellten Achsen relativ zum Zeichenfenster.
+	bool.labels:Labels
+		set:Labels
+		german:Beschriftung
+		doc:Switch to de/activate axis labels.
+			german:Ein/Ausschalter für die Achsenbeschriftung.
+	string.text font for labels:Font
+		set:Font
+		options:FontOptions
+		german:Texttyp-Beschriftung

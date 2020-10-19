@@ -1,0 +1,53 @@
+obj.IsosurfaceCut
+	german:Iso-Schnittfläche
+	doc:A cut-surface defined as the set of all points where\
+		the selected result value assumes the specified iso-value.
+		german:Schnittfläche definiert als die Menge aller Punkte\
+			an denen der gewählte Ergebniswert den vorgegebenen\
+			Wert annimmt.
+	string.iso-attribute:IsoAttribute
+		options:GetAttributesList
+		set:IsoAttribute
+		german:Iso-Attribut
+		doc:Result value defining the iso-surface.
+			german:Ergebniswert der die Iso-Fläche definiert.
+	float.iso-value:IsoValue
+		set:IsoValue
+		german:Iso-Wert
+		doc:Value of the iso-attribute defining the isosurface.
+			german:Wert des Iso-Attributes der die Iso-Fläche bestimmt.
+	float.iso-value increment:IsoValueIncrement
+		set:IsoValueIncrement
+		german:Iso-Inkrement
+	apply.increment iso-value
+		set:IncrementIsoValue
+		german:Iso-Wert erhöhen
+		doc:Increment the ->IsosurfaceCut.IsoValue by ->IsosurfaceCut.IsoValueIncrement.
+			german:->IsosurfaceCut.IsoValue um ->IsosurfaceCut.IsoValueIncrement erhöhen.
+	apply.decrement iso-value
+		set:DecrementIsoValue
+		german:Iso-Wert vermindern
+		doc:Decrement the ->IsosurfaceCut.IsoValue by ->IsosurfaceCut.IsoValueIncrement.
+			german:->IsosurfaceCut.IsoValue um ->IsosurfaceCut.IsoValueIncrement vermindern.
+	opr.export values at selected point
+		german:Werte am selektierten Punkt exportieren
+		float3.selected point:SelectedPoint
+			set:SelectedPoint
+			pick world
+			pick world multiple
+			german:gewählter Punkt
+			doc:Selected point on the cut surface.
+				german:Ausgewählter Punkt auf der Schnittfläche.
+		float.start-iso-value:get_iso0
+			set:set_iso0
+			german:Start-Iso-Wert
+		float.end-iso-value:get_iso1
+			set:set_iso1
+			german:End-Iso-Wert
+		float.delta-iso-value:get_deltaIso
+			set:set_deltaIso
+			german:Iso-Wert-Stufung
+		filename.export values to file
+			set:export_values_at_point_over_iso
+			mode:w
+			german:Werte in Datei exportieren

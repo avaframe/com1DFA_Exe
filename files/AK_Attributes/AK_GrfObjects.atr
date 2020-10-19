@@ -1,0 +1,8 @@
+obj.GrfObjects
+	filename.import
+		set:Import
+		pattern:*.grf,*.xyzv
+		mode:r
+	string.add
+		set:Add
+		doc:Add an empty grf-object.

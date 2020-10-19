@@ -1,0 +1,22 @@
+obj.Cases
+	string.new case
+		set:Create
+		doc:Create a case object.
+	filename.load
+		set:Load
+		pattern:*.dat,*.asix
+		mode:r
+		doc:Load a FIRE case by specifying the corresponding dat-file.
+	text.mesh part definition:MeshPartDefinition
+		set:MeshPartDefinition
+		doc:Mesh part definition in one of the formats:\
+			\
+			block <i> <n>\
+			\
+			range <icStart> <icEnd>\
+			\
+			selection <cell-selection>\
+			\
+			inside <glob> $$init Init()-body $$formula F(double x[3]) - body\
+			\
+			intersecting <glob> $$init Init()-body $$formula F(double x[3]) - body

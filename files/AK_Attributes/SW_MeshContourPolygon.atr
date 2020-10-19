@@ -1,0 +1,45 @@
+obj.MeshContourPolygon
+	german:Netz-Konturpolygon
+	doc:Polygon for the definition of the boundary of a 3D-mesh\
+		on the base DHM. Topologically, the boundary must be a\
+		quadrilateral. Therefore the four corner points (N,S,E,W) must be\
+		marked in the polygon. The mesh-main-direction is N to S.\
+		\
+		ATTENTION: the contour polygon should be some 100 meters larger in the runout direction\
+		and lateral direction (not over ridges, however) than the area expected\
+		to be affected by the avalanche. Otherwise, the retarding influence of the surrounding\
+		air is not taken into account properly!
+		german:Polygon zur Definition der Berandung eines 3D-Netzes\
+			auf dem Basis-DHM. Topologisch gesehen, muss das Polygon\
+			ein Viereck sein. Deshalb müssen vier Eckpunkte markiert werden.\
+			Die Eckpunkte sind mit "ObenRechts", "ObenLinks", "UntenRechts" und "UntenLinks"\
+			bezeichnet, wobei mit "oben" die Anbruchgebiets-Seite und mit "unten" die\
+			Auslauf-Seite des Netzes gemeint ist. Die Eckpunkte sind also so zu setzen, dass\
+			die Lawine von "oben" nach "unten" fließt (= Hauptrichtung des Netzes).\
+			"Rechts" und "links" ist aus der Sicht der Fließrichtung zu verstehen,\
+			also orografisch rechts und links.\
+			\
+			ACHTUNG: das Umrisspolygon sollte im Auslauf und seitlich (sofern dem nicht Geländegrate\
+			entgegenstehen) etwa 100 Meter größer als die von der\
+			Staublawine beaufschlagte Fläche sein. Andernfalls wird der bremsende Einfluss\
+			der umgebenden Luft ungenügend berücksichtigt!
+	int.NW corner:NWCorner
+		set:NWCorner
+		pick world
+		german:Eckpunkt oben rechts
+		vis:VisNone
+	int.SW corner:SWCorner
+		set:SWCorner
+		pick world
+		german:Eckpunkt unten rechts
+		vis:VisNone
+	int.SE corner:SECorner
+		set:SECorner
+		pick world
+		german:Eckpunkt unten links
+		vis:VisNone
+	int.NE corner:NECorner
+		set:NECorner
+		pick world
+		german:Eckpunkt oben links
+		vis:VisNone

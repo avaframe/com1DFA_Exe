@@ -1,0 +1,212 @@
+
+// string list sorting
+char list2sort[0][64];
+int str_list_comp(int i, int j)
+{
+	return strcmp(list2sort[i], list2sort[j]);
+}
+void sort_string_list(int n, char list[], int order[])
+{
+	int i;
+	resize(list2sort, n);
+	for(i = 0; i < n; i++) get_list_element(list, i, list2sort[i]);
+	oqsort(n, order, str_list_comp);
+	resize(list2sort, 0);
+}
+
+
+
+void acci_vis(char value[])
+{
+	get("", "$type", value);
+	if(istrstr(value, "ACCI_") == 0){
+		get("", "VisWrite", value);
+	}else{
+		get("", "VisNone", value);
+	}
+}
+
+void acci_thermal_vis(char value[])
+{
+	get("", "$type", value);
+	if(istrstr(value, "ACCI_thermal") == 0){
+		get("", "VisWrite", value);
+	}else{
+		get("", "VisNone", value);
+	}
+}
+
+void fire_reader_vis(char value[])
+{
+	get("", "$type", value);
+	if(istrstr(value, "FIRE_reader") == 0){
+		get("", "VisWrite", value);
+	}else{
+		get("", "VisNone", value);
+	}
+}
+
+void fire_writer_vis(char value[])
+{
+	get("", "$type", value);
+	if(istrstr(value, "FIRE_writer") == 0){
+		get("", "VisWrite", value);
+	}else{
+		get("", "VisNone", value);
+	}
+}
+
+void ports_vis(char value[])
+{
+	get("", "$type", value);
+	if(istrstr(value, "ACCI") == 0){
+		get("", "VisNone", value);
+	}else{
+		get("", "VisWrite", value);
+	}
+}
+
+void selection_vis(char value[])
+{
+	get("", "$type", value);
+	if(istrstr(value, "ACCI") == 0){
+		get("", "VisNone", value);
+	}else{
+		get("", "VisWrite", value);
+	}
+}
+
+
+
+void add_quantity(char value[])
+{
+	char s[32*32];
+	get("", "$quantities", s);
+	strcat(s, value);
+	strcat(s, AK_SEP);
+	strcat(s, AK_SEP);
+	set("", "$quantities", s);
+}
+
+void quantitiy_options(char value[])
+{
+	char s[32*32];
+	get("", "$quantities", s);
+	value[0] = 0;
+	//if(istrstr(s, "HTC ") < 0){ strcat(value, "HTC 0 A->B"); strcat(value, AK_SEP); }
+	//if(istrstr(s, "Tfluid ") < 0){ strcat(value, "Tfluid 300 A->B"); strcat(value, AK_SEP); }
+	if(istrstr(s, "convection ") < 0){ strcat(value, "convection 100,300 A->B"); strcat(value, AK_SEP); }
+	if(istrstr(s, "Twall ") < 0){ strcat(value, "Twall 300 A->B"); strcat(value, AK_SEP); }
+}
+
+
+
+
+
+void toggle_face_selections(char value[])
+{
+	char s[2];
+	get("", "$faceSels", s);
+	if(s[0] == '0') s[0] = '1'; else s[0] = '0';
+	set("", "$faceSels", s);
+}
+
+void toggle_cell_selections(char value[])
+{
+	char s[2];
+	get("", "$cellSels", s);
+	if(s[0] == '0') s[0] = '1'; else s[0] = '0';
+	set("", "$cellSels", s);
+}
+
+
+
+void get_fire_case(char value[])
+{
+	get("", "$FIRE_case", value);
+}
+void set_fire_case(char value[])
+{
+	char s[4096+0], name[256+0], v[256+0];
+	set("", "$FIRE_case", value);
+	strcpy(s, value);
+	cut_name(s, name);
+	sprintf(s, "FIRE\nreader\n%s", name);
+	set("", "Text", s);
+	set("", "SetCase", value);
+}
+
+void set_target_mesh(char value[])
+{
+	char s[4096+0], name[256+0];
+	set("", "$targetMesh", value);
+	if(strlen(value) > 0){
+		strcpy(s, value);
+		cut_name(s, name);
+		sprintf(s, "FIRE\nwriter\n%s", name);
+		set("", "Text", s);
+		set("", "SetCase", value);
+	}
+}
+
+
+void add_ports(char value[])
+{
+	int i, n, order[0];
+	char s[8*1024], v[256+0], filter[256+0];
+	get("", "$portFilter", filter);
+	get("", "$faceSels", v);
+	if(v[0] == '1'){
+		set("", "CaseProp", "faceSelections");
+		get("", "CasePropData", s);
+		n = list_size(s);
+		resize(order, n + 1);
+		sort_string_list(n, s, order);
+		for(i = 0; i < n; i++){
+			get_list_element(s, order[i], v);
+			if(istrstr(v, filter) >= 0) set("", "AddPort", v);
+		}
+		resize(order, 0);
+	}
+	get("", "$cellSels", v);
+	if(v[0] == '1'){
+		set("", "CaseProp", "cellSelections");
+		get("", "CasePropData", s);
+		n = list_size(s);
+		resize(order, n + 1);
+		sort_string_list(n, s, order);
+		for(i = 0; i < n; i++){
+			get_list_element(s, order[i], v);
+			if(istrstr(v, filter) >= 0) set("", "AddPort", v);
+		}
+		resize(order, 0);
+	}
+	if(istrstr("allCells", filter) >= 0) set("", "AddPort", "allCells");
+}
+
+void set_ports_attachment(char value[])
+{
+	int n;
+	char s[8*1024], v[256+0];
+	get("", "GetComponentList", s);
+	n = list_size(s);
+	while(n--){
+		get_list_element(s, n, v);
+		set(v, "Attachment", value);
+	}
+}
+
+void ports_to_right(char value[]){ set_ports_attachment("0"); }
+void ports_to_left(char value[]){ set_ports_attachment("1"); }
+
+
+
+void adjust_center(char value[])
+{
+	set("", "$adjCenter", value);
+	if(value[0] == '1'){
+		set("", "$adjVis", "-");
+	}else{
+		set("", "$adjVis", "w");
+	}
+}

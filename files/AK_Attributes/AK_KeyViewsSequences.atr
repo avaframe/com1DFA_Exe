@@ -1,0 +1,9 @@
+obj.KeyViewsSequences
+	german:Schlüsselansichten-Folgen
+	doc:A container for key view sequences (->KeyViewsSequence.).
+		german:Ein Behälter für Schlüsselansichtenfolgen (->KeyViewsSequence.).
+	string.create new sequence
+		set:Create
+		german:neue Folge
+		doc:Append a new, empty key view sequence.
+			german:Neue, leere Schlüsselansichtenfolge anfügen.

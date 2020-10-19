@@ -1,0 +1,47 @@
+obj.GrfObject
+	filename.import
+		set:Import
+		pattern:*.grf,*xyzv
+		mode:r
+		doc:Import a grf-file which contains a description of simple grafical objects per line\
+			(format see ->.add) or an xyzv-file which contains the x,y,z-coords and one or more values\
+			per line of point cloud data. All files must be ASCII and whitespace must be used\
+			as separator.
+	bool.show points:ShowPoints
+		set:ShowPoints
+	bool.show lines:ShowLines
+		set:ShowLines
+	bool.show faces:ShowFaces
+		set:ShowFaces
+	bool.show labels:ShowLabels
+		set:ShowLabels
+	string.label font:Font
+		set:Font
+		options:FontList
+	float.current time:CurrentTime
+		set:CurrentTime
+		options:TimeSteps
+	apply.next time step
+		set:NextTimeStep
+	apply.previous time step
+		set:PrevTimeStep
+	apply.animate
+		set:Animate
+	string.add
+		set:Add
+		doc:Add a grf-element in format: \
+			p <col> <pt> (point) \
+			n <col> <number> <pt> (number) \
+			l <col> <pt1> <pt2> (line) \
+			t <col> <pt1> <pt2> <pt3> (triangle) \
+			q <col> <pt1> <pt2> <pt3> <pt4> (quadrilateral) \
+			s <col> <pt> <radius> (sphere) \
+			txt <col> <pt> <text> (<text> may contain blanks) \
+			 \
+			<pt> specifies a point in format <x> <y> <z>.\
+			\
+			<col> specifies a color and may be one of red, blue, green, yello, black, white,\
+			lblue, lred, mag, cyan, orange\
+			 or in format <red>_<green>_<blue> with RGB-values in range 0-1\
+			 or in format v_<value>, in which case a colorbar is added that defines\
+			the mapping of <value> to color.

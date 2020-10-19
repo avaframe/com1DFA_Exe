@@ -1,0 +1,89 @@
+obj.ACCI_Comp
+	opr.basic
+		string.add port
+			set:AddPort
+		string.remove port
+			set:DelPort
+		string.port font:PortsFont
+			set:PortsFont
+			options:GetFontList
+		filename.set case
+			set:SetCase
+			pattern:*.ssf,*.flm
+		string.case property:CaseProp
+			set:CaseProp
+			options:CasePropOptions
+		table.case property data:CasePropData
+	filename.case:get_fire_case
+		vis:fire_reader_vis
+		set:set_fire_case
+		pattern:*.ssf,*.dat,*.asix
+	filename.target mesh:$targetMesh
+		vis:fire_writer_vis
+		set:set_target_mesh
+		pattern:*.flm,*.nas,*.inp,*.fil,*.cgns,*.wrl
+	filename.target project:$targetProject
+		vis:fire_writer_vis
+		set:$targetProject
+		pattern:*.fpr,*.proj
+	string.target case name:$targetCaseName
+		vis:fire_writer_vis
+		set:$targetCaseName
+	bool.time averaging:$timeAvg
+		vis:fire_writer_vis
+		set:$timeAvg
+	apply.ports to right
+		set:ports_to_right
+		vis:ports_vis
+	apply.ports to left
+		set:ports_to_left
+		vis:ports_vis
+	bool.face selections:$faceSels
+		vis:selection_vis
+	apply.toggle face selections
+		set:toggle_face_selections
+		vis:selection_vis
+	bool.cell selections:$cellSels
+		vis:selection_vis
+	apply.toggle cell selections
+		set:toggle_cell_selections
+		vis:selection_vis
+	string.name must contain:$portFilter
+		set:$portFilter
+		vis:ports_vis
+	apply.add ports
+		set:add_ports
+		vis:ports_vis
+	string.remove ports
+		options:GetComponentList
+		set:DeletePort
+		vis:ports_vis
+		multiselect
+	apply.remove all ports
+		set:DeleteAllPorts
+		vis:ports_vis
+	opr.quantities
+		vis:acci_vis
+		table.quantities:$quantities
+			set:$quantities
+		string.add quantity
+			set:add_quantity
+			options:quantitiy_options
+	bool.adjust center:$adjCenter
+		vis:acci_vis
+		set:adjust_center
+	string.adjust x:$adjx
+		vis:$adjVis
+		set:$adjx
+		options:$adjOpts
+	string.adjust y:$adjy
+		vis:$adjVis
+		set:$adjy
+		options:$adjOpts
+	string.adjust z:$adjz
+		vis:$adjVis
+		set:$adjz
+		options:$adjOpts
+	bool.ignore orientation:$ignoreOrientation
+		vis:acci_vis
+		set:$ignoreOrientation

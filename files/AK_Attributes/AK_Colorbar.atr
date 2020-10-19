@@ -1,0 +1,161 @@
+obj.Colorbar
+	german:Farbskala
+	doc:Colorbar and color-value-mapping for displaying field values.
+		german:Farbskala mit Farbbalken zur Darstellung von Feldwerten.
+	string.label:Label
+		vis:VisRead
+		german:Beschriftung
+	string.attribute:Attribute
+		vis:VisRead
+		german:Feldgröße
+		doc:Name of the field value.
+			german:Name of the field value.
+	string.attribute short:AttributeShort
+		vis:VisRead
+		german:Kurzbezeichnung
+	string.unit:Unit
+		vis:VisRead
+		german:Einheit
+		doc:Physical unit of the field values.
+			german:Physikalische Einheit der Feldwerte.
+	bool.autoscale:Autoscale
+		set:Autoscale
+		german:Auto-Skalierung
+		doc:If on, colorbar minimum and maximum are\
+			adjusted to the current field values.\
+			Otherwise, colorbar minimum and maximum\
+			can be explicitly defined.
+			german:Wenn an, werden Skalen-Minimum und Maximum\
+				den dargestellten Feldwerten angepasst.\
+				Andernfalls können Minimum und Maximum explizit\
+				vorgegeben werden.
+	float.min:Min
+		set:Min
+		vis:MinMaxVis
+		german:Minimum
+		doc:Colorbar minimum value.
+			german:Farbskalen-Minimum.
+	float.max:Max
+		set:Max
+		vis:MinMaxVis
+		german:Maximum
+		doc:Colorbar maximum value.
+			german:Farbskalen-Maximum.
+	bool.discrete colors:DiscreteColors
+		set:DiscreteColors
+		german:diskrete Farben
+		doc:If on, one single color is used for each segments,\
+			otherwise, the color varies linearly within the segments.
+			german:Wenn an, wird für jedes Segment eine einzige Farbe\
+				verwendet, andernfalls wird die Farbe innerhalb der\
+				Segmente koninuierlich variiert.
+	string.color table:ColorTable
+		set:ColorTable
+		options:ColorTableOptions
+		vis:ColorTableVis
+		german:Farbtafel
+		doc:A table of colors (rgb-file in attributes directory) that is used\
+			instead of the standard colors. Only available, if ->Colorbar.DiscreteColors\
+			is active. Applies to all color bars. The number of color segments is adjusted\
+			to the number of colors in the table (except ->Colorbar.ArbitrarySteps is active).
+			german:Eine Farbtafel (rgb-Date im Attributverzeichnis) die anstelle\
+				der Standard-Farbwerte verwendet wird. Nur verfügbar, wenn\
+				->Colorbar.DiscreteColors aktiviert ist. Die Farbtafel gilt\
+				für alle Farbbalken. Die Anzahl der Farbsegmente wird der\
+				Anzahl der Farben in der Tafel gleichgesetzt (ausser ->Colorbar.ArbitrarySteps\
+				ist aktiv).
+	int.number of segments:Segments
+		set:Segments
+		vis:GreyscaleVis
+		german:Anzahl der Segmente
+		doc:The color scale is divided into this number of segments.\
+			Any contour lines of the field are displayed at the segment-values.
+			german:Die Farbskala wird in diese Anzahl von Segmenten unterteilt.\
+				Etwaige Isolinien werden an den Unterteilungswerten dargestellt.
+	bool.arbitrary steps:ArbitrarySteps
+		set:ArbitrarySteps
+		vis:ArbitraryStepsVis
+		german:willkürliche Stufung
+		doc:If on, the colorbar-steps, which control any displayed contour lines\
+			of the field values, can be set explicitly.
+			german:Wenn an, wird die Stufung der Skalierung nicht durch die Anzahl\
+				der Segmente, sondern durch die vorgegebenen Werte bestimmt.
+	string.intermediate step values:StepValues
+		set:StepValues
+		vis:StepValuesVis
+		german:Zwischenstufenwerte
+		doc:Explicitly defined colorbar-step-values between the minimum and maximum.\
+			Control any displayed contour lines of the field values.
+			german:Explizit vorgegebene Skalen-Stufenwerte zwischen Minimum\
+				und Maximum. Bestimmt die Stufenwerte\
+				etwaig dargestellter Isolinien.
+	int.significant digits:NumSignificantDigits
+		set:NumSignificantDigits
+		german:signifikante Kommastellen
+		doc:Number of significant digits in labels.
+			german:Anzahl der in den Skalen-Zahlenwerten dargestellten Ziffern.
+	apply.apply scaling to all of same unit
+		set:apply_scaling_to_all_of_same_unit
+		german:Skalierung auf alle selber Einheit anwenden
+		doc:Apply the colorbar-scaling (min/max) to all other colorbar objects\
+			which show values of the same physical unit.
+			german:Skalen-Minimum und -Maximum für alle Skalen übernehmen,\
+				die eine Feldgröße mit selber physikalischer Einheit darstellen.
+	bool.display labels:DisplayLabels
+		set:DisplayLabels
+		german:Beschriftung
+		doc:If on, colorbar text labels are displayed.
+			german:Wenn an, wird die Farbbalkenbeschriftung dargestellt.
+	bool.display intermediate labels:DisplayInterLabels
+		set:DisplayInterLabels
+		german:Zwischenstufen-Beschriftung
+		doc:If on, colorbar labels are displayed at the colorbar segments.
+			german:Wenn an, wird die Farbbalken-Zwischenstufenbeschriftung dargestellt.
+	string.text font:Font
+		options:AK_Text2d::GetFontList
+		set:Font
+		german:Text-Type
+		doc:Text font for the colorbar labels.
+			german:Text-Type für die Balkenbeschriftung.
+	float2.length and width:Size
+		set:Size
+		german:Länge und Breite
+		doc:Length and width of the colorbar given relative\
+			to the drawing area (i.e. in the range [0,1]).
+			german:Länge und Breite des Farbbalkens relativ zur\
+				Größe des Zeichenfensters.
+	string.horizontal alignment:HorizontalAlignment
+		set:HorizontalAlignment
+		options:HorizontalAlignmentOpts
+		german:horizontale Ausrichtung
+	string.vertical alignment:VerticalAlignment
+		set:VerticalAlignment
+		options:VerticalAlignmentOpts
+		german:verikale Ausrichtung
+	float.min-color to background fading range:MinColorToBackgroundFadingRange
+		set:MinColorToBackgroundFadingRange
+		german:Ausblendungsbereich
+		doc:Relative range [0,1] from the colorbar-minimum, where a transition to\
+			the drawing-area-background-color (->FOX_Viewer.BgColor) is done.\
+			Set to zero to deactivate the transition. The value applies to all\
+			colorbars.
+			german:Relativer Bereich [0-1] ab dem Skalenminimum, in dem die\
+				Farbskalierung zur Hintergrundfarbe (->FOX_Viewer.BgColor) übergeht.\
+				Zum Deaktivieren des Überganges auf Null setzen. Der Wert gilt\
+				für alle Farbbalken.
+	bool.greyscale:Greyscale
+		set:Greyscale
+		vis:GreyscaleVis
+		volatile
+		german:Graustufen
+		doc:If on, the colors used are greyscales from white to black. The value\
+			applies to all colorbars.
+			german:Wenn an, werden Graustufen von schwarz nach weiss verwendet.\
+				Der Wert gilt für alle Farbbalken.
+	bool.transparent:Transparent
+		set:Transparent
+		doc:If on, no color-mapping is applied. The defined color (->VisObj.Color, ->VisObj.AutoColored)\
+			for the field value object is used instead and the colobar is hidden.
+			german:Wenn an, wird keine Farbskalierung angewandt, sondern das Wertefeld\
+				mit der eingestellten Farbe (->VisObj.Color, ->VisObj.AutoColored)\
+				dargestellt. Der Farbbalken wird dabei ausgeblendet.

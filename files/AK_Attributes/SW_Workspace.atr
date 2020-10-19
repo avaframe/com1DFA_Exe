@@ -1,0 +1,38 @@
+obj.ShallowWaterWorkspace
+	german:Projekt
+	doc:The shallow water workspace may contain an arbitrary number\
+		of DHMs, polygons, release areas, simulations etc.,\
+		which can be saved and loaded together with\
+		File:Save and File:Open, respectively.
+		german:Ein Projekt kann eine beliebige Anzahl von DHMs, Polygonen, Anbruchgebieten,\
+			Simulationen etc. enthalten, die gemeinsam mit File:Save gespeichert\
+			und mit File:Open geladen werden können.
+	string.new user object
+		set:CreateUserObject
+		vis:VisNone
+		german:neues Benutzer-Objekt
+		doc:Create a new user-defined object (->UserObj.).
+			german:Neues benutzer-definiertes Objekt (->UserObj.) erzeugen.
+	opr.simulation batch
+		german:Simulationsstapel
+		text.simulations in batch:batch_sims
+			set:batch_sims_set
+			german:Simulationen im Stapel
+		directory.add simulation
+			set:batch_add_sim
+			pattern:*.atr
+			german:Simulation hinzufügen
+			doc:Simulation directory must be selected.
+				german:Simulationsverzeichnis (.../Project/Simulation/xxx) auswählen.
+		apply.delete added simulations
+			set:batch_delete
+			german:Stapel löschen
+		float.waiting time [s] between simulations:batch_wait_time
+			set:batch_wait_time_set
+			german:Wartezeit [s] zwischen Simulationen
+		apply.run batch
+			set:batch_start
+			german:Stapel starten
+	string.new 2D softsphere simulation
+		vis:VisNone
+		set:CreateSoftSphereSim2D

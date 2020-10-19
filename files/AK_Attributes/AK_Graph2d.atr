@@ -1,0 +1,34 @@
+obj.Graph2d
+	german:Graph-2D
+	doc:A graph, i.e. a curve defined by x,y-values.
+		german:Ein Graph, d.h. eine Kurve definiert durch x,y-Werte.
+	bool.automatic x-scaling:XAuto
+		german:automatische x-Skalierung
+		set:XAuto
+		doc:If switched on, x-values are scaled so to fit the viewer window.
+			german:Wenn an, werden die x-Werte an das Anzeigefenster angepasst.
+	float.x-min:Xmin
+		set:Xmin
+		vis:XVis
+		doc:X-value at left border of viewer window.
+			german:X-Wert am linken Rand des Anzeigefensters.
+	float.x-max:Xmax
+		set:Xmax
+		vis:XVis
+		doc:X-value at right border of viewer window.
+			german:X-Wert am rechten Rand des Anzeigefensters.
+	bool.automatic y-scaling:YAuto
+		german:automatische y-Skalierung
+		set:YAuto
+		doc:If switched on, y-values are scaled so to fit the viewer window.
+			german:Wenn an, werden die y-Werte an das Anzeigefenster angepasst.
+	float.y-min:Ymin
+		set:Ymin
+		vis:YVis
+		doc:Y-value at lower border of viewer window.
+			german:Y-Wert am unteren Rand des Anzeigefensters.
+	float.y-max:Ymax
+		set:Ymax
+		vis:YVis
+		doc:Y-value at upper border of viewer window.
+			german:Y-Wert am oberen Rand des Anzeigefensters.

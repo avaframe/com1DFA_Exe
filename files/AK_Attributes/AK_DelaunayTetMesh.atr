@@ -1,0 +1,35 @@
+obj.DelaunayTetMesh
+	filename.import
+		set:ReadDtFile
+		pattern:*.dt
+		mode:r
+	int.number of nodes:NumNodes
+	int.number of tets:NumTets
+	float.remove bnd-slivers
+		set:RemoveBndSlivers
+	string.create Voronoi mesh
+		set:CreateVoroMesh
+	bool.display points:DisplayPoints
+		set:DisplayPoints
+	bool.display Voronoi diagram:DisplayVoro
+		set:DisplayVoro
+	bool.display surface:DisplaySurf
+		set:DisplaySurf
+	bool.display tets:DisplayTets
+		set:DisplayTets
+	bool.display Voronoi mesh:DisplayVoroMesh
+		set:DisplayVoroMesh
+	bool.display labels:DisplayLabels
+		set:DisplayLabels
+	apply.print Voronoi diagram info
+		set:DisplayVoroInfo
+	filename.write tets to grd file
+		set:WriteGrd
+		pattern:*.grd
+		mode:w
+	int.number of random test points
+		set:TestRandom
+	int.number of grid test points
+		set:TestGrid
+	apply.dump
+		set:Dump

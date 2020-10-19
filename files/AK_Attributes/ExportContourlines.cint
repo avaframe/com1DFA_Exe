@@ -1,0 +1,18 @@
+void main()
+{
+char filename[256];
+int nSteps = 36;
+while(nSteps--){
+get("", "CurrentTimeStep", filename);
+set("/", "Draw", "");
+strcat(filename, ".nxyz");
+set("PsaCuts/isocut", "ExportContourLinesWithXYRaster", filename);
+set("", "LoadNextTimeStep", "");
+}
+}
+
+
+// Isocut entsprechend einstellen und ersten ZS laden. Dann im Simulations-Dialog
+// unter Objekt->Attribute / Makros die Datei ExportContourlines.cint auswählen und mit
+// Makro abspielen ausführen. Dann kriegst du die Dateien at_(zeitschritt).dxf
+// im Current Working Directory.

@@ -1,0 +1,2 @@
+set("", "set_resistance_type", "wood")
+set("", "Height", "10.0")

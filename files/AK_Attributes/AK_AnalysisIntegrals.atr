@@ -1,0 +1,6 @@
+obj.AnalysisIntegrals
+	doc:Integral analysis values (averages over selections etc.).
+	apply.add analysis integral
+		set:Add
+		options:AddOptions
+

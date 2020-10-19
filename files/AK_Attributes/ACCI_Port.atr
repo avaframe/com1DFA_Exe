@@ -1,0 +1,14 @@
+obj.ACCI_Port
+	string:get_selection
+	string:get_client
+	int.attachment (0=right of component, 1=left):Attachment
+		set:Attachment
+	string.connect
+		set:Connect
+		options:ConnectionOptions
+	string.add transformation
+		set:add_transformation
+		options:transformation_options
+	table.transformations:$trafos
+		set:$trafos
+	table.ACCI specification:get_acci_spec

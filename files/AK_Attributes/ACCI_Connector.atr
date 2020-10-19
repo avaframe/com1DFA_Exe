@@ -1,0 +1,8 @@
+obj.ACCI_Connector
+	string.port 1:Port1
+		set:Port1
+		options:PortOptions
+	string.port 2:Port2
+		set:Port2
+		options:PortOptions
+

@@ -1,0 +1,42 @@
+
+void dataset_switch_vis(
+	char s[])
+{
+	get("", "Result", s);
+	if(istrstr(s, "%ak_ptr%") == 0)
+		strcpy(s, "-");
+	else
+		strcpy(s, "w");
+}
+
+void next_datasets(
+	char s[])
+{
+	char r[1];
+	resize(r, 256);
+	get("", "Result", r);
+print "result id:", r;
+	set(r, "NextDataset", "");
+	resize(r, 1);
+}
+
+void prev_datasets(
+	char s[])
+{
+	char r[1];
+	resize(r, 256);
+	get("", "Result", r);
+	set(r, "PreviousDataset", "");
+	resize(r, 1);
+}
+
+void animate_datasets(
+	char s[])
+{
+	char r[1];
+	resize(r, 256);
+	get("", "Result", r);
+	set(r, "animate_datasets", "");
+	resize(r, 1);
+}
+

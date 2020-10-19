@@ -1,0 +1,24 @@
+obj.KeyViews
+	string.add current view to key views
+		set:Create
+	string.apply key view
+		set:Apply
+		options:GetComponentList
+	opr.animate or interpolate
+		string.key view 1:KeyView1
+			set:KeyView1
+			options:GetComponentList
+		string.key view 2:KeyView2
+			set:KeyView2
+			options:GetComponentList
+		float.interpolate with factor (0-1)
+			set:Interpolate
+		int.number of frames:NumFrames
+			set:NumFrames
+		bool.write image files:WriteImages
+			set:WriteImages
+		string.image file base name:ImageFileName
+		apply.animate
+			set:Animate
+		apply.animate over all views
+			set:AnimateAll

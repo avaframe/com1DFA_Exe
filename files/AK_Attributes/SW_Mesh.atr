@@ -1,0 +1,457 @@
+obj.DHM
+	doc:Digital height model.
+		german:Digitales Höhenmodell.
+	filename.import
+		set:Import
+		pattern:*.xyz,*.nxyz,*.e00,*.E00,*.asc,*.ASC,*.txt.*.TXT,*.dxf,*.DXF,*.tbp
+		mode:r
+		german:importieren
+		doc:Import DHM from various formats: \
+			*.xyz = blank-, tab- or comma-separated x,y,z-coords of one point per line;\
+			the order of points is insignificant; a Delaunay-triangulation is applied\
+			to generate a triangular mesh between the points; the Delaunay-triangulation\
+			may take about 10 seconds / 100.000 points, depending on the hardware;\
+			\
+			*.nxyz = polylines given by number of points in first line, then lines with x,y,z\
+			of the points; this block may repeat an arbitrary number of times; a constrained\
+			Delaunay-triangulation is performed so that the polylines are represented in the\
+			triangular mesh (the polylines must not intersect);\
+			\
+			*.asc, *.ASC, *.txt, *.TXT, *.e00, *.E00 = ESRI ARC/INFO ASCII grid format with a header like: \
+			ncols         120 \
+			nrows         182 \
+			xllcorner     -5200 \
+			yllcorner     207000 \
+			cellsize      23.5658 \
+			NODATA_value  -9999 \
+			and then the z-values at the grid points.\
+			\
+			*.dxf, *.DXF = dxf-file; all polylines are read from the dxf-file and are\
+			constrained-Delaunay-triangulated.\
+			\
+			*.tbp = AMeGOS tbp-file: number of points, number of triangles, x,y,z-coords and\
+			triangle vertex numbers;\
+			\
+			When a DHM is imported, existing *.ano-files with the same base-name are imported automatically.\
+			When a *.jpg or *.ppm-file with the same base-name is found, it is used automatically as a\
+			texture ->VisObj.texturing.\
+			\
+			After importing, the drawing area view is adopted so that all active objects are visible.
+			german:DHM in verschiedenen Datenformaten importieren: \
+				*.xyz = Leerzeichen-, Tab- oder Komma-getrennte x,y,z-Koordinaten eines Punktes pro Zeile;\
+				die Reihenfolge der Punkte ist unbedeutend; eine Dreiecksvermaschung erfolgt über eine Delaunay-Triangulation;\
+				die Triangulation dauert etwa 10 Sekunden / 100.000 Punkte (je nach Rechner);\
+				\
+				*.nxyz = Polygonzüge gegeben durch Anzahl der Punkte in der ersten Zeile und dann\
+				Zeilen mit den x,y,z-Koordinaten der Punkte; die Punkte werden durch eine bedingte\
+				Delaunay-Triangulation vermascht, so dass die Polygonzüge im Dreiecksnetz enthalten\
+				sind (die Polygonzüge dürfen sich nicht überschneiden).\
+				\
+				*.asc, *.ASC, *.txt, *.TXT, *.e00, *.E00 = ESRI ARC/INFO ASCII Rasterformat mit einem Kopf wie: \
+				ncols         120 \
+				nrows         182 \
+				xllcorner     -5200 \
+				yllcorner     207000 \
+				cellsize      23.5658 \
+				NODATA_value  -9999 \
+				und dann den z-Koordinaten der Gittepunkte.\
+				\
+				*.dxf, *.DXF = dxf-Datei; alle Polygonzüge werden von der dxf-Datei gelesen\
+				und bedingt Delaunay-trianguliert.\
+				\
+				*.tbp = AMeGOS tbp-Datei: Anzahl der Punkte, Anzahl der Dreiecke, x,y,z-Koordinaten\
+				und Dreiecks-Knotennummern;\
+				\
+				Beim Importieren eines DHM werden existierende ano-Dateien mit dem selben Basisnamen automatisch mit-importiert.\
+				Wird eine jpg- oder ppm-Datei selben Namens gefunden, wird diese automatisch als Textur (->VisObj.texturing)\
+				geladen.\
+				\
+				Nach dem Importieren wird die Ansicht in der Zeichenfläche so angepasst, dass alle\
+				aktiven Objekte sichtbar sind.
+	filename.load image file
+		doc:Further options see ->VisObj.texturing .
+			german:Weitere Optionen siehe ->VisObj.texturing .
+		german:Orthofoto laden
+		set:TextureFileName
+		pattern:*.ppm,*.jpg,*.JPG
+		mode:r
+	bool.image active:Textured
+		set:Textured
+		german:Foto aktiv
+	bool.display surface:DisplayFaces
+		set:DisplayFaces
+		german:Flächen darstellen
+		doc:If on, the surface-cells (quads or triangles) of the DHM are rendered filled or\
+			as wire-frame, depending on the attributes in ->VisObj..
+			german:Wenn an, werden die Flächenzellen (Vier- oder Dreiecke) des DHMs gefüllt\
+				oder als Gitter dargestelltm je nach Einstellungen in ->VisObj..
+	bool.fast display:DrawCoarsened
+		set:DrawCoarsened
+		german:beschleunigte Darstellung
+		doc:If switched on, the DHM surface is displayed\
+			three times coarser than original, which will be considerable faster.\
+			This might be important for DHMs with a large number of points.\
+			The displayed contour lines are unaffected.\
+			When switched on first time, the computation of the coarsened display-DHM\
+			is done, which may take a little time.
+			german:Wenn an, wird die DHM-Fläche dreifach vergröbert dargestellt was\
+				bedeutend schneller ist. Das kann für DHMs mit einer großen Anzahl\
+				von Punkten wichtig sein. Die Darstellung der Schichtenlinien ist\
+				davon nicht betroffen.\
+				Wenn das erstemal eingeschaltet, wird das vergröberte Anzeige-DHM\
+				berechnet, was etwas dauern kann.
+	bool.display contour lines:DisplayContourLines
+		set:DisplayContourLines
+		german:Konturlinien anzeigen
+		doc:If on, contour lines are displayed. The computation of contour lines\
+			may take some time.
+			german:Wenn an, werden Konturlinien (Höhenschichtlinien) dargestellt.\
+				Die Berechnung der Konturlinien kann dauern.
+	opr.contour lines parameters
+		german:Konturlinienparameter
+		doc:Parameters for contour lines.
+			german:Einstellungen für Konturlinien.
+		vis:DisplayContourLinesVis
+		float.minor step:ContourLinesMinorStep
+			set:ContourLinesMinorStep
+			german:Feinstufung
+			doc:Height-step with which minor contour lines are drawn.
+				german:Höhenstufung an der die Neben-Konturlinien dargestellt werden.
+		float.major step:ContourLinesMajorStep
+			set:ContourLinesMajorStep
+			german:Hauptstufung
+			doc:Height-step with which the major contour lines are drawn.
+				german:Höhenstufung an der die Haupt-Konturlinien dargestellt werden.
+		float.minor width:ContourLinesMinorWidth
+			set:ContourLinesMinorWidth
+			german:Nebenliniendicke
+			doc:Line width in pixels of the minor contour lines.
+				german:Liniendicke der Neben-Konturlinien in Bildpunkten.
+		float.major width:ContourLinesMajorWidth
+			set:ContourLinesMajorWidth
+			german:Hauptliniendicke
+			doc:Line width in pixels of the major contour lines.
+				german:Liniendicke der Haupt-Konturlinien in Bildpunkten.
+		bool.major lines labelled:ContourLinesLabelled
+			set:ContourLinesLabelled
+			german:Hauplinien beschriftet
+			doc:If on, contour-line labels (i.e. the z-value) are displayed.
+				german:Wenn an, werden die Haupt-Konturlinien\
+					mit ihrem Höhenwert beschriftet.
+		float.label distance [m]:ContourLinesLabelDistance
+			set:ContourLinesLabelDistance
+			vis:ContourLinesLabelsVis
+			german:Beschriftungsabstand [m]
+			doc:Distance of contour line labels.
+				german:Abstand der Beschriftungen einer Konturlinie.
+		string.labels font:ContourLinesLabelsFont
+			set:ContourLinesLabelsFont
+			vis:ContourLinesLabelsVis
+			options:ContourLinesLabelsFontOptions
+			german:Text-Type
+			doc:Text font for contour line labels.
+				german:Text-Type für die Beschriftungen.
+		bool.use inverse background color:$cont_lines_inv_bg_col
+			german:inverse Hintergrundfarbe
+			set:$cont_lines_inv_bg_col
+			doc:If switched on, contour lines are drawn in inverse background color.
+				german:Falls ein, wird die inverse Hintergrundfarbe f. die Konturlinien verwendet.
+		color3.contour line color:$cont_lines_col
+			german:Farbe
+			set:$cont_lines_col
+	bool.display orientation grid:DrawGrid
+		german:Orientierungsgitter zeichnen
+		set:DrawGrid
+		doc:If switched on, regular grid is shown above the DHM..
+			german:Wenn ein, wird ein regelmäßiges Gitterliniennetz\
+				über dem DHM dargestellt.
+	float.orientation grid spacing:GridSize
+		german:Orientierungsgitterlinienabstand
+		set:GridSize
+		doc:Distance of the lines of the orientation grid.
+			german:Linienabstand im Orientierungsgitter.
+	opr.display inclination ranges
+		german:Neigungsbereiche anzeigen
+		bool.highlight inclination range:ShadeIncl
+			set:ShadeIncl
+			german:Neigungsbereich hervorheben
+			doc:If on, the DHM parts with an inclination in the specified range\
+				(between ->DHM.InclMin und ->DHM.InclMax) are hightlighted in red.
+				german:Wenn an, werden die DHM-Gebiete innerhalb des vorgegebenen Neigungsbereiches\
+					(zwischen ->DHM.InclMin und ->DHM.InclMax) rot dargestellt.
+		float.inclination range minimum angle:InclMin
+			set:InclMin
+			german:Neigungsbereich-Minimalwinkel
+			doc:Inclination range minimum angle in degrees for highlighting.
+				german:Neigungsbereich-Minimalwinkel in Grad (siehe ->DHM.ShadeIncl).
+			vis:ShadeInclVis
+		float.inclination range maximum angle:InclMax
+			set:InclMax
+			german:Neigungsbereich-Maximalwinkel
+			doc:Inclination range maximum angle in degrees for highlighting.
+				german:Neigungsbereich-Maximalwinkel in Grad (siehe ->DHM.ShadeIncl).
+			vis:ShadeInclVis
+	opr.more display options
+		german:weitere Darstellungsoptionen
+		float.break lines angle [deg]:BreakLinesAngle
+			set:BreakLinesAngle
+			german:Bruchlinienwinkel [deg]
+			doc:If set to a value > 0, edges between DHM cells with a dihedral angle larger than\
+				this angle will be displayed. If such a DHM is used as simulation-mesh, loss\
+				of momentum is accounted for at such edges, depending on the angle.
+				german:Wenn auf einen Wert > 0 gesetzt, werden Kanten zwischen DHM-Zellen mit einem\
+					Winkel ihrer Normalen größer als der eingestellte Wert angezeigt. Wenn das\
+					DHM dann als Simulations-Netz verwendet wird, wird ein vom Normalenwinkel abhängiger\
+					Impulsverlust an den angezeigten Bruchkanten berücksichtigt.
+		bool.smooth shading:SmoothShading
+			set:SmoothShading
+			german:weiche Schattierung
+			doc:If on, shading is computed from average surface normals at\
+				the DHM-vertices, else it is computed from the normals of the DHM- triangles / quads.
+				german:Wenn an, wird die Schattierung aus den gemittelten Normalenvektoren\
+					an den DHM-Knoten berechnet, andernfalls aus den Normalvektoren\
+					der DHM-Dreiecke oder -Vierecke.
+		bool.display connectivity:DisplayConnectivity
+			set:DisplayConnectivity
+			german:Verbindungen anzeigen
+			doc:If on, lines connecting the centers of adjacent DHM-cells are displayed.
+				german:Wenn an, werden Verbindungslinien zwischen den Zentren\
+					angrenzender DHM-Zellen dargestellt.
+		bool.display node labels:DisplayNodeLabels
+			set:DisplayNodeLabels
+			german:Punktnummern anzeigen
+	opr.DHM modifications
+		german:DHM Modifikationen
+		filename.insert break lines
+			set:InsertBreakLines
+			pattern:*.nxyz,*.dxf,*.DXF
+			mode:r
+			german:Bruchkanten einfügen
+			doc:Load a file containing polylines and insert them as breaklines into the DHM.\
+				This will force a conversion of regular-grid-structure to irregular triangular grids.
+				german:Datei mit Polygonzügen laden und als Bruchkanten ins DHM einfügen.\
+					Das erzwingt die Umwandlung von Rastergittern in unregelmäßige Dreiecksnetze.
+		string.insert single break line
+			set:InsertBreakLine
+			options:Polylines
+			german:einzelne Bruchkante einfügen
+			doc:Select a ->Polyline. and insert it as breakline into the DHM.
+				german:->Polyline. auswählen und als Bruchkante ins DHM einfügen.
+		opr.project onto other DHM
+			german:auf anderes DHM projizieren
+			doc:Project the points of the DHM onto another DHM.
+				german:Punkte des DHMs auf ein anderes DHM projizieren.
+			string.DHM:BaseMesh
+				options:MeshNamesList
+				set:BaseMesh
+				doc:Selected DHM to project onto.
+					german:Gewähltes DHM für die Projektion.
+			apply.project
+				set:ProjectOnto
+				german:projizieren
+				doc:Project the points onto the selected DHM. May take a while.
+					german:Punkte auf das gewählte DHM projizieren. Kann dauern.
+			apply.copy normal vectors
+				german:Normalvektoren uebernehmen
+				set:InterpolateNormalsFrom
+				doc:Interpolate surface normal vectors from the selected DHM.
+					german:Normalvektoren vom gewaehlten DHM uebernehmen.
+		opr.cover other DHM with raster
+			german:anderes DHM mit Raster bedecken
+			doc:Cover another DHM with a raster.
+				german:Anderes DHM mit einem Raster bedecken.
+			string.DHM:BaseMesh
+				options:MeshNamesList
+				set:BaseMesh
+				doc:Selected DHM to cover.
+					german:Zu bedeckendes DHM.
+			float.dx:Dx
+				set:Dx
+				doc:Side length of the cells.
+					german:Seitenlänge der Zellen.
+			apply.cover with square grid
+				set:CoverWithCartesianGrid
+				german:mit quadratischem Raster bedecken
+			apply.cover with honeycomb grid
+				set:CoverWithHoneyCombGrid
+				german:mit Waben-Raster bedecken
+		string.create difference to other DHM
+			german:Differenzhöhenmodell zu anderem DHM erzeugen
+			set:generate_difference_to
+			options:generate_difference_to_opts
+			doc:Computes height differences to another DHM, stores them in file 'difference.asc'\
+				in the current project directory and loads this file as an additional new DHM.
+				german:Berechnung von Differenzhöhen zu einem anderen DHM. Differenzen\
+					werden in 'difference.asc' im aktuellen Projektsverzeichnis gespeichert.\
+					Diese Datei wird zusätzlich als neues DHM geladen.\
+					Die beiden DHMs müssen nicht unbedingt gleiche Gittergröße haben, können auch\
+					TINs sein (also geladene xyz-Dateien). Bei TINs sollte man vor dem\
+					Differenzenbilden auf dem 1. DHM das ->DHM.Dx auf den gewünschten\
+					Wert (zB 5 [m]) stellen. Für das 2. DHM wird dasselbe dx dann automatisch\
+					übernommen. Was dann eigentlich passiert, ist:\
+					\
+					1. DHM wird als asc exportiert (mit eingestelltem dx)\
+					asc wird gelesen (z-Koordinaten in cint-Formel gespeichert)\
+					2. DHM wird als asc exportiert (mitselbem dx und Eckpunktkoordinaten)\
+					dieses asc wird gelesen und z-Koordinaten von den ersten abgezogen\
+					Das Differenz-DHM wird als difference.asc gespeichert und in Samos geladen.
+		opr.curvature and surface normals
+			german:Krümmung und Normalvektoren
+			apply.create curvature field
+				set:CreateCurvatureField
+				german:Krümmungsfeld erzeugen
+			apply.remove curvature field
+				set:RemoveCurvatureField
+				german:Krümmungsfeld entfernen
+			apply.create normal vectors field
+				set:CreateNormalsField
+				german:Normalvektorenfeld erzeugen
+			apply.remove normal vectors field
+				set:RemoveNormalsField
+				german:Normalvektorenfeld entfernen
+		opr.smoothing
+			german:Glätten
+			doc:Smoothing operations.
+				german:Glättungsoperationen.
+			int.smoothing iterations:SmootherIterations
+				set:SmootherIterations
+				german:Glättungsiterationen
+				doc:Number of smoothing-iterations.
+					german:Anzahl der Glättungs-Iterationen.
+			apply.smooth
+				set:Smooth
+				german:glätten
+				doc:Smooth the z-coordinates of the DHM-points.
+					german:z-Koordinaten der DHM-Punkte glätten.
+			apply.smooth normals
+				set:SmoothVertexNormals
+				german:Normalen glätten
+				doc:Smooth the normal-vectors computed at the DHM-points.
+					german:Normalvektoren an den DHM-Punkten glätten.
+			apply.minimize curvature
+				set:MinimizeCurvature
+				german:Kruemmung minimieren
+				doc:Minimize curvature by flipping edges between triangles.
+					german:Kruemmung durch flippen von Kanten zwischen\
+						Dreiecken minimieren.
+	opr.export raster parameter
+		german:Export-Raster-Parameter
+		doc:Parameter for rasterization and export in *.asc format.
+			german:Parameter für Rasterung und Export im asc-Format.
+		vis:DxVis
+		float2.lower left corner:Xll
+			set:Xll
+			pick world
+			german:Eckpunkt unten links
+			doc:xy-coords of lower left corner (i.e. SW-corner).
+				german:xy-Koordinaten des linken unteren Eckpunktes (SW-Ecke).
+		float2.upper right corner:Xor
+			set:Xor
+			pick world
+			german:Eckpunkt oben rechts
+			doc:xy-coords of upper right corner (i.e. NE-corner).
+				german:xy-Koordinaten des oberen rechten Eckpunktes (NO-Ecke).
+		float.dx:Dx
+			set:Dx
+			doc:Side length of the cells.
+				german:Seitenlänge der Zellen.
+	filename.export
+		set:Export
+		pattern:*.xyz,*.asc,*.ASC,*.txt,*.TXT,*.e00,*.E00
+		mode:w
+		german:exportieren
+		doc:Export the DHM in various formats, ->DHM.Import.
+			german:DHM in verschiedenen Formaten exportieren, ->DHM.Import.
+	filename.export contour lines
+		set:ExportContourLines
+		pattern:*.nxyz,*.dxf,*.DXF
+		mode:w
+		german:Konturlinien exportieren
+		doc:Export the contour lines as polylines to various file formats\
+			(->Polyline.Export).
+			german:Konturlinien als Polygonzüge in verschiedenen Dateiformaten exportieren\
+				(->Polyline.Export).
+	opr.info
+		german:Info
+		doc:Informations on mesh-topology.
+			german:Informationen zur Netz-Topologie.
+		bool.regular grid:RegularGrid
+			german:regelmäßiges Gitter
+			doc:If yes, the DHM is a regular grid with square cells.
+				german:Falls ja, ist das Gitter regelmäßig mit quadratischen Zellen.
+		int.number of vertices:NumVertices
+			german:Anzahl der Knoten
+			doc:Number of node-points in the DHM.
+				german:Anzahl der Knotenpunkte im DHM.
+		int.number of cells:NumCells
+			german:Anzahl der Zellen
+			doc:Number of cells (quads or triangles) in the DHM.
+				german:Anzahl der Zellen (Vier- oder Dreiecke) im DHM.
+		float.projected area:ProjectedArea
+			german:projizierte Fläche
+			doc:The area projected into the x-y-plane.
+				german:Die in die x-y-Ebene projizierte Fläche.
+		float.resolution:Resolution
+			german:Auflösung
+			doc:The average distance between DHM-nodes.
+				german:Die mittlere Entfernung zwischen den Knotenpunkten des DHM.
+		float2.inquiry point:XActive
+			set:XActive
+			german:Abfragepunkt
+			pick world
+		float.height at inquiry point:HActive
+			german:Höhe am Abfragepunkt
+		float3.normal vector at inquiry point:NActive
+			german:Normalvector am Abfragepunkt
+		opr.raster
+			german:Raster
+			vis:DxVis
+			doc:Make DHM a regular grid (raster) with square cells\
+				(or honeycomb-cells).
+				german:DHM als Raster mit quadratischen Zellen\
+					(oder Wabenzellen).
+			float2.lower left corner:Xll
+				set:Xll
+				pick world
+				german:Eckpunkt unten links
+				doc:xy-coords of lower left corner (i.e. SW-corner).
+					german:xy-Koordinaten des linken unteren Eckpunktes (SW-Ecke).
+			float2.upper right corner:Xor
+				set:Xor
+				pick world
+				german:Eckpunkt oben rechts
+				doc:xy-coords of upper right corner (i.e. NE-corner).
+					german:xy-Koordinaten des oberen rechten Eckpunktes (NO-Ecke).
+			float.dx:Dx
+				set:Dx
+				doc:Side length of the cells.
+					german:Seitenlänge der Zellen.
+			apply.set to square raster
+				set:SetToCartesianGrid
+				german:auf Raster setzen
+				doc:Set to raster with square cells.
+					german:Auf Raster mit quadratischen Zellen setzen.
+			apply.set to honeycomb grid
+				set:SetToHoneyCombGrid
+				german:auf Wabenraster setzen
+				doc:Set to a regular triangular raster; dual mesh is hexagonal (honeycombs).
+					german:Auf Raster mit gleichseitigen Dreieckszellen setzen. Das\
+						duale Netz ist wabenförmig (hexogonal).
+			int.number of no-data-interpolations:NumNoDataValueInterpolationIterations
+				set:NumNoDataValueInterpolationIterations
+				german:Anzahl der no-data Interpolationen
+				doc:Number of iterations applied to no-data-points to interpolate a z-coordinate.\
+					If set to zero, the no-data-areas will be discarded. A no-data-interpolation is\
+					applied only when loading from asc-file or projecting a regular square grid\
+					onto some other DHM.
+					german:Anzahl der Iterationen an no-data-Punkten zur Interpolation einer\
+						z-Koordinate. Wenn gleich 0, werden die no-data-Punkte verworfen.\
+						Die no-data-Interpolation wird nur beim Laden einer asc-Datei\
+						oder beim Projizieren eines Rastergitters auf ein anderes DHM\
+						angewandt.
+	string.create offset mesh
+		german:DHM mit überlagerter Fließtiefe erzeugen
+		set:generate_offset_with_flow_depth
+		options:generate_offset_with_flow_depth_opts
+		doc:Create a new DHM with added flow depth of a simulation.
+			german:Neues DHM mit überlagerten Fließtiefen einer Simulation erzeugen.

@@ -1,0 +1,99 @@
+obj.Multicycle simulation
+	filename.load moving mesh
+		set:load_moving_mesh
+		pattern:*.macro
+	float.cycle length:Period
+		set:Period
+	int.number of cycles:NumCycles
+		set:NumCycles
+	filename.add curve
+		set:Load
+		mode:r
+		pattern:*.csv
+		vis:VisNone
+	string.add PDF (stroke conrod)
+		set:AddPDF
+		vis:VisNone
+	string.add track
+		set:Add
+		vis:VisNone
+	opr.movement
+		string.moving part:$MOV_part
+			set:MOV_set_part
+			options:MovingParts
+		filename.load curve
+			set:MOV_select_curve
+			mode:r
+			pattern:*.csv
+		string.define PDF (stroke conrod)
+			set:MOV_set_PDF
+		table.moving parts:$MOV
+			set:$MOV
+	string.define mesh resolution
+		set:set_mesh_resolution
+		options:InitializationParts
+	opr.initial conditions
+		string.initial condition part:$IC_part
+			set:IC_set_part
+			options:InitializationParts
+		string.quantity:$IC_qty
+			set:$IC_qty
+			options:IC_qtys
+		float.set const value
+			set:IC_set_const
+		table.initial conditions:$ICS
+			set:$ICS
+	opr.boundary conditions
+		string.boundary:$BND_part
+			set:BND_set_part
+			options:BoundaryParts
+		string.quantity:$BND_qty
+			set:$BND_qty
+			options:BND_qtys
+		float.set const value
+			set:BND_set_const
+		filename.load curve
+			set:BND_select_curve
+			mode:r
+			pattern:*.csv
+		table.boundary conditions:$BND
+			set:$BND
+	string.add periodic event
+		set:add_periodic_event
+		options:periodic_event_options
+	string.add arbitrary event
+		set:add_arbitrary_event
+		options:arbitrary_event_options
+	opr.output
+		float.output 3d each:$OUT3
+			set:$OUT3
+		float.output 2d each:$OUT2
+			set:$OUT2
+		float.backup each:$BAK
+			set:$BAK
+	float.current step:CurrentStep
+		set:CurrentStep
+	float.delta step:DeltaStep
+		set:DeltaStep
+	apply.animate
+		set:Animate
+	apply.next step
+		set:NextStep
+	apply.previous step
+		set:PrevStep
+	apply.prepare simulation
+		set:prepare_sim
+	apply.run simulation
+		set:run_sim
+	opr.format layout
+		float.track height:TrackHeight
+			set:TrackHeight
+		float.track width:TrackWidth
+			set:TrackWidth
+		int.number of major axis ticks within cycle:NumMajor
+			set:NumMajor
+		int.number of minor axis ticks within cycle:NumMinor
+			set:NumMinor
+		string.font:Font
+			set:Font
+			options:FontList

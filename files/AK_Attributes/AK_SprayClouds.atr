@@ -1,0 +1,3 @@
+obj.SprayClouds
+	string.new spray cloud
+		set:Create

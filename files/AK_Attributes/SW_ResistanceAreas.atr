@@ -1,0 +1,54 @@
+obj.ResistanceAreas
+	german:Widerstandsgebiete
+	doc:Container for resistance areas (->ResistanceArea.).
+		german:Behälter für Widerstandsgebiete (->ResistanceArea.).
+	filename.import
+		pattern:*.shp,*.res,*.nxyz,*.dxf,*.DXF
+		set:import_resistance
+		mode:r
+		multiselect
+		german:importieren
+		doc:Import resistance areas in various formats. Of these, only the SAMOS-res-format\
+			constains resistance parameters. The other formats just define contour-polygons.\
+			The res-format is as follows:\
+			\
+			<height> <width> <resistance coeff> <density=@@1/(spacing^2)/@> [DFA-flag] \
+			<number of polygon points n> \
+			<x1> <y1> <z1> \
+			... \
+			<xn> <yn> <zn> \
+			\
+			An arbitrary number of such blocks may be contained in a *.res-file.\
+			Each one defines one resistance area.\
+			If the DFA-flag is set to 1 or not set at all, resistance is only applied to\
+			the dense flow part, otherwise only to the powder-part.\
+			\
+			For the other formats see ->Polylines.Import.
+			german:Widerstandsgebiete in verschiedenen Formaten importieren. Davon enthält\
+				nur das SAMOS-res-Format Widerstandsparameter. Die anderen Formate\
+				definieren nur Umriss-Polygone.\
+				Das res-Format ist wie folgt:\
+				\
+				<Höhe> <Breite> <Widerstandskoeffizient> <Dichte=@@1/(Abstand^2)/@> [DFA-Kennung] \
+				<Anzahl der Polygonpunkte n> \
+				<x1> <y1> <z1> \
+				... \
+				<xn> <yn> <zn> \
+				\
+				Eine res-Datei kann eine beliebige Anzahl solcher Blöcke enthalten.\
+				Jeder definiert ein Widerstandsgebiet.\
+				Wenn die DFA-Kennung auf 1 gesetzt oder ungesetzt ist, wirkt ein Widerstandsgebiet\
+				nur auf die DFA, sonst nur auf die PSA.\
+				\
+				Andere Formate siehe ->Polylines.Import.
+	string.new resistance area
+		set:Create
+		german:neues Widerstandsgebiet
+		doc:Add an empty, new resistance area.
+			german:Neues, leeres Widerstandsgebiet anfügen.
+	string.clone resistance area
+		set:Clone
+		options:GetComponentList
+		german:Widerstandsgebiet klonen
+		doc:Copy a contained resistance area.
+			german:Enthaltenes Widerstandsgebiet kopieren.

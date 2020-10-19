@@ -1,0 +1,89 @@
+obj.Group
+	german:Gruppe
+	doc:A group references an abritrary number of objects but does not own them.\
+		It allows to edit the common attributes of the referenced objects simultaneously.
+		german:Eine Gruppe verweist auf eine beliebige Anzahl von Objekten, ohne diese zu besitzen.\
+			Sie erlaubt das gleichzeitige Editieren der gemeinsamen Attribute dieser Objekte.
+	string.selected object type:SelectedObjectType
+		options:GetObjectTypesList
+		set:SelectedObjectType
+		vis:FullVisibility
+		german:ausgewählter Objekttyp
+		doc:Object type for type-filtered add and remove operations.
+			german:Objekttyp für Typ-gefiltertes Hinzufügen und Entfernen.
+	string.selected attribute:SelectedAttribute
+		set:SelectedAttribute
+		options:AttributeOptions
+		german:ausgewähltes Attribut
+		doc:Attribute name for filtered add/remove operations.
+			german:Attributname für gefiltertes Hinzufügen/Entfernen.
+	string.selected attribute value:SelectedValue
+		set:SelectedValue
+		options:ValueOptions
+		german:ausgewählter Attributwert
+		doc:Attribute value for filtered add/remove operations.
+			german:Attributwert für gefiltertes Hinzufügen/Entfernen.
+		vis:AttributeVisibility
+	text.filter:Filter
+	col.referenced objects:ContainedObjectsList
+		set:ContainedObjectsList
+		german:referenzierte Objekte
+		doc:List of the referenced objects.
+			german:Liste der referenzierten Objekte.
+	string.add
+		options:GetObjectsOfTypeList
+		set:AppendObject
+		multiselect
+		german:hinzufügen
+		doc:Add the reference to another object of the selected type.
+			german:Verweis auf ein weiteres Objekt des ausgewählten Typs hinzufügen.
+	apply.add all
+		set:AppendAllObjectsOfType
+		german:alle hinzufügen
+		doc:Add the references to all other objects of the selected type.
+			german:Verweise auf alle weiteren Objekte des ausgewählten Typs hinzufügen.
+	apply.add all matching
+		set:AppendAllMatchingObjects
+		german:alle passenden hinzufügen
+		doc:Add the references to all objects of selected type and with matching attribute\
+			value.
+			german:Verweise auf alle Objekte des ausgewählten Types mit passendem\
+				Attributwert hinzufügen.
+		vis:AttributeVisibility
+	string.remove
+		options:GetComponentList
+		set:RemoveObject
+		multiselect
+		german:entfernen
+		doc:Remove the reference to an object.
+			german:Den Verweis auf ein Objekt entfernen.
+	apply.remove all of selected type
+		set:RemoveAllObjectsOfType
+		vis:FullVisibility
+		german:alle gewählten Typs entfernen
+		doc:Remove all references to objects of the selected type.
+			german:Alle Verweise auf Objekte des ausgewählten Typs entfernen.
+	apply.remove all matching
+		set:RemoveAllMatchingObjects
+		german:alle passenden entfernen
+		doc:Remove the references to all objects of selected type and with matching attribute\
+			value.
+			german:Verweise auf alle Objekte des ausgewählten Types mit passendem\
+				Attributwert entfernen.
+		vis:AttributeVisibility
+	apply.remove all
+		set:RemoveAllObjects
+		german:alle entfernen
+		doc:Remove all references from the group.
+			german:Alle Verweise aus der Gruppe entfernen.
+	directory.load
+		german:laden
+		set:load_group
+	float.simulation start offset:start_simulations_delay_get
+		german:Simulationsstart-Zeitversatz
+		vis:start_simulations_with_delay_vis
+		set:start_simulations_delay_set
+	apply.start simulations in background with delay
+		german:Simulationen zeitversetzt im Hintergrund starten
+		set:start_simulations_with_delay
+		vis:start_simulations_with_delay_vis

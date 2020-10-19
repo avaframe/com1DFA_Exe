@@ -1,0 +1,30 @@
+obj.OglViewer
+	doc:This is a test-viewer based on OpenGL.\
+		Just a second line for testing.
+	filename.macro file:MacroFileName
+		doc:This sets the macro file name for later recording or playing.
+		set:MacroFileName
+		pattern:*.macro
+	bool.record on:Recording
+		set:Recording
+	int.macro repetitions:MacroRepetitions
+		set:MacroRepetitions
+	apply.play macro
+		set:PlayMacro
+	string.image file name evaluator:ImageFileNameEvaluator
+		set:ImageFileNameEvaluator
+		options:GetImageFileNameEvaluators
+	filename.image file name:GetImageFileName
+		set:SetImageFileName
+		vis:VisImageFileName
+		pattern:*.png,*.ppm
+	directory.image file directory:ImageFileDir
+		set:ImageFileDir
+	apply.Write image file
+		set:WriteImageFile
+	float4x4.trafo matrix:TrafoMatrixString
+		set:SetTrafoMatrixString
+	apply.Autofit
+		set:Autofit
+	color3.background color:BgColor
+		set:BgColor

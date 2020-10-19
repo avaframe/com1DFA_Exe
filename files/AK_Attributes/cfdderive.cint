@@ -1,0 +1,188 @@
+char value[4096];
+char line[4096];
+char aux[4096];
+
+
+
+
+int AddFileArgs(
+	char parFileName[])
+{
+	int i;
+	FILE *fp = fopen(parFileName, "r");
+	if(!fp){
+		print "cfdderive::Run: cannot read parameter file", parFileName;
+		return 0;
+	}
+	while(fgets(value, 4096-1, fp)){
+		if(value[0] == '-'){
+			i = 0;
+			while(value[i] && value[i] != ' ' && value[i] != '\n') ++i;
+			value[i] = 0;
+			strcat(line, value);
+			strcat(line, AK_SEP);
+			if(value[i + 1]){
+				strcat(line, value[i + 1]);
+				line[strlen(line)-1] = 0;
+			}
+		}
+	}
+	fclose(fp);
+}
+
+
+
+int Run(char dummy[])
+{
+	int listFormula = 0;
+	int listAttributes = 0;
+	int listSteps = 0;
+	int listExamples = 0;
+	int outDefined = 0;
+	int force = 0;
+	int mesh = 0;
+	int res = 0;
+	int frml = 0;
+	int i;
+	char derivator[512];
+	char examplesDir[512];
+	char key;
+	int iArg, nArgs;
+	char arg[512];
+
+	strcpy(derivator, "../AttributeDerivator");
+	get("root", "ArglistSep", line);
+	set("root", "ReportCommands", "1");
+
+	nArgs = list_size(line);
+	for(iArg = 0; iArg < nArgs; ++iArg){
+		get_list_element(line, iArg, arg);
+		if(iArg + 1 < nArgs) get_list_element(line, iArg + 1, value);
+		if(!strcmp(arg, "-par")){
+			AddFileArgs(value);
+		}else if(!strcmp(arg, "-dat")){
+			set(derivator, "DatFileName", value);
+			mesh++;
+			res++;
+		}else if(!strcmp(arg, "-asix")){
+			set(derivator, "AsixFileName", value);
+			mesh++;
+			res++;
+		}else if(!strcmp(arg, "-mesh")){
+			set(derivator, "MeshFileName", value);
+			mesh++;
+		}else if(!strcmp(arg, "-res")){
+			set(derivator, "ResultFileName", value);
+			res++;
+		}else if(!strcmp(arg, "-lf")){
+			listFormula = 1;
+		}else if(!strcmp(arg, "-ls")){
+			listSteps = 1;
+		}else if(!strcmp(arg, "-la")){
+			listAttributes = 1;
+		}else if(!strcmp(arg, "-lex")){
+			listExamples = 1;
+		}else if(!strcmp(arg, "-last")){
+			set(derivator, "Steps", "last");
+		}else if(!strcmp(arg, "-min")){
+			set(derivator, "MinStep", value);
+			set(derivator, "Steps", "range");
+		}else if(!strcmp(arg, "-max")){
+			set(derivator, "MaxStep", value);
+			set(derivator, "Steps", "range");
+		}else if(!strcmp(arg, "-frml")){
+			set(derivator, "AddFormula", value);
+			frml++;
+		}else if(!strcmp(arg, "-mesh") || !strcmp(arg, "-res")){
+			print "";
+			print "ATTENTION: The command arguments '-mesh' and '-res' have been replaced by '-dat <dat-file>',";
+			print "with <dat-file> the dat-file in the FIRE case-directory!";
+			print "Please specify the dat-file instead of the mesh- and result-files!";
+			print "";
+			return 0;
+		}else if(!strcmp(arg, "-out")){
+			set(derivator, "OutputFileName", value);
+			outDefined = 1;
+		}else if(!strcmp(arg, "-force")){
+			force = 1;
+		}
+		if(error(aux)){
+			print "\nfire_utils_derive BREAKING DUE TO:", aux, "\n";
+			return 0;
+		}
+
+	}
+
+	if(listFormula){
+		set(derivator, "ShowFormulaSignature", "");
+	}else if(listSteps){
+		set(derivator, "ListSteps", "");
+	}else if(listAttributes){
+		set("../Cases", "Create", "case");
+		get(derivator, "MeshFileName", value);
+		set("../Cases/case", "MeshFileName", value);
+		get(derivator, "ResultFileName", value);
+		set("../Cases/case", "ResultFileName", value);
+		set("../Cases/case", "Load", "");
+		set("../Cases/case", "ListAttributes", "");
+	}else if(listExamples){
+		set(derivator, "ListExampleFormulas", "");
+	}else if(mesh && res && frml){
+		if(!outDefined && !force){
+			print "\nATTENTION: This operation will append the derived results";
+			print " to the 3D results of the selected FIRE case.";
+			print " If the name of a derived quantity (as assigned to variable 'name' in the formula(s))";
+			print " is identical to the name of a quantity already present in the 3D results,";
+			print " the derived quantity will overwrite the existing one.";
+			printf("Do you want to proceed ? (y/n):");
+			scanf("%c", key);
+			if(key == 'y') set(derivator, "DeriveAttributes", "");
+		}else{
+			set(derivator, "DeriveAttributes", "");
+		}
+	}else{
+		get(derivator, "ExampleFormulasPath", examplesDir);
+		print "usage: fire_utils_derive";
+		print "-dat <dat file name> specify case dat file mandatory except for -lf";
+		print "       In case of FIRE M use -asix <asix file name>";
+		print "[-lf]  list predefined variables and formulas, list signatures of";
+		print "       initialization and formula code";
+		print "[-lex] list formula examples in the installation as contained in";
+		print "      ", examplesDir;
+		print "[-la]  list attributes in result file";
+		print "[-ls]  list data steps in result file";
+		print "[-frml <formula file name>] formula file name; an arbitrary number of";
+		print "       formula files may be specified at the same time by repeated -frml";
+		print "       arguments;";
+		print "       If the file is not found in the working directory, it is searched for";
+		print "       in", examplesDir;
+		print "       Mandatory option except for -lf, -la , -ls or -lex";
+		print "       Note: that if the formula file extension is vfrml, then the formula";
+		print "             is automatically applied three times, with the global formula";
+		print "             variable I_VECTOR_COMP set to 0, 1 and 2, respectively, and the";
+		print "             suffices .X, .Y and .Z appended to the result-name. This is";
+		print "             intended to simplify the generation of vectorial results with";
+		print "             one formula in one go.";
+		print "[-last] process last iteration, time or angle only";
+		print "[-min [<ITC min>]] start iteration, time or angle for processing; the";
+		print "       default is the first iteration, time or angle in the result data";
+		print "[-max [<ITC max>]] end iteration, time or angle for processing; the default";
+		print "       is the last iteration, time or angle in the result data";
+		print "[-par <parameter file name>] specify a parameter file containing further";
+		print "       command parameters";
+		print "[-force] suppress interactive user-confirmation";
+		print "";
+		print "Options for compatibility with versions before v2010 and for processing";
+		print "extra fl3-files. This option is an alternative to -dat";
+		print "It is needed, if extra fl3-files (generated by user-functions or";
+		print "user-formulas) are to be processed instead of the standard 3D result data";
+		print "[-mesh <mesh file name>] specify mesh file name: flm-file for static and";
+		print "       fmo-file for moving meshes";
+		print "[-res <result file name>] specify result fl3-file name";
+		print "[-out <output file name>] specify output fl3-file name; if an existing";
+		print "       fl3-file is specified (e.g. the input fl3-file as specified with";
+		print "       -res), data are appended; mandatory except for -lf, -la or -ls";
+	}
+
+	return 1;
+}

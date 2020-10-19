@@ -1,0 +1,236 @@
+obj.Polyline
+	german:Polygonzug
+	doc:A polyline consists of an arbitrary number of connected points. It is not closed,\
+		i.e. there is no connection between the first and last point.
+		german:Ein Polygonzug besteht aus einer beliebigen Anzahl von Punkten. Er ist nicht\
+			geschlossen, d.h. erster und letzer Punkt sind nicht verbunden.
+	filename.import
+		set:Import
+		pattern:*.xy,*.xyz,*.nxyz,*.dxf,*.DXF
+		mode:r
+		german:importieren
+		doc:Load a polyline from various file formats: \
+			*.xy = two blank/tab separated columns for x- and y-coordinates of points; \
+			*.xyz = three blank/tab separated columns for x-, y- and z-coordinates of points; \
+			*.nxyz = one line with number of points 'n', 'n' lines with blank/tab separated\
+			x, y and z-coordinates of points; such blocks may repeat arbitrary times, but only\
+			the first block is read; \
+			*.dxf, *.DXF: dxf-file; only the first polyline is read; \
+			 \
+			With the xy, xyz and nxyz-format, annotations (->Polyline.Annotations) may be contained\
+			in the files before the point coordinates (before the number of points 'n' in case of nyxz).\
+			Annotations may be given in the format \
+			 \
+			key1=value1;key2=value2;...;keyN=valueN; \
+			 \
+			or in multiline format \
+			 \
+			key1=value1 \
+			key2=value2 \
+			... \
+			keyN=valueN
+			german:Polygonzug von Dateien verschiedenen Formats laden: \
+				*.xy = zwei Leerzeichen/Tabulator-getrennte Spalten für x- und y-Koordinaten der Punkte; \
+				*.xyz = drei Leerzeichen/Tabulator-getrennte Spalten für x-, y- und z-Koordinaten der Punkte; \
+				*.nxyz = eine Zeile mit der Punktanzahl 'n', 'n' Zeilen mit Leerzeichen/Tabulator-getrennten\
+				x-, y- und z-Koordinaten der Punkte; solche Blöcke können sich beliebig oft wiederholen,\
+				aber nur der erste wird gelesen; \
+				*.dxf, *.DXF: dxf-Datei; nur der erste Polygonzug wird gelesen; \
+				 \
+				In xy-, xyz- und nxyz dürfen zusätzlich Annotationen (->Polyline.Annotations) angegeben werden,\
+				und zwar vor den Koordinatenwerten (bzw. vor der Zeile mit der Punktanzahl im Fall von nxyz).\
+				Die Annotationen können entweder im Format \
+				 \
+				Name1=Wert1;Name2=Wert2;...;NameN=WertN; \
+				 \
+				oder in mehreren Zeilen im Format \
+				 \
+				Name1=Wert1 \
+				Name2=Wert2 \
+				... \
+				NameN=WertN \
+				 \
+				angegeben werden.
+	filename.export
+		set:Export
+		pattern:*.xy,*.xyz,*.nxyz,*.dxf,*.DXF
+		mode:w
+		german:exportieren
+		doc:Export the polyline to a file in various formats (->Polyline.Import). Annotations (->Polyline.Annotations)\
+			are saved with the xy, xyz and nxyz format.
+			german:Polygonzug in Datei in verschiedenen Formaten (->Polyline.Import) exportieren.\
+				Annotationen (->Polyline.Annotations) werden mit den xy, xyz und nxyz-Formaten\
+				mit-exportiert.
+	string.project onto DHM:BaseMeshName
+		set:ProjectOnto
+		options:MeshNamesList
+		german:auf DHM projizieren
+		doc:Project the polyline points onto a selected DHM (->DHM.).
+			german:Punkte des Polygonzuges auf ein gewähltes DHM (->DHM.) projizieren.
+	float.projected length:ProjectedLength
+		german:projizierte Länge
+		doc:Length of the polyline projected into the x-y-plane.
+			german:Länge des in die x-y-Ebene projizierten Polygonzuges.
+	int.number of vertices:NumVertices
+		german:Anzahl der Punkte
+		doc:Number of vertex points.
+			german:Anzahl der Eckpunkte.
+	apply.list point coords
+		set:ListPoints
+		german:Punktkoordinaten auflisten
+		doc:Display a list with the coordinates of the polyline vertices.
+			german:Liste mit den Koordinaten der Punkte des Polygonzuges anzeigen.
+	string.copy points of
+		set:CopyCoordsOf
+		options:PolylinesList
+		german:Punkte übernehmen
+		doc:Copy the points of another polyline.
+			german:Punkte eines anderen Polygonzuges übernehmen.
+	text.annotations:Annotations
+		set:Annotations
+		german:Annotationen
+		doc:Annotations are exported and imported with the formats *.nxyz, *.xy and *.xyz in order\
+			to be able to pass additional information (e.g. for subsequent conversion to\
+			shape-format). Annotations must be given in the format: \
+			key1=value1;key2=value2;...;keyN=valueN; \
+			Note: annotation keys and values may be arbitrary character strings but may not\
+			contain semicolons ';' or newline-characters, as these are internally\
+			used as separators!
+			german:Annotationen werden mit den Formaten *.nxyz, *.xyz und *.xy im- und exportiert\
+				um Zusatzinformationen z.B. für eine nachfolgende Konvertierung\
+				in Shape-Format transportieren zu können. Annotationen sind in folgendem\
+				Format anzugeben: \
+				Name1=Wert1;Name2=Wert2;...;NameN=WertN; \
+				Achtung: Annotations-Namen und -Werte dürfen beliebige Zeichenketten sein,\
+				doch keine Strichpunkte ';' oder Zeilenumbrüche enthalten,\
+				da diese intern als Trennzeichen verwendet werden.
+	opr.edit
+		german:editieren
+		doc:Append, insert or delete points of the polyline.\
+			Input is either via coordinate values or by picking.\
+			When picking is activated, the polyline is highlighted.
+			german:Punkte anfügen, einfügen oder löschen.\
+				Eingabe über Koordinatenwerte oder Mausklick.\
+				Wenn Mauseingabe aktiviert, wird der Polygonzug hervorgehoben.
+		float3.append points
+			set:AppendPoint
+			pick world multiple
+			german:Punkte anfügen
+			doc:Append points at the end of the polyline.\
+				Input by coordinate values or picking.
+				german:Punkte am Ende des Polygonzuges anfügen.\
+					Eingabe über Koordinatenwerte oder Mausklick.
+		float3.select and move vertices
+			set:SelectAndMove
+			pick world multiple
+			german:Punkte wählen und verschieben
+			doc:Select vertices and move them.
+				german:Punkte wählen und verschieben.
+		float3.remove vertices
+			set:SelectAndRemove
+			pick world multiple
+			german:Punkte entfernen
+			doc:Select a vertex and remove it.
+				german:Punkt wählen und entfernen.
+		int.select vertex:SelectedVertex
+			set:SelectedVertex
+			pick world
+			pick world multiple
+			german:Punkt wählen
+			doc:Select a vertex by number or picking for further operations.\
+				The polyline-name (->Object.Id) is displayed at the selected\
+				vertex. With ->Polyline.UnselectVertex the point can be deselected.
+				german:Punkt des Polygonzuges über Nummer oder Mausklick\
+					für weitere Operationen wählen.\
+					Der Name des Polygonzugs (->Object.Id) wird am\
+					gewählten Punkt dargestellt.\
+					Mit ->Polyline.UnselectVertex kann der Punkt abgewählt\
+					werden.
+		float3.coordinates of selected vertex:CoordsOfSelectedVertex
+			german:Koordinaten des gewählten Punktes
+		float3.move selected vertex
+			vis:VisNone
+			set:MoveVertex
+			pick world
+			pick world multiple
+			german:gewählten Punkt verschieben
+			doc:Move the selected vertex to a new position\
+				specified by coordinates or picking.
+				german:Gewählten Punkt an eine neue, über Koordinaten\
+					oder Mausklick definierte Position verschieben.
+		apply.remove selected vertex
+			vis:VisNone
+			set:RemoveVertex
+			german:gewählten Punkt entfernen
+			doc:Remove the selected vertex.
+				german:Gewählten Punkt entfernen.
+		apply.deselect vertex
+			vis:VisNone
+			set:UnselectVertex
+			german:Punkt abwählen
+			doc:De-select vertices so that none is selected.
+				german:Punkt abwählen so dass keiner ausgewählt ist.
+		float3.insert point
+			set:InsertPoint
+			pick world
+			pick world multiple
+			german:Punkt einfügen
+			doc:Insert a new point before the selected vertex.
+				german:Neuen Punkt vor gewähltem Punkt einfügen.
+		apply.reverse
+			set:Reverse
+			german:umkehren
+			doc:Reverse the point order in the polygon.
+				german:Reihenfolge der Punkte im Polygonzug umkehren.
+		float2.move polyline
+			set:MoveAllXY
+			german:Polygonzug verschieben
+			doc:Move the entire polyline in x- and y-direction and\
+				reproject it onto the base-dhm (if defined).\
+				The movement must be given in the format '<dx> <dy>', for example '100.5 -55.3'.
+				german:Gesamten Polygonzug in x- und y-Richtung verschieben und auf Basis-DHM\
+					(falls definiert) re-projizieren. Die Verschiebung muss im Format\
+					'<dx> <dy>', z.B. '100.5 -55.3', eingegeben werden.
+	bool.draw resampled:DrawResampled
+		set:DrawResampled
+		german:mit Zwischenpunkten darstellen
+		doc:If on, intermediate points are inserted temporarily for better drawing,\
+			according to the spatial resolution	of the base-DHM .
+			german:Wenn an, werden zur besseren Darstellung Zwischenpunkte je\
+				nach räumlicher Auflösung des Basis-DHMs temporär eingefügt.
+	float.refine line:$refinementSegmentLength
+		set:Refine
+		german:Verfeinern
+		doc:Refine the polyline so that length of segments is about the specified distance.
+			german:Polygonzug verfeinern, so dass die Segmentlaenge ca. gleich dem vorgegebenen Wert wird.
+	bool.label vertices:VertexLabels
+		set:VertexLabels
+		german:Punktnummern
+		doc:If switched on, polyline vertex numbers are shown\
+			and the polyline-name is hidden.
+			german:Wenn an, werden die Punktnummern dargestellt\
+				und der Polygonzug-Name wird ausgeblendet.
+	bool.hide label
+		german:Beschriftung ausblenden
+		set:UnselectVertex
+	string.label font:LabelFont
+		set:LabelFont
+		options:FontList
+		german:Texttype
+		doc:Text font for vertex labels.
+			german:Texttype für Punktnummern.
+	apply.clear
+		set:Clear
+		confirm
+		german:Löschen
+		doc:Delete all vertices.
+			german:Alle Punkte löschen.
+	float2.show distance
+		vis:VisNone
+		set:ProjectedDistance
+		german:Entfernung anzeigen
+		pick world
+		pick world multiple
+		doc:Displays projected distance to selected point. Distance is positive above polyline.
+			german:Projizierte Entfernung zu gewähltem Punkt anzeigen. Entfernung\
+				ist positiv oberhalb des Polygonzugs.

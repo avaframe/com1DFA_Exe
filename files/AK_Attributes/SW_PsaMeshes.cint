@@ -1,0 +1,15 @@
+void get_NumRasterCells(
+	char value[])
+{
+	double A;
+	int nz;
+	double ds;
+	get("", "ContourPolygon", value);
+	get(value, "ProjectedArea", value);
+	sscanf(value, " %lf", A);
+	get("", "CellsInVertDir", value);
+	sscanf(value, " %d", nz);
+	get("", "Dx", value);
+	sscanf(value, " %lf", ds);
+	sprintf(value, "%d", (int) (A / ds / ds * nz + 0.5) );
+}

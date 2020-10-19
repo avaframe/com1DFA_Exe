@@ -1,0 +1,210 @@
+
+void load_moving_mesh(char s[])
+{
+	set("root", "PlayMovie", s);
+}
+
+void MOV_set_part(char s[])
+{
+	set("", "$MOV_part", s);
+	set("", "HilightPart", s);
+}
+
+void MOV_select_curve(char s[])
+{
+	char id[128], part[128], tab[4096];
+	get("", "$MOV_part", part);
+	set("", "Load", s);
+	get("", "$latest_comp", id);
+	set(id, "DisplacedPart", part);
+	set("", "HilightPart", "");
+	get("", "$MOV", tab);
+	strcat(tab, part);
+	strcat(tab, AK_SEP);
+	strcat(tab, id);
+	strcat(tab, AK_SEP);
+	strcat(tab, AK_SEP);
+	set("", "$MOV", tab);
+}
+
+void MOV_set_PDF(char s[])
+{
+	char id[128], part[128], tab[4096];
+	get("", "$MOV_part", part);
+	set("", "AddPDF", s);
+	get("", "$latest_comp", id);
+	set(id, "DisplacedPart", part);
+	set("", "HilightPart", "");
+	get("", "$MOV", tab);
+	strcat(tab, part);
+	strcat(tab, AK_SEP);
+	strcat(tab, id);
+	strcat(tab, AK_SEP);
+	strcat(tab, AK_SEP);
+	set("", "$MOV", tab);
+}
+
+void IC_set_part(char s[])
+{
+	set("", "$IC_part", s);
+	set("", "HilightPart", s);
+}
+
+void IC_qtys(char s[])
+{
+	strcpy(s, "Temperature"); strcat(s, AK_SEP);
+	strcat(s, "Pressure"); strcat(s, AK_SEP);
+}
+
+void IC_set_const(char s[])
+{
+	char tab[4096], part[128], qty[128];
+	get("", "$ICS", tab);
+	get("", "$IC_part", part);
+	get("", "$IC_qty", qty);
+	strcat(tab, part);
+	strcat(tab, AK_SEP);
+	strcat(tab, qty);
+	strcat(tab, AK_SEP);
+	strcat(tab, s);
+	strcat(tab, AK_SEP);
+	strcat(tab, AK_SEP);
+	set("", "$ICS", tab);
+	set("", "HilightPart", "");
+}
+
+
+
+void BND_set_part(char s[])
+{
+	set("", "$BND_part", s);
+	set("", "HilightPart", s);
+}
+
+void BND_qtys(char s[])
+{
+	s[0] = 0;
+	strcat(s, "Pressure"); strcat(s, AK_SEP);
+	strcat(s, "Mass flow"); strcat(s, AK_SEP);
+	strcat(s, "Temperature"); strcat(s, AK_SEP);
+	strcat(s, "Tfluid"); strcat(s, AK_SEP);
+	strcat(s, "HTC"); strcat(s, AK_SEP);
+}
+
+void BND_set_const(char s[])
+{
+	char tab[4096], part[128], qty[128];
+	get("", "$BND", tab);
+	get("", "$BND_part", part);
+	get("", "$BND_qty", qty);
+	strcat(tab, part);
+	strcat(tab, AK_SEP);
+	strcat(tab, qty);
+	strcat(tab, AK_SEP);
+	strcat(tab, s);
+	strcat(tab, AK_SEP);
+	strcat(tab, AK_SEP);
+	set("", "$BND", tab);
+	set("", "HilightPart", "");
+}
+
+void BND_select_curve(char s[])
+{
+	char id[128], part[128], qty[128], tab[4096];
+	get("", "$BND_part", part);
+	get("", "$BND_qty", qty);
+	set("", "Load", s);
+	get("", "$latest_comp", id);
+	strcat(part, ":");
+	strcat(part, qty);
+	get("", "$BND", tab);
+	strcat(tab, part);
+	strcat(tab, AK_SEP);
+	strcat(tab, qty);
+	strcat(tab, AK_SEP);
+	strcat(tab, id);
+	strcat(tab, AK_SEP);
+	strcat(tab, AK_SEP);
+	set("", "$BND", tab);
+	set("", "HilightPart", "");
+}
+
+
+
+void periodic_event_options(char s[])
+{
+	s[0] = 0;
+	strcat(s, "IGN:ignition"); strcat(s, AK_SEP);
+}
+
+void add_periodic_event(char s[])
+{
+	int i = istrchr(s, ':');
+	s[i] = 0;
+	set("", "Add", s);
+	set(s, "Type", "points");
+	set(s, "Label", s[i + 1]);
+	if(istrstr(s, "IGN") == 0) set(s, "Color", "1 0 0");
+}
+
+
+void arbitrary_event_options(char s[])
+{
+	s[0] = 0;
+	strcat(s, "MESHES:Switch to mesh"); strcat(s, AK_SEP);
+	strcat(s, "ACT_FLOW:Activate flow"); strcat(s, AK_SEP);
+	strcat(s, "ACT_INJ:Activate injection"); strcat(s, AK_SEP);
+	strcat(s, "ACT_CMB:Activate combustion"); strcat(s, AK_SEP);
+	strcat(s, "WHILE:Repeat cycle until"); strcat(s, AK_SEP);
+}
+
+void add_arbitrary_event(char s[])
+{
+	int i = istrchr(s, ':');
+	s[i] = 0;
+	set("", "Add", s);
+	set(s, "Type", "events");
+	set(s, "Label", s[i + 1]);
+	if(istrstr(s, "ACT_FLOW") == 0) set(s, "Color", "0 0 1");
+	if(istrstr(s, "ACT_INJ") == 0) set(s, "Color", "0 1 0");
+	if(istrstr(s, "MESHES") == 0) set(s, "Color", "0 0 0");
+	if(istrstr(s, "MESH_RESOLUTION") == 0) set(s, "Color", "0 0 0");
+	if(istrstr(s, "ACT_CMB") == 0) set(s, "Color", "0.8 0.2 0");
+	if(istrstr(s, "WHILE") == 0) set(s, "Color", "0 0 0");
+}
+
+
+void prepare_sim(char s[])
+{
+	message("INFO:"
+	"In case of the New ICE Workflow, prepare means generating the moving mesh and the case.\n"
+	"  The geometry definition part may be implemented in FAME (?)\n"
+	"  and the IC/BC setup etc in FIRE SGUI.\n"
+	"\n"
+	"In case of Multicycle with FIRE C, it means adding initial and boundary conditions\n"
+	"  and event data to an existing (template?) ssf file (by generating ssc files).\n"
+	"  (i.e. Single Case strategy!)\n"
+	"\n"
+	"In case of Multicycle with FIRE M (with existing mesh), the cycle definition part\n"
+	"  should probably be implemented in FAME (-> New ICE Workflow)",
+	"prepare_sim");
+}
+
+void run_sim(char s[])
+{
+	message("INFO:"
+	"This would start the simulation after defining computing resources.",
+	"run_sim");
+}
+
+
+
+void set_mesh_resolution(char s[])
+{
+	char id[128];
+	set("", "HilightPart", s);
+	strcpy(id, "MESH_RESOLUTION:");
+	strcat(id, s);
+	add_arbitrary_event(id);
+}
+

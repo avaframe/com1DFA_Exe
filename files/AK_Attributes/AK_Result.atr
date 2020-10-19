@@ -1,0 +1,57 @@
+obj.Case
+	filename.dat file:
+		set:DatFileName
+		pattern:*.dat
+	filename.asix file:
+		set:AsixFileName
+		pattern:*.asix
+	filename.mesh file:MeshFileName
+		set:MeshFileName
+		pattern:*.flm,*.fmo,*.fe7
+	filename.result file:ResultFileName
+		set:ResultFileName
+		pattern:*.fl3
+	text.mesh part definition:MeshPartDefinition
+		set:MeshPartDefinition
+		doc:Mesh part definition in one of the formats:\
+			\
+			block <i> <n>\
+			\
+			range <icStart> <icEnd>\
+			\
+			selection <cell-selection>\
+			\
+			inside <glob> $$init Init()-body $$formula F(double x[3]) - body\
+			\
+			intersecting <glob> $$init Init()-body $$formula F(double x[3]) - body
+	apply.load
+		set:Load
+	string.current dataset:CurrentDataset
+		options:DatasetsList
+		set:LoadDataset
+	int.current dataset number:CurrentDatasetNumber
+		options:DatasetNumbersList
+		set:LoadDatasetNumber
+	apply.next dataset
+		set:NextDataset
+	apply.previous dataset
+		set:PreviousDataset
+	apply.animate datasets
+		set:animate_datasets
+	bool.record animation:get_ani_image_rec
+		set:set_ani_image_rec
+	filename.animation image base file name:get_ani_image_file
+		set:set_ani_image_file
+		mode:w
+		pattern:*.png,*.ppm
+	float.interpolation factor:CurrentInterpolationFactor
+		set:CurrentInterpolationFactor
+	float.set iteration/time/angle
+		set:LoadITC
+	string.current dataset interpolated:CurrentDatasetInterpolated
+	float.current time:CurrentTime
+		vis:CurrentTimeVis
+	apply.list data sets
+		set:ListDatasets
+	apply.list attributes
+		set:ListAttributes

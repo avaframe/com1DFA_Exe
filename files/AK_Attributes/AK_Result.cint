@@ -1,0 +1,46 @@
+
+void set_ani_image_rec(
+	char s[])
+{
+	set("", "$aniImgRec", s);
+}
+void get_ani_image_rec(
+	char s[])
+{
+	get("", "$aniImgRec", s);
+	if(s[0] == 0) strcpy(s, "0");
+}
+void set_ani_image_file(
+	char s[])
+{
+	set("/", "ImageFileName", s);
+}
+void get_ani_image_file(
+	char s[])
+{
+	get("/", "ImageFileName", s);
+}
+void animate_datasets(
+	char s[])
+{
+	int n; int i;
+	char ds[32];
+	char l[0];
+	char record[8];
+	resize(l, 1024*1024);
+	get("", "$aniImgRec", record);
+	if(record[0] == '1'){
+		set("/", "ImageFileNameEvaluator", "numbered");
+		set("/", "ImageFileNumber", "0");
+	}
+	get("", "CurrentDatasetNumber", ds);
+	get("", "DatasetNumbersList", l);
+	n = list_size(l);
+	for(i = 0; i < n; i++){
+		get_list_element(l, i, ds);
+		set("", "LoadDatasetNumber", ds);
+		set("/", "Draw", "");
+		if(record[0] == '1') set("/", "WriteImageFile", "");
+	}
+	resize(l, 0);
+}

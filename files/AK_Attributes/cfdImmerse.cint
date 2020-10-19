@@ -1,0 +1,65 @@
+
+
+
+int scan(
+        char line[],
+        char key[],
+        char val[])
+{
+        int i;
+        int j;
+        if(!strncmp(line, key, strlen(key))){
+                i = istrchr(line, '=');
+                if(i < 0) return 0; 
+                strcpy(val, line[i+1]);
+                j = strlen(val)-1;
+                if(val[j] < 32) val[j] = 0;
+                return 1;
+        }
+        return 0;
+}
+
+
+
+void printUsage()
+{
+	print "usage: cfdImmerse -mesh <flm-file> -surf <flm-file> [-invert]";
+}
+
+
+
+void main()
+{
+	char args[4096], val[256];
+	int i;
+	int invert = 0;
+	char mesh[256] = {0};
+	char surf[256] = {0};
+	get("/", "Arglist", args);
+	print "";
+	print args;
+	print "";
+	if((i = istrstr(args, "-mesh")) >= 0 && sscanf(args[i], "-mesh %s", val) == 1) strcpy(mesh, val);
+	if((i = istrstr(args, "-surf")) >= 0 && sscanf(args[i], "-surf %s", val) == 1) strcpy(surf, val);
+	if(istrstr(args, "-invert") >= 0) invert = 1;
+	if(!strlen(mesh)){
+		print "ERROR: no mesh specified!";
+		printUsage();
+		return;
+	}
+	if(!strlen(surf)){
+		print "ERROR: no surface specified!";
+		printUsage();
+		return;
+	}
+	set("ImpressAK/Meshes", "Import", mesh);
+	get("ImpressAK/Meshes", "GetComponentList", args);
+	if(list_size(args) < 1){
+		print "ERROR: mesh could not be loaded!";
+		return;
+	}
+	get_list_element(args, 0, val);
+	sprintf(args, "ImpressAK/Meshes/%s", val);
+	if(invert) set(args, "$invert_surf", "1");
+	set(args, "ImmerseSurface", surf);
+}

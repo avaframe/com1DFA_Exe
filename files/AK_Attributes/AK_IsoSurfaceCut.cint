@@ -1,0 +1,36 @@
+double iso0 = 0;
+void set_iso0( char value[]) { sscanf(value, " %lf", iso0); }
+void get_iso0( char value[]) { sprintf(value, "%g", iso0); }
+double iso1 = 100;
+void set_iso1( char value[]) { sscanf(value, " %lf", iso1); }
+void get_iso1( char value[]) { sprintf(value, "%g", iso1); }
+double deltaIso = 1.0;
+void set_deltaIso( char value[]) { sscanf(value, " %lf", deltaIso); }
+void get_deltaIso( char value[]) { sprintf(value, "%g", deltaIso); }
+
+void export_values_at_point_over_iso(
+	char value[])
+{
+	double dz; double v; double isoOld;
+	char s[128]; char vv[32];
+	FILE *fp;
+	fp = fopen(value, "w");
+	if(!fp){
+		sprintf(s, "cannot open file %s!", value);
+		set_error(s);
+		return;
+	}
+	set("", "IsoValue", vv);
+	sscanf(vv, " %lf", isoOld);
+        for(dz = iso0; dz <= iso1; dz += deltaIso){
+		sprintf(vv, "%g", dz);
+		set("", "IsoValue", vv);
+		set("/", "Draw", "");
+		get("", "ValueAtPoint", vv);
+		sscanf(vv, " %lf", v);
+		fprintf(fp, "%g\t%g\n", dz, v);
+	}
+	fclose(fp);
+	sprintf(vv, "%g", isoOld);
+	set("", "IsoValue", vv);
+}

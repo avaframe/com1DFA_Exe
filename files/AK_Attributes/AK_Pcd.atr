@@ -1,0 +1,25 @@
+obj.Pcd
+	filename.load
+		set:Load
+		pattern:*.pcd
+		mode:r
+	bool.show labels:ShowLabels
+		set:ShowLabels
+	string.quantity:Quantity
+		set:Quantity
+		options:QuantityList
+	bool.uniform length vectors:UniformLen
+		set:UniformLen
+	float.vector length scale:VecScale
+		set:VecScale
+	int.step:Step
+		set:Step
+	float.time:Time
+		set:Time
+		options:TimeSteps
+	apply.next time step
+		set:NextTimeStep
+	apply.previous time step
+		set:PrevTimeStep
+	apply.animate
+		set:Animate

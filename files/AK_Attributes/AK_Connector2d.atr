@@ -1,0 +1,21 @@
+obj.Connector2d
+	german:Verbindungslinie
+	doc:Connection line.
+		german:Verbindungslinie
+	float2.First point:Pt1
+		set:Pt1
+		pick screen
+		german:Punkt 1
+	float2.Second point:Pt2
+		set:Pt2
+		pick screen
+		german:Punkt 2
+	int.direction at 1st point (0=right, 1=legt):Dir1
+		set:Dir1
+		german:Richtung am Punkt 1 (0=rechts, 1=links)
+	int.direction at 2nd point (0=right, 1=legt):Dir2
+		set:Dir2
+		german:Richtung am Punkt 2 (0=rechts, 1=links)
+	float.minimal length:Len
+		set:Len
+		german:Mindestlaenge

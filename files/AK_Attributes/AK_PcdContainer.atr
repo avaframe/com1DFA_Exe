@@ -1,0 +1,5 @@
+obj.Cuts
+	doc:Container particle-cload-data (binary pcd-files).
+	filename.load
+		set:Load
+		pattern:*.pcd

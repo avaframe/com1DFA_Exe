@@ -1,0 +1,83 @@
+obj.ReleaseArea
+	german:Anbruch-/Aufnahmegebiet
+	doc:A release or entrainment area is a polygon with associated snow depth, density and temperature.\
+		It can be used as primary release area, secondary release area or entrainment-area.\
+		A secondary release area gets active as soon as flowing mass touches its boundary.\
+		In entraiment areas mass is picked up at the front of the flow, according to\
+		the specified release-depth.
+		german:Anbruch- und Aufnahmegebiete sind Polygone mit zugeordneter Schnee-Mächtigkeit, -Dichte\
+			und Temperatur (relevant bei Nassschneelawinen).\
+			Es kann als primäres oder sekundäres Anbruchgebiet, oder als\
+			Aufnahmegebiet verwendet werden. Ein sekundäres Anbruchgebiet wird ausgelöst\
+			sobald strömende Masse seine Berandung berührt. In Aufnahmegebieten wird\
+			Masse entsprechend der vorgegebenen Mächtigkeit an der Strömungsfront aufgenommen.
+	string.depth function:RelDepFuncName
+		set:RelDepFuncName
+		german:Mächtigkeitsfunktion
+		doc:Reference a ReleaseDHM of specify a formula that gives snow depth as function of location and exposition.\
+			The formula file must be located in the folder 'release_depth' and must implement\
+				the function 'double depth(double x[3], double n[3])', which gives depth\
+				dependent on position vector 'x' and surface normal vector 'n'.\
+				Optionally, a function 'void init()' can be implemented, which then is\
+				executed once after the formula is selected.\
+				Addationally, the functions 'void getpar(char s[])' and 'void setpar(char s[])'\
+				may be implemented, which are used to display formula parameters\
+				and to set formula parameters. The parameters have to be written to the\
+				string 's' and read from the string 's', respectively.
+			german:Referenz auf ein ReleaseDHM oder auf eine Formel, die die Maechtigkeit als Funktion von Ort und Exposition definiert.\
+				Die Formel muss im Verzeichnis 'release_depth' liegen und die Funktion\
+				'double depth(double x[3], double n[3])' definieren, die die Maechtigkeit\
+				als Funktion des Ortsvektors 'x' und des Oberflaechennormalvektors 'n' liefert.\
+				Optional kann auch eine Funktion 'void init()' implementiert werden, die dann\
+				einmal nach der Auswahl der Formel aufgerufen wird. Weiters koennen die\
+				Funktionen 'void getpar(char s[])' und 'void setpar(char s[])' implementiert\
+				werden, um Formel-Parameter anzuzeigen bzw. zu setzen.\
+				Die Parameter sind dazu in den String 's' zu schreiben bzw. vom String 's'\
+				zu lesen.
+		options:RelDepFuncNameOpts
+	string.depth function parameters:RelDepFuncPar
+		set:RelDepFuncPar
+		vis:RelDepFuncParVis
+		german:Mächtigkeitsfunktionsparameter
+	float.depth [m]:Depth
+		set:set_depth
+		german:Mächtigkeit [m]
+		doc:Snow depth (normal to the surface) in the area. In case of depth definition by\
+			ReleaseDHM or formula, the average depth is displayed.
+			german:Schnee-Mächtigkeit (normal zur Oberfläche) des Gebietes. Im Fall von\
+				Mächtigkeit von ReleaseDHM oder Formel wird die mittlere Mächtigkeit angezeigt.
+		vis:DepthVis
+	float.density [kg/m3]:Density
+		set:Density
+		german:Dichte [kg/m3]
+		doc:Snow density in the area.
+			german:Schneedichte im Gebiet.
+	float.temperature [deg Celsius]:get_temperature
+		set:set_temperature
+		german:Temperatur (Grad Celsius, max. 0 Grad)
+		doc:Snow temperature in the area. Relevant for wet snow avalanches.
+			german:Schneetemperatur im Gebiet. Relevant bei Nassschneelawinen.
+	float.water mass fraction:get_water_fraction
+		set:set_water_fraction
+		german:Wasser-Gewichtsanteil
+		doc:Water mass fraction [kg/kg] of the snow in the area. Relevant for wet snow avalanches.
+			german:Wasser-Massenanteil [kg/kg] des Schnees im Gebiet. Relevant bei Nassschneelawinen.
+	float.specific enthalpy:Enthalpy
+		set:Enthalpy
+		german:Spezifische Enthalpie
+		vis:VisRead
+		doc:Specific enthalpy [J/kg] of the snow in the area. Relevant for wet snow avalanches.
+			german:Spezifische Enthalpie [J/kg] des Schnees im Gebiet. Relevant bei Nassschneelawinen.
+	string.mass [kt]:Mass_kt
+		german:Masse [kt]
+		doc:Snow mass in the area in kilotons.
+			german:Schneemasse im Gebiet in Kilotonnen.
+	string.volume [m3]:Volume
+		german:Volumen [m3]
+		doc:Snow volume in the area.
+			german:Schnee-Volumen im Gebiet.
+	apply.update mass and volume
+		set:UpdateMass
+		german:Masse und Volumen aktualisieren
+		doc:Re-compute the snow mass and volume in the area.
+			german:Schneemasse und -volumen im Gebiet neu berechnen.

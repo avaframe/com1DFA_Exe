@@ -1,0 +1,310 @@
+
+
+
+void generate_offset_with_flow_depth_opts(
+	char value[])
+{
+	char s[0], x[0];
+	int i, n;
+	resize(s, 4096);
+	resize(x, 256);
+	set("/", "CreateGroup", "dep_tmp");
+	set("/dep_tmp", "SelectedObjectType", "ScalarField");
+	set("/dep_tmp", "AppendAllObjectsOfType", "");
+	get("/dep_tmp", "ContainedObjectsList", s);
+	set("/", "DeleteComponent", "dep_tmp");
+	n = list_size(s);
+	value[0] = 0;
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, x);
+		if(istrstr(x, "/FlowDepth") >= 0){
+			strcat(value, x[2]);
+			strcat(value, AK_SEP);
+		}
+	}
+	resize(x, 0);
+	resize(s, 0);
+}
+
+
+
+void generate_offset_with_flow_depth(
+	char value[])
+{
+	char s[0];
+	int i;
+	int ncols, nrows, n;
+	double xll, yll, dx, nodata;
+	double z[0], zz;
+	int ii, ij;
+	double a[3], b[3], normal[3];
+	FILE *fp;
+	char xlls[16], ylls[16];
+
+	resize(s, 256);
+
+	get("", "ProjectDir", s);
+	add_name(s, "offset.asc");
+	print "exporting DHM to", s;
+	set("", "Export", s);
+
+	print "re-reading", s;
+	fp = fopen(s, "r");
+	if(!fp){
+		set_error("cannot open temporary file offset.asc in project-dir!");
+		resize(s, 0);
+		return;
+	}
+	if(
+		fscanf(fp, " ncols %d", ncols) != 1 ||
+		fscanf(fp, " nrows %d", nrows) != 1 ||
+		fscanf(fp, " %s %lf", xlls, xll) != 2 ||
+		fscanf(fp, " %s %lf", ylls, yll) != 2 ||
+		fscanf(fp, " cellsize %lf", dx) != 1 ||
+		fscanf(fp, " NODATA_value %lf", nodata) != 1){
+		fclose(fp);
+		resize(s, 0);
+		set_error("error in exported file format!");
+		return;
+	}
+	print "ncols, nrows:", ncols, nrows;
+	print "dx, Xll:", dx, xll, yll;
+	n = nrows * ncols;
+	print "storing", n, "z-values";
+	resize(z, n);
+	for(i = 0; i < n; i++) fscanf(fp, " %lf", z[i]);
+	fclose(fp);
+
+	print "setting export parameters for", value;
+	set(value, "ExportRasterAutoRange", "0");
+	sprintf(s, "%lf", dx); set(value, "ExportRasterSize", s);
+	sprintf(s, "%lf %lf", xll, yll); set(value, "ExportRasterLL", s);
+	sprintf(s, "%d", ncols); set(value, "ExportRasterNumColumns", s);
+	sprintf(s, "%d", nrows); set(value, "ExportRasterNumRows", s);
+
+	get("", "ProjectDir", s);
+	add_name(s, "offset.asc");
+	print "exporting to", s;
+	set(value, "ExportFieldRasterAscii", s);
+	set(value, "ExportRasterAutoRange", "1");
+
+	print "reading", s;
+	fp = fopen(s, "r");
+	if(!fp){
+		set_error("cannot open temporary file offset.asc/2 in project-dir!");
+		resize(s, 0);
+		resize(z, 0);
+		return;
+	}
+	if(
+		fscanf(fp, " ncols %d", ncols) != 1 ||
+		fscanf(fp, " nrows %d", nrows) != 1 ||
+		fscanf(fp, " %s %lf", xlls, xll) != 2 ||
+		fscanf(fp, " %s %lf", ylls, yll) != 2 ||
+		fscanf(fp, " cellsize %lf", dx) != 1 ||
+		fscanf(fp, " NODATA_value %lf", nodata) != 1){
+		fclose(fp);
+		resize(s, 0);
+		resize(z, 0);
+		set_error("error in exported file format!");
+		return;
+	}
+	print "adding z-values";
+	a[0] = 2.0 * dx;
+	a[1] = 0.0;
+	b[0] = 0.0;
+	b[1] = 2.0 * dx;
+	for(i = 0; i < n; i++){
+		fscanf(fp, " %lf", zz);
+		if(z[i] == nodata) continue;
+		if(zz == nodata) zz = 0.0;
+		// convert depth to height
+		ii = i % ncols;
+		ij = i / ncols;
+		if(
+			ii > 0 && ii < ncols-1 &&
+			ij > 0 && ij < nrows-1 &&
+			z[i + 1] != nodata &&
+			z[i - 1] != nodata &&
+			z[i + ncols] != nodata &&
+			z[i - ncols] != nodata
+			){
+			a[2] = z[i + 1] -  z[i - 1];
+			b[2] = z[i + ncols] -  z[i - ncols];
+			normal = a ^ b;
+			normal /= |normal|;
+			if(normal[2] > 0.5) zz /= normal[2];
+		}
+		z[i] += zz;
+	}
+	fclose(fp);
+
+	get("", "ProjectDir", s);
+	add_name(s, "offset.asc");
+	print "writing", s;
+	fp = fopen(s, "w");
+	if(!fp){
+		set_error("cannot open temporary file offset.asc for writing in project-dir!");
+		resize(s, 0);
+		resize(z, 0);
+		return;
+	}
+	fprintf(fp, "ncols %d\n", ncols);
+	fprintf(fp, "nrows %d\n", nrows);
+	fprintf(fp, "%s %lf\n", xlls, xll);
+	fprintf(fp, "%s %lf\n", ylls, yll);
+	fprintf(fp, "cellsize %lf\n", dx);
+	fprintf(fp, "NODATA_value %lf\n", nodata);
+	for(i = 0; i < n; i++){
+		fprintf(fp, "%lf ", z[i]);
+		if((i + 1) % ncols == 0) fprintf(fp, "\n");
+	}
+	fprintf(fp, "\n");
+	fclose(fp);
+	resize(z, 0);
+
+	print "importing", s;
+	set("..", "Import", s);
+
+	fp = fopen(s, "w");
+	if(fp) fclose(fp);
+
+	resize(s, 0);
+}
+
+
+
+void generate_difference_to_opts(
+	char value[])
+{
+	char s[0], x[0], id[0];
+	int i, n;
+	resize(s, 4096);
+	resize(x, 256);
+	resize(id, 256);
+	get("", "Id", id);
+	get("..", "GetComponentList", s);
+	n = list_size(s);
+	value[0] = 0;
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, x);
+		if(strcmp(x, id) != 0){
+			strcat(value, "../");
+			strcat(value, x);
+			strcat(value, AK_SEP);
+		}
+	}
+	resize(id, 0);
+	resize(x, 0);
+	resize(s, 0);
+}
+
+void generate_difference_to(
+	char value[])
+{
+	char s[0], aux[0];
+	int i;
+	int ncols, nrows, n;
+	double xll, yll, dx, nodata;
+	double z[0], zz;
+	FILE *fp;
+	char xlls[16], ylls[16];
+
+	resize(s, 256);
+	resize(aux, 64);
+
+	get("", "ProjectDir", s);
+	add_name(s, "difference.asc");
+	print "exporting DHM to", s;
+	set("", "Export", s);
+
+	print "reading", s;
+	fp = fopen(s, "r");
+	if(!fp){
+		set_error("cannot open temporary file difference.asc in project-dir!");
+		resize(aux, 0); resize(s, 0);
+		return;
+	}
+	if(
+		fscanf(fp, " ncols %d", ncols) != 1 ||
+		fscanf(fp, " nrows %d", nrows) != 1 ||
+		fscanf(fp, " %s %lf", xlls, xll) != 2 ||
+		fscanf(fp, " %s %lf", ylls, yll) != 2 ||
+		fscanf(fp, " cellsize %lf", dx) != 1 ||
+		fscanf(fp, " NODATA_value %lf", nodata) != 1){
+		fclose(fp);
+		resize(aux, 0); resize(s, 0);
+		set_error("error in exported file format!");
+		return;
+	}
+	print "ncols, nrows:", ncols, nrows;
+	print "dx, Xll:", dx, xll, yll;
+	n = nrows * ncols;
+	print "storing", n, "z-values";
+	resize(z, n);
+	for(i = 0; i < n; i++) fscanf(fp, " %lf", z[i]);
+	fclose(fp);
+
+	get("", "Xll", aux);
+	set(value, "Xll", aux);
+	get("", "Xor", aux);
+	set(value, "Xor", aux);
+	get("", "Dx", aux);
+	set(value, "Dx", aux);
+	set(value, "Export", s);
+
+	print "reading", s;
+	fp = fopen(s, "r");
+	if(!fp){
+		set_error("cannot open temporary file aux.asc/2 in project-dir!");
+		resize(aux, 0); resize(s, 0); resize(z, 0);
+		return;
+	}
+	if(
+		fscanf(fp, " ncols %d", ncols) != 1 ||
+		fscanf(fp, " nrows %d", nrows) != 1 ||
+		fscanf(fp, " %s %lf", xlls, xll) != 2 ||
+		fscanf(fp, " %s %lf", ylls, yll) != 2 ||
+		fscanf(fp, " cellsize %lf", dx) != 1 ||
+		fscanf(fp, " NODATA_value %lf", nodata) != 1){
+		fclose(fp);
+		resize(aux, 0); resize(s, 0); resize(z, 0);
+		set_error("error in exported file format!");
+		return;
+	}
+	print "subtracting z-values";
+	for(i = 0; i < n; i++){
+		fscanf(fp, " %lf", zz);
+		if(z[i] == nodata || zz == nodata)
+			z[i] = nodata;
+		else
+			z[i] -= zz;
+	}
+	fclose(fp);
+
+	print "writing", s;
+	fp = fopen(s, "w");
+	if(!fp){
+		set_error("cannot open temporary file aux.asc for writing in project-dir!");
+		resize(aux, 0); resize(s, 0); resize(z, 0);
+		return;
+	}
+	fprintf(fp, "ncols %d\n", ncols);
+	fprintf(fp, "nrows %d\n", nrows);
+	fprintf(fp, "%s %lf\n", xlls, xll);
+	fprintf(fp, "%s %lf\n", ylls, yll);
+	fprintf(fp, "cellsize %lf\n", dx);
+	fprintf(fp, "NODATA_value %lf\n", nodata);
+	for(i = 0; i < n; i++){
+		fprintf(fp, "%lf ", z[i]);
+		if((i + 1) % ncols == 0) fprintf(fp, "\n");
+	}
+	fprintf(fp, "\n");
+	fclose(fp);
+	resize(z, 0);
+
+	print "importing", s;
+	set("..", "Import", s);
+
+	resize(aux, 0); resize(s, 0);
+}

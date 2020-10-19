@@ -1,0 +1,4 @@
+set("", "DisplayContourLines", "0")
+set("", "AutoColored", "1")
+set("", "Opacity", "0.5")
+set("", "ExportRasterSize", "5.0")

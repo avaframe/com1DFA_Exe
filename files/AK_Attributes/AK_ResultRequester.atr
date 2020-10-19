@@ -1,0 +1,35 @@
+obj.ResultProvider
+	string.acci server host name:Hostname
+		set:Hostname
+	int.acci server port number:Port
+		set:Port
+	string.acci client id:ClientId
+		set:ClientId
+	float.start time/angle:StartITC
+		set:StartITC
+	float.end time/angle:EndITC
+		set:EndITC
+	float.delta time/angle:DeltaITC
+		set:DeltaITC
+	string.ITC list:ITCList
+		set:ITCList
+	float.rpm:Rpm
+		set:Rpm
+	float.start angle:StartAngle
+		set:StartAngle
+	string.mesh:Mesh
+		set:Mesh
+	bool.values at nodes:ValuesAtNodes
+		set:ValuesAtNodes
+	filename.output result file:Output
+		set:Output
+		mode:w
+		pattern:*.fl3,*.txt
+	bool.keep existing results:Keep
+		set:Keep
+		doc:Keep existing results. Implies keeping existing results\
+			mesh, regardless of ->.Mesh
+	apply.run
+		set:Run
+	string.run with arguments
+		set:RunWithArguments

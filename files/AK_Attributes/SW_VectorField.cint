@@ -1,0 +1,96 @@
+
+int MAXSTRLEN = 512;
+
+
+void get_vec_field_vis(
+	char s[])
+{
+	get("", "Id", s);
+  // printf("%s \n",s);
+  
+	if(
+		!strcmp(s, "Velocity") ||
+		!strcmp(s, "EntrainmentMass") ){
+		get("", "VisNone", s);
+	}else{
+		get("", "VisWrite", s);
+	}
+}
+
+void init_inverse()
+{
+	char label[MAXSTRLEN];
+	char aux[MAXSTRLEN];
+	int i; int ie;
+	get("", "Label", label);
+	i = istrstr(label, " [");
+	if(i >= 0){
+		strcpy(aux, label[i]);
+		strcpy(label[i], " inverse");
+		strcat(label, aux);
+	}
+	i = istrrchr(label, '[');
+	if(i >= 0){
+		ie = istrchr(label[i], ']');
+		if(ie){
+			ie += i;
+			label[i] = 0;
+			label[ie] = 0;
+			sprintf(aux, "%s[1/(%s)", label, label[i+1]);
+			label[ie] = ']';
+			strcat(aux, label[ie]);
+			strcpy(label, aux);
+		}
+	}
+	set("", "SetLabel", label);
+}
+double inverse(
+	double v[3])
+{
+	double mag = |v|;
+	if(fabs(mag) < 1.0e-2){
+		v = 0.0;
+	}else{
+		v /= (mag*mag);
+	}
+}
+
+
+
+void getDataConversion(
+	char s[])
+{
+	get("", "$conversion", s);
+	if(s[0] == 0 || !strcmp(s, "%AK_NULL%")) strcpy(s, "none");
+}
+
+void setDataConversion(
+	char s[])
+{
+	char aux[MAXSTRLEN];
+	get("", "$conversion", aux);
+	if(!strcmp(aux, s)) return;
+	if(aux[0] == 0 || !strcmp(aux, "none")){
+		get("", "Label", aux);
+		set("", "$unconvertedLabel", aux);
+	}
+	set("", "$conversion", s);
+	if(!strcmp(s, "inverse")){
+		init_inverse();
+	}else if(!strcmp(s, "none")){
+		get("", "$unconvertedLabel", aux);
+		set("", "SetLabel", aux);
+	}
+}
+
+void getDataConversionOptions(
+	char s[])
+{
+	char label[MAXSTRLEN];
+	get("", "Label", label);
+	strcpy(s, "none"); strcat(s, AK_SEP);
+	strcat(s, "inverse"); strcat(s, AK_SEP);
+}
+
+
+

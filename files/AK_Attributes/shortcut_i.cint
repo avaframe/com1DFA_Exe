@@ -1,0 +1,7 @@
+void main()
+{
+	char s[256];
+	get("", "ProjectDir", s);
+	add_name(s, "image.png");
+	set("", "WriteToImageFile", s);
+}

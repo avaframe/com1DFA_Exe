@@ -1,0 +1,75 @@
+
+int n_acci_thermal = 0;
+void add_acci_thermal(char value[])
+{
+	char id[32], s[32], v[64];;
+	n_acci_thermal++;
+	sprintf(id, "ACCI_thermal_%d", n_acci_thermal);
+	set("", "CreateACCI_Comp", id);
+	set(id, "Position", value);
+	set(id, "$type", "ACCI_thermal");
+	sprintf(s, "ACCI\nthermal %d", n_acci_thermal);
+	set(id, "Text", s);
+	set(id, "AddPort", "A");
+	s = id; add_id(s, "A");
+	set(s, "Attachment", "1");
+	set(id, "AddPort", "B");
+	s = id; add_id(s, "B");
+	set(s, "Attachment", "0");
+	strcat(v, "convection 100,300 A->B"); strcat(v, AK_SEP); strcat(v, AK_SEP);
+	set(id, "$quantities", v);
+	set(id, "$ignoreOrientation", "1");
+	set(id, "$adjCenter", "0");
+	set(id, "$adjVis", "w");
+	set(id, "$adjx", "none");
+	set(id, "$adjy", "none");
+	set(id, "$adjz", "none");
+	strcpy(v, "none"); strcat(v, AK_SEP);
+	strcat(v, "min"); strcat(v, AK_SEP);
+	strcat(v, "max"); strcat(v, AK_SEP);
+	set(id, "$adjOpts", v);
+}
+
+
+
+int n_fire_reader = 0;
+void add_fire_reader(char value[])
+{
+	char id[32], s[32];
+	n_fire_reader++;
+	sprintf(id, "FIRE_reader_%d", n_fire_reader);
+	set("", "CreateACCI_Comp", id);
+	set(id, "Position", value);
+	set(id, "$type", "FIRE_reader");
+	sprintf(s, "FIRE\nreader %d\nundefined", n_fire_reader);
+	set(id, "Text", s);
+	set(id, "AutoColored", "0");
+	set(id, "Color", "0 0 1");
+	set(id, "$cellSels", "0");
+	set(id, "$faceSels", "1");
+	set(id, "$adjVis", "-");
+}
+
+
+
+int n_fire_writer = 0;
+void add_fire_writer(char value[])
+{
+	char id[32], s[32];
+	n_fire_writer++;
+	sprintf(id, "FIRE_writer_%d", n_fire_writer);
+	set("", "CreateACCI_Comp", id);
+	set(id, "$type", "FIRE_writer");
+	set(id, "Position", value);
+	sprintf(s, "FIRE\nwriter %d\nundefined", n_fire_writer);
+	set(id, "Text", s);
+	set(id, "AutoColored", "0");
+	set(id, "Color", "0 0.6 0");
+	set(id, "$cellSels", "0");
+	set(id, "$faceSels", "1");
+	set(id, "$timeAveraging", "0");
+	set(id, "$adjVis", "-");
+}
+
+
+

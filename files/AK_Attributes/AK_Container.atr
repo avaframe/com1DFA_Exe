@@ -1,0 +1,56 @@
+obj.Container
+	german:Behälter
+	doc:A container holds an arbitrary number of objects (components). It owns them and allows\
+		to delete them and to create new ones.
+		german:Ein Behälter hält eine beliebige Anzahl von Objekten (Komponenten). Er besitzt diese\
+			und erlaubt sie zu löschen und neue zu erzeugen.
+	string.unload component
+		options:GetComponentList
+		set:UnloadComponent
+		vis:DeleteVisibility
+		multiselect
+		german:Komponente entladen
+		doc:Remove a component from memory\
+			and from the object tree, but not from disk.
+			german:Komponente vom Speicher vom Objektbaum\
+				entfernen, aber nicht von der Festplatte.
+	apply.unload all
+		set:UnloadAllContainers
+		vis:DeleteVisibility
+		german:alle entladen
+		doc:Removes all components from memory and from the object tree, but not from disk.
+			german:Alle Komponenten vom Speicher und vom Objektbaum\
+				entfernen, aber nicht von der Festplatte.
+	string.load component
+		options:UnloadedComponentsList
+		set:LoadComponent
+		multiselect
+		german:Komponente laden
+		doc:Load a component from the object directory of the container.
+			german:Komponente vom Objektverzeichnis des Behälters laden.
+	string.delete component (also from disk, if already saved!)
+		options:GetComponentList
+		set:DeleteObject
+		vis:DeleteVisibility
+		multiselect
+		confirm
+		german:Komponente löschen (auch von Festplatte, falls schon gespeichert!)
+		doc:Delete a component from memory, object tree and disk, if already saved!\
+			Imported files are not removed.
+			german:Komponente vom Speicher, Objektbaum und von der Festplatte\
+				(falls schon gepeichert) löschen. Importierte Dateien werden\
+				nicht beruehrt.
+	apply.delete all (also from disk, if already saved!)
+		set:DeleteAll
+		vis:DeleteVisibility
+		confirm
+		german:alle löschen (auch von Festplatte, falls schon gespeichert)
+		doc:Deletes all components from memory, object tree and disk, of already saved!
+			german:Alle Komponenten vom Speicher, Objektbaum und von der Festplatte\
+				(falls schon gespeichert) löschen.
+	bool.suppress loading components:SuppressCreatingComponents
+		set:SuppressCreatingComponents
+		volatile
+		german:keine Komponenten laden
+		doc:If on, sub-objects will not be loaded with the container.
+			german:Wenn an, werden Unterobjekte nicht mitgeladen.

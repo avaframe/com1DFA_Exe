@@ -1,0 +1,9 @@
+obj.SourceLines
+	german:Quell-Linien
+	doc:A container for source lines (->SourceLine.).
+		german:Ein Behälter für Quell-Linien (->SourceLine.).
+	string.new source line
+		set:AddSourceLine
+		german:neue Quell-Linie
+		doc:Append a new, empty source line.
+			german:Neue, leere Quell-Linie anfügen.

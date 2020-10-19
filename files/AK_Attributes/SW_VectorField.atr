@@ -1,0 +1,74 @@
+obj.VectorField
+	german:Vektorfeld
+	doc:Vectorial field data with associated colorbar (->Colorbar.) for\
+		the color-coding of the vector values.\
+		The line width for displaying the vectors is controlled by ->VisObj.LineWidth.
+		german:Feld von Vektoren mit zugeordneter Farbskala (->Colorbar.) zur\
+			Farbkodierung der Vektoren.\
+			Die Liniendicke für die Darstellung der Vektoren wird durch\
+			->VisObj.LineWidth bestimmt.
+	string.data transformation:getDataConversion
+		set:setDataConversion
+		options:getDataConversionOptions
+		german:Datentransformation
+		doc:Configurable data transformations\
+			(see .../files/AK_Attributes/SW_VectorField.cint).
+			german:Konfigurierbare Datenumrechnung\
+				(siehe .../files/AK_Attributes/SW_VectorField.cint).
+	float.scaling:VectorScaling
+		set:VectorScaling
+		german:Vektorlängenskalierung
+		doc:Scaling factor in [m/<field unit>] for displaying the vector-length.
+			german:Skalierungsfaktor in [m/<Feldeinheit>] zur Darstellung\
+				der Vektorlänge.
+	float.resampling grid size:ResamplingGridSize
+		set:ResamplingGridSize
+		german:Resampling-Gittergröße
+		doc:If set to a value > 0.0, the vectors are displayed at points of\
+			a regular grid with grid size equal to this value. This can\
+			be used to avoid vectors beein drawn too close to each other.
+			german:Wenn auf einen Wert > 0.0 gesetzt, werden die Vektoren\
+				an Punkten eines regelmäßigen Gitters mit der Gittergröße\
+				gleich diesem Wert gezeichnet. Das kann angewandt werden, wenn\
+				die Vektoren sonst zu dicht für eine übersichtliche Darstellung liegen.
+	float.minimal magnitude value:Min
+		german:Minimale Vektorlänge
+		doc:Minimal vector magnitude.
+			german:Minimaler Betrag der Vektorlänge im Feld.
+	float.maximal magnitude value:Max
+		german:Maximale Vektorlänge
+		doc:Maximal vector magnitude.
+			german:Maximaler Betrag der Vektorlänge im Feld.
+	float.average magnitude value:Average
+		german:mittlere Vektorlänge
+		doc:Average vector magnitude.
+			german:Mittlerer Betrag der Vektorlänge im Feld.
+	apply.create magnitude field
+		set:CreateMagnitudeField
+		vis:CreateMagnitudeFieldVis
+		german:Betragsfeld
+		doc:Create a scalar field from the vector-magnitude as sub-object.
+			german:Skalarfeld der Vektorlängen als Unterobjekt erzeugen.
+	apply.remove magnitude field
+		set:RemoveMagnitudeField
+		vis:RemoveMagnitudeFieldVis
+		german:Betragsfeld löschen
+		doc:Remove the scalar magnitude-field created with ->VectorField.CreateMagnitudeField.
+			german:Betragsfeld-Unterobjekt löschen.
+	string.selected polyline:SelectedPolyline
+		set:SelectedPolyline
+		options:PolylinesList
+		german:gewählter Polygonzug
+	filename.export values along polyline
+		set:ExportValuesAlongPolyline
+		vis:ExportValuesAlongPolylineVis
+		german:Werte entlang des gewählten Polygonzugs exportieren
+	filename.export values
+		set:ExportValues
+		german:Werte exportieren
+		doc:Export values to an ASCII file in format: \
+			location_x location_y location_z vector_x vector_y vector_z \
+			(one vector per line).
+			german:Vektorwerte im Format \
+				location_x location_y location_z vector_x vector_y vector_z \
+				(ein Vektor pro Zeile) in spezifizierte ASCII-Datei schreiben.

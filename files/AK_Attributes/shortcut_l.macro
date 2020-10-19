@@ -1,0 +1,9 @@
+set("", "DeleteComponent", "_tmp_")
+set("", "CreateGroup", "_tmp_")
+set("_tmp_", "SelectedObjectType", "ShallowWaterSimulation")
+set("_tmp_", "SelectedAttribute", "Active")
+set("_tmp_", "SelectedValue", "1")
+set("_tmp_", "AppendAllMatchingObjects", "")
+set("_tmp_", "LoadLastTimeStep", "")
+set("", "DeleteComponent", "_tmp_")
+

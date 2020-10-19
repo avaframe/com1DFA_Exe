@@ -1,0 +1,122 @@
+
+double center[3];
+int do_transform = 0;
+
+double Cell2dVol(
+   int ic)
+{
+   int i, n = NumCellVerts(ic);
+   double v[3] = 0.0, x0[3], xp[3], xi[3];
+   if(n < 3) return 0.0;
+   GetVertexCoords(CellVertexIndex(ic, 0), x0);
+   GetVertexCoords(CellVertexIndex(ic, 1), xp);
+   for(i = 2; i < n; i++){
+      GetVertexCoords(CellVertexIndex(ic, i), xi);
+      v += (xp - x0) ^ (xi - x0);
+      xp = xi;
+   }
+   return 0.5 * |v|;
+}
+
+void set_sel_center(char name[])
+{
+   double x[3], size, size_tot = 0.0;
+   int sel[3], i, j, nf;
+   center = 0.0;
+   do_transform = 1;
+   if(strcmp(name, "allCells") == 0){
+      for(i = 0; i < NCELL; i++){
+         size = CellVolume(i);
+         if(size < 1.0e-30) size = Cell2dVol(i); // needed for shell meshes!
+         size_tot += size;
+         GetCellCenter(i, x);
+         center += size * x;
+      }
+   }else if(strcmp(name, "allBndFaces") == 0){
+      for(i = 0; i < NCELL; i++){
+         nf = NumCellFaces(i);
+         for(j = 0; j < nf; j++){
+            if(CellNeighborIndex(i, j) < 0){
+               GetFaceNormal(i, j, x);
+               size = |x|;
+               size_tot += size;
+               GetFaceCenter(i, j, x);
+               center += size * x;
+            }
+         }
+      }
+   }else if(SelInit(name, sel)){
+      if(SelType(sel) == 1){
+         size = 1.0;
+         while(SelNext(sel)){
+            size_tot += size;
+            SelCenterGet(sel, x);
+            center += size * x;
+         }
+      }else if(SelType(sel) == 2){
+         while(SelNext(sel)){
+            size = SelArea(sel);
+            size_tot += size;
+            SelCenterGet(sel, x);
+            center += size * x;
+         }
+      }else if(SelType(sel) == 3){
+         while(SelNext(sel)){
+            size = SelVol(sel);
+            if(size < 1.0e-30) size = Cell2dVol(SelIndex(sel)); // needed for shell meshes!
+            size_tot += size;
+            SelCenterGet(sel, x);
+            center += size * x;
+         }
+      }
+   }else{
+      print "\n\nERROR:set_sel_center: selection", name, "does not exist!\n\n";
+      do_transform = 0;
+   }
+   if(do_transform){
+      if(size_tot > 0.0){
+         center /= size_tot;
+         print "center of", name, "is", center;
+      }else{
+         center = 0.0;
+         do_transform = 0;
+         print "\n\nERROR:set_sel_center: selection", name, "has zero size! Transformation skipped!\n\n";
+      }
+   }
+}
+
+// project center into plane
+void project_into_plane(
+   double cx,
+   double cy,
+   double cz,
+   double nx,
+   double ny,
+   double nz)
+{
+   double c[3] = {cx, cy, cz};
+   double n[3] = {nx, ny, nz};
+   n /= |n|;
+   center -= n * ((center - c) . n);
+   if(do_transform) print "center projected into plane", c, n, "is", center;
+}
+
+// project center onto cyclic-axis
+void project_onto_axis(
+   double cx,
+   double cy,
+   double cz,
+   double nx,
+   double ny,
+   double nz)
+{
+   double c[3] = {cx, cy, cz};
+   double n[3] = {nx, ny, nz};
+   n /= |n|;
+   center = c + n * ((center - c) . n);
+   if(do_transform) print "center projected onto axis", c, n, "is", center;
+}
+
+void transform(double x[3])
+{ x -= center; }
+

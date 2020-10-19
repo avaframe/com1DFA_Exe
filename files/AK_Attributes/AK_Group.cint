@@ -1,0 +1,83 @@
+void get_group_vis(char s[])
+{
+        get("", "Id", s);
+        if(
+                !strcmp(s, "ResistanceAreas") ||
+                !strcmp(s, "WallLines") ||
+                !strcmp(s, "SourceLines") ){
+                get("/", "VisNone", s);
+        }else{
+                get("/", "VisWrite", s);
+        }
+}
+
+
+void load_group(char value[])
+{
+	set("", "LoadProject", value);
+}
+
+/* stuff for starting simulations in background with delay */
+
+void start_simulations_with_delay_vis(char value[])
+{
+	int i, n;
+	char s[0], x[0], y[0];
+	resize(s, 256*64);
+	resize(x, 256);
+	resize(y, 256);
+	get("", "ContainedObjectsList", s);
+	n = list_size(s);
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, x);
+		get(x, "Type", y);
+		if(strcmp(y, "ShallowWaterSimulation") != 0) break;
+	}
+	resize(y, 0);
+	resize(x, 0);
+	resize(s, 0);
+	if(n > 0 && i == n)
+		sprintf(value, "w");
+	else
+		sprintf(value, "-");
+}
+
+double start_simulations_delay = 30.0;
+
+void start_simulations_delay_get(char value[])
+{
+	sprintf(value, "%g", start_simulations_delay);
+}
+
+void start_simulations_delay_set(char value[])
+{
+	double delay;
+	if(sscanf(value, " %lf", delay) == 1 && delay >= 0.0)
+		start_simulations_delay = delay;
+}
+
+void start_simulations_with_delay(char value[])
+{
+	int i, n;
+	char s[0], x[0], msg[0];
+	resize(s, 256*64);
+	resize(x, 256);
+	resize(msg, 512);
+	get("", "ContainedObjectsList", s);
+	n = list_size(s);
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, x);
+		set(x, "$autosave", "0");
+		set(x, "RunInBackground", "");
+		set(x, "$autosave", "1");
+		if(i < n - 1){
+			sprintf(msg, "waiting %g seconds after start of '%s'...",
+				start_simulations_delay, x);
+			message(msg, "start_simulations_with_delay");
+			sleep(start_simulations_delay);
+		}
+	}
+	resize(msg, 0);
+	resize(x, 0);
+	resize(s, 0);
+}

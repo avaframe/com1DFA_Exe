@@ -1,0 +1,106 @@
+obj.DHMs
+	doc:Container for DHMs (->DHM.).
+		german:Behälter für DHMs (->DHM.).
+	string.new DHM
+		set:CreateMesh
+		german:neues DHM
+		doc:Add an empty, new DHM.
+			german:Neues, leeres DHM einfügen.
+	filename.import
+		set:Import
+		pattern:*.xyz,*.asc,*.ASC,*.TXT,*.txt,*.e00,*.E00,*.nxyz,*.dxf,*.DXF,*.tbp
+		mode:r
+		german:importieren
+		doc:Import a DHM from various formats an add it to the container ->DHM.Import.\
+			Additionally, any *.rel (->ReleaseAreas.Import) and\
+			*.res-files (->ResistanceAreas.Import)\
+			with the same base name are automatically imported.
+			german:DHM in verschiedenen Formaten (->DHM.Import) importieren.\
+				Zusätzlich werden alle rel- (->ReleaseAreas.Import) und\
+				res-Dateien (->ResistanceAreas.Import) selben Namens\
+				automatisch importiert.
+	int.number of point reductions on raster-import:NumPtRedRasterImport
+		set:NumPtRedRasterImport
+		german:Ausdünnungsfaktor bei Raster-Import
+		doc:Applies to ->DHMs.ImportRasterReduced only.
+			german:Gilt nur für ->DHMs.ImportRasterReduced.
+	filename.import raster with reduction
+		set:ImportRasterReduced
+		pattern:*.asc,*.ASC,*.TXT,*.txt,*.e00,*.E00
+		mode:r
+		german:Raster ausgedünnt importieren
+		doc:Import a DHM from raster format and reduce the number of DHM points\
+			so that the point-distance increases by a factor of @@2 ^ r/@ (@@r/@ ->DHMs.NumPtRedRasterImport).
+			german:DHM im Raster-Format importieren, so dass der Punktabstand\
+				um den Faktor @@2^r/@ (@@r/@ ->DHMs.NumPtRedRasterImport) steigt. Das reduziert die Anzahl der\
+				Punkte (und damit den Speicherbedarf) um den Faktor @@2 ^ (2 * r)/@.
+	int.reduction factor for reduce grid:$reductionFactor
+		set:$reductionFactor
+		german:Reduktionsfaktor fuer Raster ausduennen
+	filename.reduce grid
+		set:reduce_grid
+		pattern:*.asc,*.ASC,*.TXT,*.txt,*.e00,*.E00
+		german:Raster ausduennen
+	opr.import tiles
+		german:Kacheln importieren
+		doc:Load several DHMs (tiles) and merge into one combined DHM. Merging is only possible,\
+			if the grids of the individual tiles have the same cell size and a consistent position.\
+			The tiles may overlap, however. If a grid point is contained in more than one tile,\
+				the value of the tile specified last has priority.
+			german:Gruppe von DHMs (Kacheln) laden und in ein Gesamt-DHM verschmelzen. Das Verschmelzen\
+				ist nur möglich, wenn die Kacheln dieselbe Gitterweite und eine konsistente Position\
+				aufweisen. Die Kacheln dürfen überlappen.\
+				Wenn ein Gitterpunkt in mehreren Kacheln definiert wird, hat der Wert der letzten\
+				Kachel Vorrang.
+		filename.select tile (multiselect possible)
+			set:TileSelect
+			pattern:*.xyz,*.asc,*.ASC,*.TXT,*.txt,*.e00,*.E00,*.nxyz,*.dxf,*.DXF,*.tbp
+			mode:r
+			multiselect
+			german:Kachel selektieren
+		string.de-select tile
+			set:TileDeselect
+			german:Kachel de-selektieren
+			options:Tiles
+			multiselect
+		apply.clear tiles
+			set:TilesClear
+			german:Kacheln leeren
+		col.selected tiles:Tiles
+			set:Tiles
+			german:selektierte Kacheln
+		vec2.x-min:TilesXmin
+		vec2.x-max:TilesXmax
+		float.cell size:TilesDs
+			german:Zellgröße
+		bool.tiles consistent:TilesConsistent
+			german:Kacheln konsistent
+			doc:True, if the selected tiles are grids with the same grid size\
+				and with consistent position.
+				german:Wahr, wenn die selektierten Kacheln Gitter mit der selben\
+					Maschenweite und in konsistenter Lage sind.
+		apply.load tiles
+			vis:TilesLoadVis
+			german:Kacheln laden
+			set:TilesLoad
+	bool.automatically create simulation mesh on import:AutoCreateSimulationMesh
+		set:AutoCreateSimulationMesh
+		german:automatisch Simulationsnetz bei Import erzeugen
+		volatile
+	float.simulation meshes default cell size:SimulationDefaultCellSize
+		german:voreingestellte Zellgröße für Simulationsnetze
+	float.set simulation meshes default cell size:
+		set:SimulationDefaultCellSize
+		german:voreingestellte Zellgröße für Simulationsnetze setzen
+	string.create simulation mesh
+		set:CreateSimulationMesh
+		options:GetComponentList
+		german:Simulationsnetz erzeugen
+		doc:Create a simulation mesh for a DHM. A simulation mesh is a raster\
+			of square cell of side length ->DHMs.SimulationDefaultCellSize m and with smoothed normal vectors,\
+			as it should be used for a simulation (->ShallowWaterSimulation.). Simulation meshes are identified\
+			by the name suffix '_simulation'.
+			german:Simulationsnetz für ein DHM erzeugen. Ein Simulationsnetz ist ein\
+				Raster aus quadratischen Zellen von ->DHMs.SimulationDefaultCellSize m Seitenlänge und mit geglätteten\
+				Normalvektoren, wie es für eine Simulation (->ShallowWaterSimulation.)\
+				verwendet werden sollte. Simulationsnetze werden durch den Namenssuffix '_simulation' gekennzeichnet.

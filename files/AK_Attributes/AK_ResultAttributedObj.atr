@@ -1,0 +1,58 @@
+obj.ResultObject
+	german:Ergebnisobjekt
+	doc:An object carrying 3D simulation results with associated colorbar\
+		(->Colorbar.) for the color-coding of the result values.
+		german:Ein Trägerobjekt für 3D-Simulationsergebnisse mit zugeordneter Farbskala\
+			(->Colorbar.) zur Farbkodierung der Ergebniswerte.
+	string.case:Result
+		options:GetResultsList
+		set:SetResult
+		german:Ergebnisdaten
+		doc:Simulation result data.
+			german:Ergebnisdaten einer 3D-Simulation.
+	apply.next dataset
+		german:nächster Schritt
+		set:next_datasets
+		vis:dataset_switch_vis
+	apply.previous dataset
+		german:voriger Schritt
+		set:prev_datasets
+		vis:dataset_switch_vis
+	apply.animate datasets
+		german:Schritte animieren
+		set:animate_datasets
+		vis:dataset_switch_vis
+	string.attribute:Attribute
+		options:GetAttributesList
+		set:SetAttribute
+		german:Attribut
+		doc:Displayed attribute of the result data.
+			german:Dargestelltes Ergebnisattribut.
+	string.id:IdString
+		vis:VisRead
+		german:ID
+		doc:Identification name.
+			german:Identifikationsname.
+	bool.vectors:Vectors
+		set:Vectors
+		vis:VectorsVis
+		german:Vektoren
+		doc:If on, vectorial result attributes are displayed\
+			as vectors. Otherwise, the vector length is displayed\
+			as scalar value.
+			german:Wenn an, werden vektorielle Ergebnisattribute als Vektoren\
+				dargestellt. Andernfalls wird die Vektorlänge als Skalar\
+				dargestellt.
+	float.vector length scale:VectorLengthScale
+		set:VectorLengthScale
+		vis:VectorLengthScaleVis
+		german:Vektorlängenskalierung
+		doc:Length-scale-factor [m/<unit of ->ResultObject.Attribute>]\
+			for displaying vectors.
+			german:Längenskalierungsfaktor [m/<unit of ->ResultObject.Attribute>]\
+				zur Darstellung von Vektoren.
+	string.arrow type:ArrowType
+		set:ArrowType
+		options:ArrowTypeOptions
+		german:Vektor-Pfeiltyp
+		vis:VectorLengthScaleVis

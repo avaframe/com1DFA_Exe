@@ -1,0 +1,85 @@
+
+char value[256];
+char line[4096];
+char aux[4096];
+
+int scan(
+	char key[])
+{
+	int i, j, k, l;
+	l = strlen(key);
+	if(!strncmp(line, key, l) && (line[l] == ' ' || line[l] == '\n')){
+		i = istrchr(line, ' ');
+		j = istrchr(line[i+1], ' ');
+		k = istrstr(line[i], " -");
+		l = istrstr(line, " -");
+		if(i == l || k < 0 && j < 0){
+			value[0] = 0;
+		}else{
+			strncpy(value, line[i+1], j);
+			value[j] = 0;
+		}
+		if(k < 0 && i != l){
+			line[0] = 0;
+		}else{
+			strcpy(aux, line[i+k+1]);
+			strcpy(line, aux);
+		}
+		return 1;
+	}
+	return 0;
+}
+
+void pop()
+{
+	int i;
+	i = istrstr(line, " -");
+	if(i < 0){
+		line[0] = 0;
+	}else{
+		strcpy(aux, line[i+1]);
+		strcpy(line, aux);
+	}
+}
+
+void main()
+{
+	char ifile[256] = "", ofile[256] = "", scale[32] = "1.0", num[32] = "1";
+	get("root", "Arglist", line);
+	set("root", "ReportCommands", "1");
+	pop();
+	while(strlen(line)){
+		if(scan("-r")){
+			strcpy(ifile, value);
+		}else if(scan("-w")){
+			strcpy(ofile, value);
+		}else if(scan("-s")){
+			strcpy(scale, value);
+		}else if(scan("-n")){
+			strcpy(num, value);
+		}else{
+			pop();
+		}
+	}
+	if(!strlen(ifile) || !strlen(ofile)){
+		print "usage: arguments:";
+		print "   -r <input_mesh_file>";
+		print "   -w <output_file>.flm";
+		print "   [-s <scaling factor> (coords in nas- and stl-files are divided by this factor; default 1)]";
+		print "   [-n <input data set number> (only used with flm- and cgns-input; default 1)]";
+		return;
+	}
+	print "input file", ifile;
+	print "output file", ofile;
+	print "scale", scale;
+	print "set-number", num;
+
+	set("ImpressAK/Meshes", "$importDataSetNumber", num);
+	set("ImpressAK/Meshes", "$importScalingFactor", scale);
+	set("ImpressAK/Meshes", "Import", ifile);
+	get("ImpressAK/Meshes", "GetComponentList", aux);
+	get_list_element(aux, 0, value);
+	strcpy(aux, "ImpressAK/Meshes");
+	add_id(aux, value);
+	set(aux, "ExportFlm", ofile);
+}

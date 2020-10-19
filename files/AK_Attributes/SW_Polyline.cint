@@ -1,0 +1,97 @@
+
+void SelectAndMove(
+	char s[])
+{
+	char select[8];
+	get("", "$select", select);
+	if(select[0] == 0) strcpy(select, "1");
+	if(strcmp(select, "1") == 0){
+		set("", "SelectedVertex", s);
+		strcpy(select, "0");
+	}else{
+		set("", "MoveVertex", s);
+		strcpy(select, "1");
+	}
+	set("", "$select", select);
+}
+
+void MoveAllXY(
+	char s[])
+{
+	char aux[0];
+	int n, i, i0;
+	double dx[2], x[3];
+	if(sscanf(s, " %lf %lf", dx[0], dx[1]) == 2){
+		resize(aux, 256);
+		get("", "SelectedVertex", aux);
+		sscanf(aux, " %d", i0);
+		get("", "NumVertices", aux);
+		sscanf(aux, " %d", n);
+		for(i = 0; i < n; i++){
+			sprintf(aux, "%d", i + 1);
+			set("", "SelectedVertex", aux);
+			get("", "CoordsOfSelectedVertex", aux);
+			sscanf(aux, " %lf %lf %lf", x[0], x[1], x[2]);
+			x[0] += dx[0];
+			x[1] += dx[1];
+			sprintf(aux, "%.14g %.14g %.14g", x[0], x[1], x[2]);
+			set("", "MoveVertex", aux);
+		}
+		sprintf(aux, "%d", i0);
+		set("", "SelectedVertex", aux);
+		get("", "BaseMeshName", aux);
+		if(strlen(aux)) set("", "ProjectOnto", aux);
+		resize(aux, 0);
+	}else{
+		set_error("x-y for moving must be given in format 'x y', for example '100 10.5'");
+	}
+}
+
+void SelectAndRemove(
+	char s[])
+{
+	set("", "SelectedVertex", s);
+	set("", "RemoveVertex", s);
+}
+
+
+void Refine(
+	char s[])
+{
+	char aux[0];
+	int done = 0, n, i;
+	double ds, x[3], y[3], z[3];
+	if(sscanf(s, " %lf", ds) != 1) return;
+	if(ds < 0.1){
+		set_error("refinement-segment-length must be > 0.1 m!");
+		return;
+	}
+	set("", "$refinementSegmentLength", s);
+	resize(aux, 256);
+	while(!done){
+		done = 1;
+		get("", "NumVertices", aux);
+		sscanf(aux, " %d", n);
+		set("", "SelectedVertex", aux);
+		get("", "CoordsOfSelectedVertex", aux);
+		sscanf(aux, " %lf %lf %lf", y[0], y[1], y[2]);
+		for(i = n - 2; i >= 0; i--){
+			sprintf(aux, "%d", i + 1);
+			set("", "SelectedVertex", aux);
+			get("", "CoordsOfSelectedVertex", aux);
+			sscanf(aux, " %lf %lf %lf", x[0], x[1], x[2]);
+			if(|x - y| > 1.5 * ds){
+				z = 0.5 * (x + y);
+				sprintf(aux, "%d", i + 2);
+				set("", "SelectedVertex", aux);
+				sprintf(aux, "%.14g %.14g %.14g", z[0], z[1], z[2]);
+				set("", "InsertPoint", aux);
+				done = 0;
+			}
+			y = x;
+		}
+	}
+	get("", "BaseMeshName", aux);
+	set("", "ProjectOnto", aux);
+	resize(aux, 0);
+}

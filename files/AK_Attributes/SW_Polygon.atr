@@ -1,0 +1,27 @@
+obj.Polygon
+	german:Polygon
+	doc:A polygon is a closed polyline.
+		german:Ein Polgon ist ein geschlossener Polygonzug.
+	string.projected area [ha]:ProjectedAreaHa
+		german:projizierte Fläche [ha]
+		doc:Polygon area @@A_proj/@ in the x-y-plane.
+			german:Polygonfläche  @@A_proj/@ in der x-y-Ebene.
+	opr.true area
+		german:geneigte Fläche
+		string.true area [ha]:TrueAreaHa
+			german:geneigte Fläche [ha]
+			doc:Area @@A_true/@ of the DHM surface within the polygon.
+				german:Wahre Fläche  @@A_true/@ der DHM-Oberfläche innerhalb des Polygons.
+		string.mean inclination [deg]:MeanInclination
+			german:mittlere Neigung [Grad]
+			doc:Average inclination @@alfa/@ of the DHM surface within the polygon, according to\
+				@@cos(alfa) = A_proj / A_true/@\
+				with @@A_proj/@ ->Polygon.ProjectedAreaHa and @@A_true/@ ->Polygon.TrueAreaHa.
+				german:Mittlere Neigung @@alfa/@ der vom Polygon eingeschlossenen DHM-Oberfläche, nach\
+					@@cos(alfa) = A_proj / A_true/@,\
+					mit @@A_proj/@ ->Polygon.ProjectedAreaHa und @@A_true/@ ->Polygon.TrueAreaHa.
+		apply.update data
+			set:UpdateTrueArea
+			german:Daten aktualisieren
+			doc:Re-compute the true area and average inclination.
+				german:Geneigte Fläche und Neigung neu berechnen.

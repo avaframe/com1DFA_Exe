@@ -1,0 +1,7 @@
+set("", "Height", "5")
+set("", "Width", "10")
+set("", "Spacing", "20")
+set("", "ResistanceCoefficient", "2.0")
+set("", "PsaWidth", "10")
+set("", "PsaSpacing", "20")
+set("", "PsaResistanceCoefficient", "2.0")

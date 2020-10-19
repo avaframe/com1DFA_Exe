@@ -1,0 +1,69 @@
+obj.Spray
+	german:Partikel
+	doc:Particle-cloud. Particles can be displayed with\
+		color and size dependent on result values.
+		german:Partikelwolke (PSA-Partikel-Pakete). Partikel\
+			können nach Ergebniswerten eingefärbt und\
+			größenskaliert werden.
+	bool.render as spheres:RenderAsSpheres
+		set:RenderAsSpheres
+		german:als Kugeln darstellen
+		doc:If on, particles are rendered as spheres, otherwise as\
+			points (markers), which is much less expensive\
+			in terms of rendering times. If the particels are\
+			rendered as points, the point size is determined by\
+			->VisObj.PointSize.
+			german:Wenn an, werden die Partikel als Kugeln dargestellt,\
+				andernfalls als Punkte, was weit weniger Rechenzeit\
+				zur Darstellung erfordert. Bei Punktdarstellung wird\
+				die Punktgröße durch ->VisObj.PointSize bestimmt.
+	bool.adaptive resolution:AdaptiveResolution
+		set:AdaptiveResolution
+		german:adaptive Aufloesung
+		doc:If on and ->.RenderAsSpheres is on, spheres will be rendered with\
+			adaptive resolution (smaller spheres with less segments).\
+			Otherwise, all spheres are rendered with a maximal number of segements\
+			(which may be slow).
+			german:Wenn an und ->.RenderAsSpheres ist an, werden alle Kugeln mit\
+				adaptiver Aufloesung (kleine Kugeln mit weniger Segmenten) dargestellt.\
+				Ansonsten wird fuer alle Kugeln die maximale Anzahl von Segmenten verwendet\
+				(was langsam sein kann).
+	bool.constant size:ConstantSize
+		set:ConstantSize
+		vis:ScalingVis
+		german:konstante Größe
+		doc:If on, all particles will be displayed with the same size\
+			and not scaled according to ->Spray.SizeAttribute.
+			german:Wenn an, werden alle Partikel mit gleicher Größe dargestellt\
+				und nicht nach ->Spray.SizeAttribute skaliert.
+	string.size attribute:SizeAttribute
+		options:GetAttributesList
+		set:SizeAttribute
+		vis:SizeAttributeVis
+		german:Größenattribut
+		doc:Result attribute that determines particle size.
+			german:Ergebnisattribut das die Partikelgröße bestimmt.
+	float.particle size scale:DropletSizeScale
+		set:DropletSizeScale
+		vis:ScalingVis
+		german:Partikelgrößenskalierung
+		doc:Size scaling factor [m/<unit of ->Spray.SizeAttribute>]\
+			for drawing particles.
+			german:Größenskalierungsfaktor [m/<Einheit von ->Spray.SizeAttribute>]\
+				zur Darstellung der Partikel.
+	float.minimal particle display size:MinDisplayDropletSize
+		set:MinDisplayDropletSize
+		vis:SizeAttributeVis
+		german:Mindestdarstellungsgröße
+		doc:Minimal display size for particles.
+			german:Mindestgröße mit der Partikel dargestellt werden.
+	float.maximal particle display size:MaxDisplayDropletSize
+		set:MaxDisplayDropletSize
+		vis:SizeAttributeVis
+		german:Maximale Darstellungsgröße
+		doc:Maximal display size for particles.
+			german:Maximalgröße mit der Partikel dargestellt werden.
+	string.number of particles:NumberOfDroplets
+		german:Partikelanzahl
+		doc:Number of currently displayed particles.
+			german:Anzahl der gerade dargestellten Partikel.

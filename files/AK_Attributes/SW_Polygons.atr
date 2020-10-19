@@ -1,0 +1,27 @@
+obj.Polygons
+	german:Polygone
+	doc:Container for polygons.
+		german:Behälter für Polygone.
+	string.create empty polygon
+		set:Create
+		german:leeres Polygon erzeugen
+		doc:Add an empty, new polygon.
+			german:Neues, leeres Polygon anfügen.
+	filename.import
+		pattern:*.shp,*.xy,*.xyz,*.dxf,*.DXF,*.nxyz
+		mode:r
+		set:import_polygons
+		multiselect
+		german:importieren
+		doc:Load polygons from various file formats. See ->Polylines.Import.
+			german:Polygone von Dateien verschiedenen Formats laden. Siehe ->Polylines.Import.
+	string.base mesh name:BaseMeshName
+		german:Basis-DHM
+		doc:Name of the DHM previously used for projection.
+			german:Name des zuletzt für die Projektion verwendeten DHMs.
+	string.project onto DHM:
+		set:ProjectOnto
+		options:MeshNamesList
+		german:auf DHM projizieren
+		doc:Project all contained Polygons onto a DHM.
+			german:Alle enthaltenen Polygone auf ein DHM projizieren.

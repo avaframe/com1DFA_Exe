@@ -1,0 +1,5 @@
+set("/Scale", "Length", "200.0")
+set("/Scale", "Color", "1 1 1")
+set("/Scale", "Font", "HELVETICA_18")
+set("/Scale", "ScreenPosition", "0.05 0.05")
+set("/Scale", "Active", "1")

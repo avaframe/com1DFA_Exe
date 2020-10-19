@@ -1,0 +1,354 @@
+
+// global data
+int verbose = 0;
+int nCells, nBndFaces, nChannels, nRows, iFront[0], iBack[0], nSteps, nQnts;
+int cellOfBndFace[0];
+double stepValues[0];
+char qntNames[0][64];
+char flmFile[512], caseDir[512], gidFiles[0][512];
+
+
+
+// hash indes for a face
+int face_index(int sel[3])
+{
+	// we don't expect more than 20 faces per cell!
+	return 20 * SelIndex(sel) + SelIndex2(sel);
+}
+
+
+
+int scan_gid_time_steps(
+	char gidFile[])
+{
+	char line[1024];
+	int data = 0, dim = 16;
+	double t;
+	FILE *fp;
+	nSteps = 0;
+	resize(stepValues, dim);
+	fp = fopen(gidFile, "r");
+	if(!fp){ print "cannot open file:", gidFile; return 1; }
+	while(fgets(line, 1024, fp)){
+		if(istrstr(line, "END") == 0){
+			data = 1;
+		}else if(data){ 
+			if(sscanf(line, " %lf", t) != 1){
+				print "error in gidas file", gidFile, ", in line", line, "?";
+				fclose(fp);
+				return 2;
+			}
+			if(nSteps >= dim){
+				dim *= 2;
+				resize(stepValues, dim);
+			}
+			stepValues[nSteps++] = t;
+		}
+	}
+	fclose(fp);
+	resize(stepValues, nSteps);
+	return 0;
+}
+
+
+
+int scan_mesh()
+{
+	int err = 0, mesh, sel[3], dict, bndSel;
+	int i;
+	// load mesh
+	mesh = MeshCreate();
+		if(!mesh){ print "cannot create mesh object!"; return 1; }
+	err = MeshRead(mesh, flmFile, 1);
+		if(err){ print "cannot create mesh object!"; return err; }
+	ResetCurrentMesh(mesh);
+
+	// count cells and bnd-faces, retrieve number of channels, channel length
+	nCells = NumCells();
+	print "number of cells in mesh:", nCells;
+	if(!SelInit("rear", sel) || SelType(sel) != 2) err = 1;
+		if(err){ print "selection 'rear' missing!"; return err; }
+	if(!SelInit("front", sel) || SelType(sel) != 2) err = 1;
+		if(err){ print "selection 'front' missing!"; return err; }
+	if(SelLen(sel) != nChannels){ print "number of faces in selection 'front' (",
+		SelLen(sel), ") different to number from input file (", nChannels, ")!"; return 2; }
+	nChannels = SelLen(sel);
+	print "number of channels according to selection'front' in mesh:", nChannels;
+	nRows = nCells / nChannels;
+	print "number of cells per channel:", nRows;
+	bndSel = MeshFaceSelectionCreate(mesh, "_bnd_faces_");
+		if(!bndSel){ print "cannot create '_bnd_faces_'!"; return 5; }
+	SelInit("_bnd_faces_", sel);
+	nBndFaces = SelLen(sel);
+	print "number of boundary faces in mesh:", nBndFaces;
+
+	// get indices of front and back faces for all channels for values array;
+	// build aux dictionary with face_index as key and number of bnd face as value;
+	// cellOfBndFace of bnd face i gives number of adjacent cell (for mirroring-out
+	// values); for front and back faces cellOfBndFace is set to -1 below;
+	dict = DictCreate(-1);
+		if(!dict){ print "cannot create auxiliary dict!"; return 6; }
+	SelInit("_bnd_faces_", sel);
+	resize(cellOfBndFace, nBndFaces);
+	cellOfBndFace = -1;
+	i = 0; while(SelNext(sel)){
+		cellOfBndFace[i] = SelIndex(sel);
+		DictSet(dict, face_index(sel), i++);
+	}
+        // note that channel index of a cell i must be (int) i / nRows!
+	resize(iFront, nChannels);
+	SelInit("front", sel);
+	while(SelNext(sel)){
+		i = DictGet(dict, face_index(sel));
+		if(i >= 0){
+			iFront[SelIndex(sel) / nRows] = i;
+			cellOfBndFace[i] = -1;
+		}
+	}
+	resize(iBack, nChannels);
+	SelInit("rear", sel);
+	while(SelNext(sel)){
+		i = DictGet(dict, face_index(sel));
+		if(i >= 0){
+			iBack[SelIndex(sel) / nRows] = i;
+			cellOfBndFace[i] = -1;
+		}
+	}
+	DictDelete(dict);
+	// mesh no longer needed
+	MeshDelete(mesh);
+	return 0;
+}
+
+
+
+// retrieve next value v from string line after position i;
+// advance i;
+int get_val(
+	char line[],
+	int i,
+	double v)
+{
+	while(line[i] == ' ' || line[i] == '\t') i++;
+	if(sscanf(line[i], "%lf", v) != 1){
+		print "cannot read value from position", i, "in line", line;
+		return 1;
+	}
+	while(line[i] != ' ' && line[i] != '\t' && line[i] != '\n') i++;
+	return 0;
+}
+
+
+
+// collect values for time step iStep and quantity iQnt for all
+// channels; return also unit of value
+int collect_values(
+	int iStep,
+	int iQnt,
+	double values[],
+	char unit[])
+{
+	char line[1024];
+	FILE *fp;
+	int iChannel, iCurStep, iUnit, i, j, err = 0;
+	double v;
+	char tick[2] = "'";
+	if(verbose) print "collecting values for step", stepValues[iStep], "and quantity", qntNames[iQnt];
+	strcpy(unit, "-");
+	for(iChannel = 0; iChannel < nChannels; iChannel++){
+		if(verbose) print "channel", iChannel, gidFiles[iChannel * nQnts + iQnt];
+		fp = fopen(gidFiles[iChannel * nQnts + iQnt], "r");
+		if(!fp){ print "cannot open", gidFiles[iChannel * nQnts + iQnt]; err = 1; break; }
+		iCurStep = -1;
+		iUnit = 0;
+		while(fgets(line, 1024, fp)){
+			if(iCurStep >= 0){ 
+				if(iCurStep == iStep){
+					j = 0;
+					// front face value
+					if(get_val(line, j, v) != 0){ err = 4; break; }
+					values[nCells + iFront[iChannel]] = v;
+					// cell values
+					for(i = 0; i < nRows; i++){
+						if(get_val(line, j, v) != 0){ err = 5; break; }
+						values[iChannel * nRows + i] = v;
+					}
+					// back face value
+					if(get_val(line, j, v) != 0){ err = 6; break; }
+					values[nCells + iBack[iChannel]] = v;
+					break;
+				}
+				iCurStep++;
+			}else if(istrstr(line, "END") == 0){
+				iCurStep = 0;
+			}else if(istrstr(line, "UNIT") == 0){
+				iUnit = 1;
+			}else if(iUnit == 1){
+				iUnit = 2;
+				j = strlen(line);
+				i = 0; while(i < j && line[i] != tick[0]) i++;
+				if(i == j){ print "error parsing unit from line", line,
+					"\nno ' found!"; err = 6; break; }
+				i++;
+				j = istrchr(line[i], tick[0]);
+				if(j < 0){ print "error parsing unit from line", line,
+					"\nno closing ' found!"; err = 7; break; }
+				if(j > 32){ print "unit string in line", line,
+					"too long!"; err = 7; break; }
+				line[i + j] = 0;
+				strcpy(unit, line[i]);
+			}else if(sscanf(line, " Discretization = %d", i) == 1){
+				if(i != nRows){
+					print "number of rows in mesh inconsistent"
+						" with number of rows (Discretization) in",
+						gidFiles[iChannel * nQnts + iQnt];
+					err = 2;
+					break;
+				}
+			}
+		}
+		fclose(fp);
+		if(err) break;
+	}
+	// mirror-out cell values to bnd except for front and back faces
+	for(i = 0; i < nBndFaces; i++) if(cellOfBndFace[i] >= 0)
+		values[nCells + i] = values[cellOfBndFace[i]];
+	if(err) print "error in collecting values for step", iStep, "and quantity", iQnt;
+	return err;
+}
+
+
+
+// create fl3 file for mesh flmFile filled with results from
+// gid files;
+// returns 0 on success;
+int create_fl3()
+{
+	int err = 0;
+	double values[0];
+	int nVals, iStep, iQnt, i;
+	char qname[128*1], unit[32];
+	char meshName[256*1], s[512*1], projDir[256*1], caseName[64];
+
+	// allocate aux array for result values
+	nVals = nCells + nBndFaces;
+	resize(values, nVals); values = 0.0;
+
+	// open fl3 data
+	strcpy(projDir, caseDir);
+	file_path_cut_name(projDir, caseName);
+	file_path_cut_name(projDir, s);
+	strcpy(meshName, flmFile);
+	file_path_make_relative(meshName, projDir);
+	SetResultProject(projDir);
+	err = OpenResultCase(caseName, meshName, "time", "");
+	// for all time steps:
+	for(iStep = 0; iStep < nSteps; iStep++){
+		// open step
+		err = OpenResultStep(stepValues[iStep]);
+		// for all quantities: collect data from gid and write
+		for(iQnt = 0; iQnt < nQnts; iQnt++){
+			collect_values(iStep, iQnt, values, unit);
+			sprintf(qname, "ElementData:BOOST:%s:%s", qntNames[iQnt], unit);
+			i = strlen(qname); while(i--) if(qname[i] == ' ' || qname[i] == '@') qname[i] = '_';
+			err = WriteResultFloat(qname, nVals, values);
+		}
+	}
+	err = CloseResult();
+
+	// free memory
+	resize(values, 0);
+}
+
+
+
+
+void get_word_after_colon(
+	char s[],
+	char word[])
+{
+	int i = istrchr(s, ':') + 1, j = 0;
+	while(s[i] == ' ') i++;
+	while(s[i] != '\n') word[j++] = s[i++];
+	word[j] = 0;
+}
+	
+int scan_input_file(
+	char inputFile[])
+{
+	char line[512], s[512];
+	int i, iChannel, iQnt = 0;
+	FILE *fp = fopen(inputFile, "r");
+	if(!fp){ print "cannot open input file", inputFile; return 1; }
+	while(fgets(line, 512, fp)){
+		if(sscanf(line, " MESH: %s", s) == 1){
+			get_word_after_colon(line, flmFile);
+			print "mesh file", flmFile;
+		}else if(sscanf(line, " CASE: %s", s) == 1){
+			get_word_after_colon(line, caseDir);
+			print "output case directory", caseDir;
+		}else if(sscanf(line, " CHANNEL: %d", i) == 1){
+			iChannel = i - 1;
+			iQnt = 0;
+		}else if(sscanf(line, " QUANTITY: %s", s) == 1){
+			if(nQnts) get_word_after_colon(line, qntNames[iQnt]);
+		}else if(sscanf(line, " FILE: %s", s) == 1){
+			if(nQnts) get_word_after_colon(line, gidFiles[iChannel * nQnts + iQnt]);
+			iQnt++;
+		}
+	}
+	fclose(fp);
+	nChannels = iChannel + 1;
+	nQnts = iQnt;
+}
+
+
+
+void main()
+{
+	int err = 0;
+	int i, j;
+	char s[1024], inputFile[512];
+	get("/", "Arglist", s);
+	print "arglist:", s;
+
+	i = istrstr(s, "-boost2fire");
+	if(i < 0){ print "argument -boost2fire missing - no input file specified!"; return; }
+	strcpy(inputFile, s[i + 12]); i = strlen(inputFile); while(inputFile[--i] == ' ') inputFile[i] = 0;
+	printf(" input file '%s'\n", inputFile);
+	
+	nQnts = 0;
+	err = scan_input_file(inputFile);
+	if(err){ print "error scanning input file", inputFile; return; }
+
+	print nChannels, "channels";
+	print nQnts, "quanties";
+	resize(qntNames, nQnts);
+	resize(gidFiles, nChannels * nQnts);
+
+	err = scan_input_file(inputFile);
+	if(err){ print "error scanning input file - pass 2"; return; }
+
+	if(verbose){
+		print "quantities:"; for(i = 0; i < nQnts; i++) print i+1, qntNames[i];
+		print "filenames:";
+		for(i = 0; i < nChannels; i++){
+			print "channel", i+1;
+			for(j = 0; j < nQnts; j++)
+				print j+1, gidFiles[i * nQnts + j];
+		}
+	}
+
+	err = scan_gid_time_steps(gidFiles[0]);
+	if(err){ print "error scanning time steps"; return; }
+
+	if(verbose) print "stepValues:", stepValues;
+
+	err = scan_mesh();
+	if(err){ print "error scanning mesh file"; return; }
+
+	err = create_fl3();
+	if(err){ print "error writing result file"; return; }
+
+	print "done.";
+}

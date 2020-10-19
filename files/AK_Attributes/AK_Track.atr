@@ -1,0 +1,32 @@
+obj.Track
+	string.type:Type
+		set:Type
+		options:TypeOpts
+	string.label:Label
+		set:Label
+	filename.load
+		set:Load
+		mode:r
+		pattern:*.csv
+		vis:VisCurve
+	float.angle/time:GetPt
+		set:SetPt
+		vis:VisCyclicEvent
+	string.add event (t id)
+		set:AddId
+		vis:VisArbiEvent
+	string.remove event
+		set:RemoveId
+		options:IdOpts
+		vis:VisArbiEvent
+	float.activate at
+		set:ActivateAt
+		vis:VisActivation
+	float.deactivate at
+		set:DeActivateAt
+		vis:VisActivation
+	string.displace:DisplacedPart
+		set:DisplacedPart
+		options:DisplacedPartOpts
+		vis:VisCurve
+	float.current value:CurrentValue

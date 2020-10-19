@@ -1,0 +1,270 @@
+
+
+
+void fit_quadric_load_grf(char s[])
+{
+	set("", "FitQuadric", "");
+	set("../../../GrfObjects", "Import", "quad.grf");
+}
+
+
+
+void orientation_surface_normal(char s[])
+{
+	char id[1*256], patchId[1*256];
+	set("", "AddPatchSelection", s);
+	get("", "Id", id);
+	sprintf(patchId, "ORT_NORMAL_%s", id);
+	id = "../";
+	get("..", "$latest_comp", id[3]);
+	set(id, "Color", "0 0 1");
+	set(id, "Rename", patchId);
+	set("", "Active", "0");
+}
+
+
+
+void orientation_start(char s[])
+{
+	char id[1*256], patchId[1*256];
+	set("", "AddPatchSelection", s);
+	get("", "Id", id);
+	sprintf(patchId, "ORT_START_%s", id);
+	id = "../";
+	get("..", "$latest_comp", id[3]);
+	set(id, "Color", "0 0 1");
+	set(id, "Rename", patchId);
+}
+void orientation_end(char s[])
+{
+	char id[1*256], patchId[1*256];
+	set("", "AddPatchSelection", s);
+	get("", "Id", id);
+	sprintf(patchId, "ORT_END_%s", id);
+	id = "../";
+	get("..", "$latest_comp", id[3]);
+	set(id, "Color", "1 0 0");
+	set(id, "Rename", patchId);
+}
+
+
+
+void pot2xyzv(char fname[], char flags[], double pot[])
+{
+	FILE *fp; int i; double x[3];
+	fp = fopen(fname, "w");
+	if(!fp) return;
+	i = NumNodes();
+	while(i--){
+		if(flags[i] != -1){
+			GetVertexCoords(i, x);
+			fprintf(fp, "%g %g %g %g\n", x[0], x[1], x[2], pot[i]);
+		}
+	}
+	fclose(fp);
+}
+
+
+
+void gradGauss(int i, double pot[], double g[3])
+{
+	int j, k, l, n;
+	double p_face, normal[3];
+	g = 0.0;
+	j = NumCellFaces(i);
+	while(j--){
+		p_face = 0.0;
+		n = NumCellFaceVerts(i, j);
+		for(k = 0; k < n; k++){
+			l = CellFaceVertexIndex(i, j, k);
+			p_face += pot[l];
+		}
+		p_face /= n;
+		GetFaceNormal(i, j, normal);
+		g += (p_face * normal);
+	}
+	g *= (1.0 / CellVolume(i));
+}
+
+void gradLeastSquare(int i, double pot[], double g[3])
+{
+	int j, k, l, m, n, n0, n1;
+	double x[3], x0[3], x1[3], e[3], dp, A[3][3], b[3];
+	A = 0.0;
+	b = 0.0;
+	j = NumCellFaces(i);
+	while(j--){
+		n = NumCellFaceVerts(i, j);
+		for(k = 0; k < n; k++){
+			n0 = CellFaceVertexIndex(i, j, k);
+			n1 = CellFaceVertexIndex(i, j, (k + 1) % n);
+			GetVertexCoords(n0, x0);
+			GetVertexCoords(n1, x1);
+			dp = pot[n1] - pot[n0];
+			e = x1 - x0;
+			for(l = 0; l < 3; l++){
+				b[l] += dp * e[l];
+				for(m = 0; m < 3; m++){
+					A[l][m] += e[l] * e[m];
+				}
+			}
+		}
+	}
+	solveLES(3, A, b, g);
+	g /= (|g| + 1.0e-50);
+}
+
+
+
+void potgrad2grf(char fname[], char flags[], double pot[])
+{
+	int i, j, n;
+	double g[3], x[3], s;
+	FILE *grf = fopen(fname, "w");
+	i = NumCells();
+	while(i--){
+		j = NumCellVerts(i);
+		while(j--) if(flags[CellVertexIndex(i, j)] == -1) break;
+		if(j >= 0) continue;
+		//gradLeastSquare(i, pot, g);
+		gradGauss(i, pot, g);
+		GetCellCenter(i, x);
+		s = CellVolume(i) ** 0.333;
+		g *= 0.5 * s / (|g| + 1.0e-30);
+		fprintf(grf, "l blue %g %g %g %g %g %g\n",
+			x[0] - g[0], x[1] - g[1], x[2] - g[2],
+			x[0] + g[0], x[1] + g[1], x[2] + g[2]);
+	}
+	fclose(grf);
+}
+
+
+
+void potCorrSurf(char flags[], double grad[][3])
+{
+	int sel[3], i, j, k, n;
+	double normal[3], normals[0][3], cosa;
+FILE *grf = fopen("grad_corr.grf", "w");
+double x[3], y[3], s;
+	resize(normals, NumNodes());
+	normals = 0.0;
+	set("", "AddSurfaceSelection", "tmp_surf");
+	if(SelInit("tmp_surf", sel)){
+		while(SelNext(sel)){
+			i = SelIndex(sel);
+			j = SelIndex2(sel);
+			GetFaceNormal(i, j, normal);
+			k = NumCellFaceVerts(i, j);
+			while(k--){
+				n = CellFaceVertexIndex(i, j, k);
+				if(flags[n] != 1 && flags[n] != 2){
+					normals[n] += normal;
+					flags[n] = 3;
+GetVertexCoords(n, x);
+fprintf(grf, "p red %g %g %g\n", x[0], x[1], x[2]);
+				}
+			}
+		}
+	}
+	n = NumNodes();
+	while(n--){
+		if(flags[n] == 3){
+			normal = normals[n];
+			normal /= |normal|;
+			cosa = normal . grad[n];
+			grad[n] -= cosa * normal;
+			grad[n] /= (|grad[n]| + 1.0e-30);
+			//if(cosa < 0.9) flags[n] = 0;
+GetVertexCoords(n, x);
+s = sqrt(|normals[n]| / 4.0);
+y = normal;
+y *= s;
+y += x;
+fprintf(grf, "l red %g %g %g %g %g %g\n", x[0], x[1], x[2], y[0], y[1], y[2]);
+y = grad[n];
+y *= s;
+y += x;
+fprintf(grf, "l blue %g %g %g %g %g %g\n", x[0], x[1], x[2], y[0], y[1], y[2]);
+		}
+	}
+	resize(normals, 0);
+	//ComputeDisplacements(flags, grad, "", "LaplaceVolume", 1.0e-4, 200);
+	ComputeDisplacements(flags, grad, "LaplaceEdgeLength", "LaplaceEdgeLength", 1.0e-4, 200);
+fclose(grf);
+}
+
+
+
+void grad2grf(char fname[], char flags[], double grad[][3])
+{
+	double x[3], g[3];
+	int n = NumNodes();
+	FILE *grf = fopen(fname, "w");
+	if(!grf) return;
+	while(n--){
+		if(flags[n] != -1){
+			GetVertexCoords(n, x);
+			g = 0.5 * 0.0005 * grad[n];
+			fprintf(grf, "l blue %g %g %g %g %g %g\n",
+				x[0] - g[0], x[1] - g[1], x[2] - g[2],
+				x[0] + g[0], x[1] + g[1], x[2] + g[2]);
+		}
+	}
+	fclose(grf);
+}
+
+
+
+void flags2grf(char fname[], char flags[])
+{
+	char col[4][16];
+	double x[3];
+	int n = NumNodes();
+	FILE *grf = fopen(fname, "w");
+	col[0] = "gray";
+	col[1] = "green";
+	col[2] = "red";
+	col[3] = "blue";
+	if(!grf) return;
+	while(n--){
+		GetVertexCoords(n, x);
+		fprintf(grf, "p %s %g %g %g\n",
+			col[flags[n] + 1], x[0], x[1], x[2]);
+	}
+	fclose(grf);
+}
+
+
+
+void compute_orientation(char s[])
+{
+	char id[256], id1[256], id2[256], flags[0];
+	double pot[0];
+	int sel[3], nNodes, i;
+	set("..", "CurrentFrmlMesh", "1");
+	get("", "Id", id);
+	sprintf(id1, "ORT_START_%s", id);
+	sprintf(id2, "ORT_END_%s", id);
+	if(SelInit(id1, sel) && SelInit(id2, sel)){
+		nNodes = NumNodes();
+		resize(flags, nNodes);
+		flags = -1;
+		resize(pot, nNodes);
+		pot = 0.5;
+		FlagSelectedNodes(id, 0, flags);
+		FlagSelectedNodes(id1, 1, flags);
+		FlagSelectedNodes(id2, 2, flags);
+		//flags2grf("flags.grf", flags);
+		i = nNodes; while(i--){
+			if(flags[i] == 1) pot[i] = 0.0;
+			if(flags[i] == 2) pot[i] = 1.0;
+		}
+		ComputePotential(flags, 0.0, pot, 1.0e-6, 1000, 0);
+		//i = 0010; while(i--) ComputePotential(flags, 0.0, pot, 1.0e-4, 5, 1);
+		pot2xyzv("pot.xyzv", flags, pot);
+                potgrad2grf("grad.grf", flags, pot);
+		resize(pot, 0);
+		resize(flags, 0);
+	}
+	set("..", "CurrentFrmlMesh", "0");
+}

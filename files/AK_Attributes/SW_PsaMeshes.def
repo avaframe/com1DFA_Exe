@@ -1,0 +1,8 @@
+set("", "Height", "500.0")
+set("", "Dx", "10.0")
+set("", "Dy", "10.0")
+set("", "Dz", "4.0")
+set("", "GridExpansionLH", "1.2")
+set("", "GridExpansionSN", "0.5")
+set("", "SmoothingFactor", "0.0")
+set("", "$dzMax", "3")

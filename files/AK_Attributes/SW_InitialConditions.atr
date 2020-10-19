@@ -1,0 +1,60 @@
+obj.ReleaseAreas
+	german:Anbruch-/Aufnahmegebiete
+	doc:Container for release or entrainment areas (->ReleaseArea.).
+		german:Behälter für Anbruch- bzw. Aufnahmegebiete (->ReleaseArea.).
+	filename.import
+		pattern:*.shp,*.rel,*.ent,*.dxf,*.DXF,*.nxyz,*.xy,*.xyz
+		mode:r
+		set:import_release_entrainment
+		multiselect
+		german:importieren
+		doc:Load release or entrainment areas from various file formats. Of these only SAMOS rel-files (*.rel,*.ent)\
+			contain data on snow depth and density. From other file formats, only the contour\
+			polygon is defined, unless *.nxyz/*.xy/*.xyz contain annotations (->Polylines.Annotations)\
+			'ah=depth' und 'rho=density' (values in SI units). \
+			The SAMOS rel-files contain:\
+			\
+			<release depth> <release density> \
+			<number of polygon-points> \
+			<x1> <y1> <z1> \
+			... \
+			<xn> <yn> <zn> \
+			\
+			This block may repeat an arbitrary number of times, each corresponds\
+			to one area.\
+			\
+			For the other file formats see ->Polylines.Import.
+			german:Anbruch-/Aufnahmegebiete von verschiedenen Dateiformaten laden. Davon enthalten nur\
+				SAMOS-rel-Dateien (*.rel, *.ent) Angaben über Schneemächtigkeit und -dichte.\
+				Von anderen Dateiformaten werden nur die Umriss-Polygone definiert, ausser\
+				*.nxyz/*.xy/*.xyz enthalten die Annotationen (->Polylines.Annotations)\
+				'ah=Mächtigkeit' und 'rho=Dichte' (Werte in SI Einheiten). \
+				SAMOS rel-Dateien enthalten:\
+				\
+				<Anbruchmächtigkeit> <Anbruchdichte> \
+				<Anzahl der Polygon-Punkte> \
+				<x1> <y1> <z1> \
+				... \
+				<xn> <yn> <zn> \
+				\
+				Solche Blöcke können sich beliebig oft wiederholen, jeder stellt\
+				ein Gebiet dar.\
+				\
+				Andere Datenformate siehe ->Polylines.Import.
+	string.new area
+		set:create_rel_ent
+		german:neues Gebiet
+		doc:Add an empty, new release or entrainment area.
+			german:Neues, leeres Anbruch- oder Aufnahemgebiet anfügen.
+	string.clone area
+		set:Clone
+		options:GetComponentList
+		multiselect
+		german:Gebiet klonen
+		doc:Copy an existing release or entrainment area.
+			german:Enthaltenes Anbruch- oder Aufnahmegebiet kopieren.
+	apply.get release are info
+		set:get_relarea_info
+		german:ReleaseArea Statisik
+		doc:generate release area info. Text file is written to project directory.
+			german:erstelle ReleaseArea Statistik (Textdatei im Projektverzeichnis)

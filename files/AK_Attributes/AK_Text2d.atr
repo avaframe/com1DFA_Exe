@@ -1,0 +1,41 @@
+obj.Text2d
+	german:Beschriftung
+	doc:Two dimensional text object that can be positioned in\
+		screen-coordinates of the drawing area.
+		german:Beschriftung, die in Bildschirmkoordinaten in der\
+			Zeichenfläche positioniert werden kann.
+	text.text:Text
+		set:Text
+		german:Text
+	string.font:Font
+		set:Font
+		options:GetFontList
+		german:Text-Type
+		doc:Text font to be used.
+			german:Zu verwendende Text-Type.
+	string.horizontal alignment:HorizontalAlignment
+		options:HorizontalAlignmentOpts
+		set:HorizontalAlignment
+		german:horizontale Ausrichtung
+		doc:Type of horizontal alignment for the text.
+			german:Art der horizontalen Textausrichtung.
+	string.vertical alignment:VerticalAlignment
+		options:VerticalAlignmentOpts
+		set:VerticalAlignment
+		german:vertikale Ausrichtung
+		doc:Type of verticel alignment for the text.
+			german:Art der vertikalen Textausrichtung.
+	bool.frame:Frame
+		set:Frame
+		german:Rahmen
+	float2.lower left corner:Xll
+		german:unterer linker Eckpunkt
+	float2.upper right corner:Xor
+		german:oberer rechter Eckpunkt
+	float2.min size:MinSize
+		set:MinSize
+		german:Mindestgröße
+		doc:Mimimal size of bounding box in x and y direction relativ to screen size.
+			german:Mindestgröße des umschließenden Rechtecks in x und y Richtung\
+			relativ zur Fenstergröße.
+

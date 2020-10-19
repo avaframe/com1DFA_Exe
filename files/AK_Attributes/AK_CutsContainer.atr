@@ -1,0 +1,35 @@
+obj.Cuts
+	german:Schnittflächen
+	doc:Container for cut-surfaces (->Cut) through 3D result space.
+		german:Behälter für Ergebnis-Schnittflächen.
+	string.new surface cut
+		set:CreateSurfaceCut
+		german:neuer Oberflächenschnitt
+		doc:Append a new, empty surface cut.
+			german:Neuen, leeren Oberflächenschnitt anfügen.
+	string.new plane cut
+		set:CreatePlaneCut
+		german:neue Schnittebene
+		doc:Append a new, empty planar cut.
+			german:Neue, leere Schnittebene anfügen.
+	string.new formula cut
+		set:CreateFormulaCut
+		german:neue Formel-Schnittfläche
+		doc:Append a new, empty formula cut.
+			german:Neue, leere Formel-Schnittfläche anfügen.
+	string.new isosurface cut
+		set:CreateIsoSurfaceCut
+		german:neuer Iso-Flächenschnitt
+		doc:Append a new, empty iso-surface cut.
+			german:Neuen, leeren Iso-Flächenschnitt anfügen.
+	string.new polyline-z-cut
+		vis:polyline_z_cut_vis
+		set:create_polyline_z_cut
+		options:polyline_options
+		german:neuer Polygonzug-Z-Schnitt
+		doc:Append a new, empty z-cut through the specified ->Polyline..\
+			A polyline z-cut is a ->FormulaCut. with an automatically generated\
+			formula so that the cut surface is the polyline extruded in the z-direction.
+			german:Neue, leere Schnittfläche parallel zur z-Achse durch den gewählten\
+				->Polyline. anfügen. Dafür wird automatisch eine ->FormulaCut. mit\
+				entsprechender Formel erzeugt.

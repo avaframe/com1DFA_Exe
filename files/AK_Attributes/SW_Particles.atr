@@ -1,0 +1,16 @@
+obj.Particles
+	german:DFA-Partikel
+	doc:Numerical particles for shallow water model.
+		german:Numerische Partikel im Flachwassermodell (DFA).
+	int.number of particles:NumberOfParticles
+		german:Partikelanzahl
+		doc:Number of numerical shallow-water-particles.
+			german:Anzahl der numerischen Flachwasserpartikel.
+	float.total mass:TotalParticlesMass
+		german:Gesamtmasse
+		doc:Total particles mass.
+			german:Gesamtmasse der numerischen Partikel.
+	float.total kinetic energy:TotalParticlesKineticEnergy
+		german:Gesamtenergie kinetisch
+		doc:Sum of kinetic energy (@@mv^2/@) of all particles.
+			german:Summe der kinetischen Energie (@@mv^2/@) aller Partikel.

@@ -1,0 +1,27 @@
+obj.Scale
+	german:Skala
+	doc:Length-scale shown as line in the viewer window.
+		german:Laengenskala, die im Anzeigefenster dargestellt wird.
+	float.length:Length
+		set:Length
+		german:Laenge
+		doc:Length of the scale in DHM units [m].
+			german:Länge der Skala in DHM-Einheiten [m].
+	float.length of the ticks relative to the text size:RelativeWidth
+		set:RelativeWidth
+		german:Laenge der Markierungsstriche relativ zur Textgroesse
+	bool.labels:Labels
+		set:Labels
+		german:Beschriftung
+		doc:Switch to de/activate tick labels.
+			german:Ein/Ausschalter für die Beschriftung der Markierungstexte.
+	string.text font for labels:Font
+		set:Font
+		options:FontOptions
+		german:Texttyp-Beschriftung
+	float2.screen position:ScreenPosition
+		set:ScreenPosition
+		pick screen
+		german:Bildschirmposition
+		doc:Position of the scale-origin in the viewer window (in window coordinates).
+			german:Position des Skalenursprungs im Zeichenfenster (in Fenster-Koordinaten).

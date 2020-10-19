@@ -1,0 +1,261 @@
+obj.VisObj
+	german:SichtObjekt
+	doc:VisObj is a visible object, i.e. an object that is shown in the drawing area (->FOX_Viewer.)\
+		It can be two- or threedimensional. Note that objects are not shown if\
+		->Object.Active is switched off. A visible object has attributes like color, line width etc..
+		german:SichtObjekt ist ein sichtbares Objekt, d.h. ein Objekt, das in der Zeichenfläche (->FOX_Viewer.)\
+			dargestellt wird. Es kann zwei- oder dreidimensional sein. Beachten Sie, dass\
+			Objekte nur dargestellt werden, wenn ->Object.Active eingeschaltet ist.\
+			Ein sichtbares Objekt hat Eigenschaften wie Farbe, Liniendicke etc..
+	bool.visible:Visibility
+		set:Visibility
+		german:sichtbar
+		doc:If on, the object is displayed in the drawing area (->FOX_Viewer.).
+			german:Wenn an, wird das Objekt in der Zeichenfläche (->FOX_Viewer.) dargestellt.
+	bool.auto-colored:AutoColored
+		set:AutoColored
+		german:auto-gefärbt
+		doc:If on, the object color is set to the inverse background color (->FOX_Viewer.BgColor).\
+			Else, the selected color (->VisObj.Color) applies.
+			german:Wenn an, wird die Objektfarbe auf die inverse Hintergrundfarbe gesetzt (->FOX_Viewer.BgColor).\
+				Ansonsten wird die gewählte Farbe (->VisObj.Color) angewandt.
+	color3.color:Color
+		vis:VisColor
+		set:Color
+		german:Farbe
+		doc:Color with which the object is rendered.
+			german:Farbe mit der das Objekt dargestellt wird.
+	float.point size:PointSize
+		set:PointSize
+		german:Punktgröße
+		doc:Size in pixels for rendering any points of the object.
+			german:Größe in Pixel zur Darstellung von Punkten des Objektes.
+	float.line width:LineWidth
+		set:LineWidth
+		german:Liniendicke
+		doc:Line width in pixel for rendering any lines of the object.
+			german:Liniendicke in Pixel zur Darstellung aller Linien des Objektes.
+	bool.points antialiased:AntialiasPoints
+		set:AntialiasPoints
+		german:geglättete Punkte
+		doc:If on, points of the object are rendered anti-aliased (i.e. smoothed).\
+			This may take effect only for larger values of ->VisObj.PointSize.
+			german:Wenn an, werden Punkte des Objektes gerunded dargestellt.\
+				Das kann sich evtl. nur bei größeren Werten der ->VisObj.PointSize auswirken.
+	bool.lines antialiased:AntialiasLines
+		set:AntialiasLines
+		german:geglättete Linien
+		doc:If on, lines are rendered anti-aliased (i.e. smoothed).
+			german:Wenn an, werden Linien geglättet dargestellt.
+	bool.polygons filled:PolygonsFilled
+		set:PolygonsFilled
+		german:Polygone gefüllt
+		doc:If on, polygons of the object are filled.
+			german:Wenn an, werden Polygone gefüllte dargestellt.
+	bool.shaded:Shaded
+		set:Shaded
+		german:schattiert
+		doc:If on, the object is rendered shaded, according to lighting ->FOX_Viewer.lighting.
+			german:Wenn an, wird das Objekt schattiert dargestellt,\
+				je nach der eingestellten Beleuchtung ->FOX_Viewer.lighting.
+	bool.transparent:Blending
+		set:Blending
+		german:transparent
+		doc:If on, the object is displayed transparent, according to ->VisObj.Opacity.
+			german:Wenn an, wird das Objekt durchscheinend entsprechend ->VisObj.Opacity dargestellt.
+	float.opacity:Opacity
+		set:Opacity
+		vis:VisOpacity
+		german:Opazität
+		doc:Opacity (intransparency) [0,1] of the object,\
+			effective only if	->VisObj.Blending is switched on.\
+			A value of 0 makes the object entirely transparent (i.e. invisible),\
+			a value of 1 makes it (nearly) intransparent.
+			german:Opazität (Undurchsichtigkeit) [0,1] des Objektes,\
+				nur wirksam wenn ->VisObj.Blending eingeschaltet.\
+				Ein Wert von 0 macht das Objekt vollständig transparent (also unsichtbar),\
+				ein Wert von 1 macht es (fast) undurchsichtig.
+	opr.texturing
+		german:Textur/Orthofotos
+		doc:Project images on to the object.
+			german:Bilder (z.B. Luftbilder) auf das Objekt projizieren.
+		filename.load texture file:TextureFileName
+			set:TextureFileName
+			pattern:*.ppm,*.jpg,*.JPG
+			mode:r
+			german:Textur-/Fotodatei laden
+			doc:Load a texture image file. A geo-referencing-file is automatically\
+				loaded, if it has the same base-name and the extension *.jgw for a *.jpg image,\
+				*.JGW for a *.JPG image and *.texpar for a *.ppm image. If no *.jgw or *.JGW\
+				file is found, an existing *.texpar file is loaded in any case.\
+				Only one image file can be used at the same time for all visible objects.
+				german:Textur-/Fotodatei laden. Eine Geo-Referenzierungs-Datei wird automatisch geladen,\
+					wenn sie den selben Basis-Namen aufweist und die Erweiterung *.jgw für eine *.jpg-Datei,\
+					*.JGW für eine *.JPG-Datei und *.texpar für eine *.ppm-Datei.\
+					Eine gleichnamige *.texpar-Datei wird auch geladen, wenn keine *.jgw oder *.JGW-Datei\
+					gefunden wird.\
+					Es kann nur eine Texturdatei gleichzeitig für alle sichtbaren Objekte verwendet werden.
+		opr.load texture from multiple files
+			german:Textur/Fotos aus mehreren Dateien
+			doc: More than one image file may be combined into one image and saved as new file, such that it can be\
+				used as texture file. A corresponding world file must be present for all images and\
+				the images must share a consistent pixel grid (same pixel size and axis and consistent position).
+				german:Mehrere Bild-Dateien können geladen und zu einem Bild zusammengesetzt und gespeichert werden,\
+					so dass sie als Textur verwendet werden können. Eine entsprechende World-Datei muss für\
+					jede Bild-Datei vorliegen und die Bilder müssen ein konsistentes Pixelraster aufweisen\
+					(also diesselbe Pixelgröße und Pixelachsen und konsistente Lage).
+			filename.add image tile to selection
+				german:Bilddatei zu Auswahl hinzufügen
+				set:TextureTileAdd
+				pattern:*.ppm,*.jpg,*.JPG
+				mode:r
+				multiselect
+			col.selected image tiles:TextureTiles
+				german:Bilddateien-Auswahl
+				set:TextureTiles
+			int.jpg quality %:JpgQuality
+				german:jpg-Qualität %
+				set:JpgQuality
+				volatile
+				doc:Quality in percent of the jpg-image generated for assembled tiles: \
+					  0...low, small file size \
+					100...high, large file size
+					german:Qualität in Prozent der für zusammengesetzte Texturen erzeugten jpg-Datei: \
+						  0...niedrig, kleine Datei \
+						100...hoch, große Datei
+			filename.combine image tiles and save them as a new file and load it as texture
+				german:ausgewählte Bilddateien zuammensetzen, als neue Datei speichern und laden
+				doc:Combine the selected image files, save the resulting image into the specified file, create a correspoding\
+					world file and apply it as texture. This operation will fail if the image files do not share\
+					the same pixel grid or if there are not corresponding world files for all selected images.\
+					The images may overlap. The last image according to the selection order has priority in the\
+					overlapping region.
+					german:Die ausgewählten Bilddateien zusammenfügen und als neues Bild in der spezifizierten Datei\
+						speichern, eine entsprechende World-Datei erzeugen und das Bild als Textur verwenden.\
+						Diese Operation scheitert, wenn die Bild-Dateien kein gemeinsames Pixelraster aufweisen oder\
+						wenn nicht World-Dateien zu allen ausgewählten Bilddateien vorliegen. Die Bilder dürfen sich\
+						überlappen. Das letzte Bild, in der Reihenfolge der Auswahl, hat Vorrang im Überlappungsbereich.
+				set:TextureTilesLoad
+				pattern:*.ppm,*.jpg,*.JPG
+				mode:w
+		int.max texture width and height (in pixels):TextureMaxSize
+			set:TextureMaxSize
+			german:max Texturbreite und -höhe (in Pixel)
+			doc:Maximal width and height in pixels of the texture image. If the image is\
+				larger, it will be scaled down automatically.
+				german:Maximale Breite und Höhe des Texturbildes in Pixel. Ist das Bild größer,\
+					wird es automatisch verkleinert.
+		bool.textured:Textured
+			set:Textured
+			german:texturiert
+			doc:If on, the specified image file ->VisObj.TextureFileName is projected normal to the\
+				z-direction onto the object. The color of the object should be set to white in this case.\
+				If on and no image file is specified, the image file used for other objects is reused.
+				german:Wenn an, wird die spezifizierte Texturdatei ->VisObj.TextureFileName in z-Richtung\
+					auf das Objekt projiziert. Die Farbe sollte in diesem Fall auf weiss gesetzt werden.\
+					Wenn an und keine Texturdatei ist spezifiziert, wird eine etwaige Texturdatei eines\
+					anderen Objektes wiederverwendet.
+		bool.repeat:TextureRepeat
+			set:TextureRepeat
+			german:wiederholt
+			doc:If on, the texture image is repeated periodically for projection.
+				german:Wenn an, wird das Texturbild für die Projektion periodisch wiederholt.
+		float4.texture s-parameters:TextureParametersS
+			set:TextureParametersS
+			german:Textur-s-Parameter
+			doc:Texturing width transformation values according to the OpenGL specification.
+				german:Textur-Breiten-Transformationsparameter nach der OpenGL-Spezifikation.
+		float4.texture t-parameters:TextureParametersT
+			set:TextureParametersT
+			german:Textur-t-Parameter
+			doc:Texturing height transformation values according to the OpenGL specification.
+				german:Textur-Höhen-Transformationsparameter nach der OpenGL-Spezifikation.
+		apply.fit
+			set:TextureFit
+			german:anpassen
+			doc:Fit the texture-size onto the object.
+				german:Texturgröße an das Objekt anpassen.
+		opr.reference texture by coords
+			german:Georeferenzierung durch Koordinaten
+			doc:Define geo-referencing by specifying three matching points on the object\
+				and the texture image.
+				german:Geo-Referenzierung durch Vorgabe von drei Passpunkten\
+					auf dem Objekt und dem Texturbild.
+			float2.texture pos 1:TexturePosX0
+				set:TexturePosX0
+				german:Texturpunkt 1
+				pick world
+			float2.world pos 1:TextureWorldPosX0
+				set:TextureWorldPosX0
+				german:Objektpunkt 1
+				pick world
+			float2.texture pos 2:TexturePosX1
+				set:TexturePosX1
+				german:Texturpunkt 2
+				pick world
+			float2.world pos 2:TextureWorldPosX1
+				set:TextureWorldPosX1
+				german:Objektpunkt 2
+				pick world
+			float2.texture pos 3:TexturePosX2
+				set:TexturePosX2
+				german:Texturpunkt 3
+				pick world
+			float2.world pos 3:TextureWorldPosX2
+				set:TextureWorldPosX2
+				german:Objektpunkt 3
+				pick world
+			apply.apply
+				set:ApplyTextureReference
+				german:Anwenden
+				doc:Compute a georeference according to the specified matching points.
+					german:Georeferenzierung aus den Passpunkten berechnen.
+		apply.save texture parameters
+			set:SaveTexPar
+			german:Texturparameter speichern
+			doc:Save the texture-parameters for geo-referencing to a *.texpar file.
+				german:Textur-Parameter für die Geo-Referenzierung als *texpar-Datei speichern.
+	opr.polygon offset
+		german:Polgon-Versatz
+		doc:Polygon offset can be used to determine which of several co-incident objects is visible.
+			german:Polygon-Versatz kann angewandt werden, um zu bestimmen,\
+				welches von mehreren aufeinanderliegenden Objekten sichtbar ist.
+		bool.fill-offset:PolygonOffsetFill
+			set:PolygonOffsetFill
+			german:Flächenversatz
+			doc:If on, offset is applied to filled polygons of object.
+				german:Wenn an, wird Versatz auf gefüllte Polygone des Objektes angewandt.
+		bool.line-offset:PolygonOffsetLine
+			set:PolygonOffsetLine
+			german:Linienversatz
+			doc:If on, offset is applied to lines of object.
+				german:Wenn an, wird Versatz auf Linien des Objektes angewandt.
+		float2.offset-factors:PolygonOffsetFactors
+			set:PolygonOffsetFactors
+			german:Versatz-Parameter
+			doc:offset-factor according to OpenGL-specification.
+				german:Versatzfaktoren nach der OpenGL-Spezifikation.
+	bool.display lists enabled:EnabledDisplayLists
+		set:EnabledDisplayLists
+		german:Anzeigelisten erlaubt
+		doc:If on, OpenGL-display lists are allowed to be used. This allows\
+			faster rendering, especially when the view is rotated or scaled,\
+			but might lead to some objects rendered incorrectly,\
+			depending on the hardware. This switch applies to all objects of\
+			this type.
+			german:Wenn an, werden OpenGL Anzeigelisten zum Zeichnen mancher\
+				Objekte verwendet. Dies erhöht die Darstellungsgeschwindigkeit,\
+				vor allem beim Rotieren und Skalieren der Ansicht, kann aber,\
+				ja nach Hardware, zur unkorrekten Darstellung mancher Objekte führen.\
+				Dieser Schalter wirkt sich auf alle Objekte dieses Typs aus.
+	string.bounding box coords:BoundingBox
+		german:Begrenzungskoordinaten
+		doc:Coordinates of the diagonal corner points of the\
+			smallest box containing the object. May not be\
+			available for all visible objects.
+			german:Koordinaten der diagonalen Eckpunkte des kleinsten\
+				Quaders, der das Objekt enthält. Nicht für alle sichtbaren\
+				Objekte verfügbar.
+	apply.update bounding box coords
+		set:BoundingBox
+		german:Begrenzungskoordinaten aktualisieren

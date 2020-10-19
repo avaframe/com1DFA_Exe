@@ -1,0 +1,35 @@
+obj.AnalyticalCut
+	german:Analytische Schnittfläche
+	doc:A cut surface that is determined by an equation of the form\
+		f(x,y,z) = d. The value d can be modified.\
+		A plane for example is given by: f(x,y,z) = ax+by+cz-d0.
+		german:Schnittfläche, die durch eine Gleichung der Form\
+			f(x,y,z) = d definiert ist. Der Wert d kann modifiziert werden.\
+			Eine Ebene z.B. ist definiert durch: f(x,y,z) = ax+by+cz-d0.
+	float.cut distance:CutDistance
+		set:CutDistance
+		german:Flächendistanz
+		doc:The cut distance is the value d. Changing d will deform the surface.\
+			A plane for example is just shifted in normal direction.
+			german:Die Fl&chendistanz ist der Wert d. Eine Veränderung von d deformiert\
+				die Schnittfläche. Eine Ebene z.B. wird in Normalrichtung verschoben.
+	float.cut distance increment:CutDistanceIncrement
+		set:CutDistanceIncrement
+		german:Distanzincrement
+		doc:Value by which the ->AnalyticalCut.CutDistance is increased or\
+			decreased by ->AnalyticalCut.IncrementCutDistance and\
+			->AnalyticalCut.DecrementCutDistance.
+			german:Wert um welchen die ->AnalyticalCut.CutDistance durch\
+				->AnalyticalCut.IncrementCutDistance und\
+				->AnalyticalCut.DecrementCutDistance erhöht\
+				oder vermindert wird.
+	apply.increment cut distance
+		set:IncrementCutDistance
+		german:Flächendistanz erhöhen
+		doc:Increase the ->AnalyticalCut.CutDistance by ->AnalyticalCut.CutDistanceIncrement.
+			german:Die ->AnalyticalCut.CutDistance um ->AnalyticalCut.CutDistanceIncrement erhöhen.
+	apply.decrement cut distance
+		set:DecrementCutDistance
+		german:Flächendistanz vermindern
+		doc:Decrease the ->AnalyticalCut.CutDistance by ->AnalyticalCut.CutDistanceIncrement.
+			german:Die ->AnalyticalCut.CutDistance um ->AnalyticalCut.CutDistanceIncrement vermindern.

@@ -1,0 +1,20 @@
+
+void convert_m2_ha(
+	char s[])
+{
+	double v;
+	sscanf(s, "%lf", v);
+	sprintf(s, "%g", 1.0e-4*v);
+}
+void ProjectedAreaHa(
+	char s[])
+{
+	get("", "ProjectedArea", s);
+	convert_m2_ha(s);
+}
+void TrueAreaHa(
+	char s[])
+{
+	get("", "TrueArea", s);
+	convert_m2_ha(s);
+}

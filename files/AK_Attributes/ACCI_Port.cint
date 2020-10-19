@@ -1,0 +1,131 @@
+
+
+
+int num_trafo_types = 0;
+char trafo_types[0][64];
+int num_trafos = 0;
+
+void init_trafo_types()
+{
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "translate: by 0,0,0";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "rotate: by 30 about 0,0,0;0,0,1";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "piston displace: along 0,0,-1";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "valve lift: along 0,0,1 scale 1 file lift.txt";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "mirror: at 0,0,0;1,0,0";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "copy: 2";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "cycle: 4 about 0,0,0;0,0,1";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "make-row: 3 along 1,0,0 with offsets 0.1,0.2";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "translate part: 1/2 by 0,0,0";
+	resize(trafo_types, num_trafo_types + 1);
+	trafo_types[num_trafo_types++] = "rotate part: 1/2 by 30 about 0,0,0;0,0,1";
+}
+
+
+void transformation_options(char value[])
+{
+	int i;
+	if(!num_trafo_types) init_trafo_types();
+	value[0] = 0;
+	for(i = 0; i < num_trafo_types; i++){
+		strcat(value, trafo_types[i]); strcat(value, AK_SEP);
+	}
+}
+
+void add_transformation(char value[])
+{
+	char s[256*32];
+	get("", "$trafos", s);
+	strcat(s, value);
+	strcat(s, "\n");
+	set("", "$trafos", s);
+}
+
+
+void get_selection(char value[])
+{
+	get("", "$selection", value);
+	if(strlen(value) == 0){
+		get("", "Id", value);
+		set("", "$selection", value);
+	}
+}
+
+void get_client(char value[])
+{
+	get("..", "Id", value);
+}
+
+void get_acci_spec(char value[])
+{
+	char t[256*16], l[256*1]; int i, j, k, n, m;
+	char client[128*1], itf[128*1];
+	char rpm[64], angle0[64], stroke[64], conrod[64], ppo[64];
+	set("..", "CaseProp", "Speed"); get("..", "CasePropData", rpm);
+	set("..", "CaseProp", "StartAngle"); get("..", "CasePropData", angle0);
+	strcpy(stroke, "0.1");
+	strcpy(conrod, "0.1");
+	strcpy(ppo, "0.0");
+	get_client(client);
+	get_selection(itf);
+	strcpy(itf, "$ITF");
+	get("", "$trafos", t);
+	i = 0;
+	strcpy(value, "\n");
+	while(i < strlen(t)){
+		j = istrchr(t[i], '\n');
+		if(j < 0) break;
+		j += i;
+		t[j] = 0;
+		k = istrchr(t[i], ':');
+		if(istrstr(t[i], "translate:") == 0){
+			sprintf(l, "translate %s of %s %s\n", itf, client, t[i + k + 1]);
+		}else if(istrstr(t[i], "rotate:") == 0){
+			sprintf(l, "rotate %s of %s %s\n", itf, client, t[i + k + 1]);
+		}else if(istrstr(t[i], "piston displace:") == 0){
+			sprintf(l, "piston-displace %s of %s %s with rpm %s"
+				" ref angle %s stroke %s conrod %s pin offset %s\n",
+				itf, client, t[i + k + 1], rpm, angle0, stroke, conrod, ppo);
+		}else if(istrstr(t[i], "valve lift:") == 0){
+			n = istrstr(t[i], "along");
+			m = istrstr(t[i], "scale");
+			t[i + m - 1] = 0;
+			sprintf(l, "valve-lift %s of %s %s with rpm %s"
+				" ref angle %s %s\n",
+				itf, client, t[i+n], rpm, angle0, t[i+m]);
+			t[i + m - 1] = ' ';
+		}else if(istrstr(t[i], "mirror:") == 0){
+			sprintf(l, "mirror %s of %s %s\n", itf, client, t[i + k + 1]);
+		}else if(istrstr(t[i], "copy:") == 0){
+			sscanf(t[i], "copy: %d", n);
+			sprintf(l, "copy %d %s of %s\n", n, itf, client);
+		}else if(istrstr(t[i], "cycle: 4 about 0,0,0;0,0,1") == 0){
+			sscanf(t[i], "cycle: %d", n);
+			k = istrstr(t[i], "about");
+			sprintf(l, "cycle-%d %s of %s %s\n", n, itf, client, t[i + k]);
+		}else if(istrstr(t[i], "make-row: 3 along 1,0,0 with offsets 0.1,0.2") == 0){
+			sscanf(t[i], "make-row: %d", n);
+			k = istrstr(t[i], "along");
+			sprintf(l, "make-row-%d %s of %s %s\n", n, itf, client, t[i + k]);
+		}else if(istrstr(t[i], "translate part: 1/2 by 0,0,0") == 0){
+			k = istrstr(t[i], "by");
+			sscanf(t[i], "translate part: %d / %d", n, m);
+			sprintf(l, "translate %d/%d %s of %s %s\n", n, m, itf, client, t[i + k]);
+		}else if(istrstr(t[i], "rotate part: 1/2 by 30 about 0,0,0;0,0,1") == 0){
+			k = istrstr(t[i], "by");
+			sscanf(t[i], "rotate part: %d / %d", n, m);
+			sprintf(l, "rotate %d/%d %s of %s %s\n", n, m, itf, client, t[i + k]);
+		}
+		strcat(value, l);
+		t[j] = ' ';
+		i = j + 1;
+	}
+}

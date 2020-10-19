@@ -1,0 +1,15 @@
+obj.FormulaCut
+	german:Formel-Schnittfläche
+	doc:Cut surface that is defined by a user-formula (AST-SCI-syntax).
+		german:Schnittfläche definiert über Benutzer-Formel (AST-SCI-Syntax).
+	string.formula (file name):FormulaFileName
+		set:FormulaFileName
+		german:Formel(Dateiname)
+		doc:Formula code or file that contains the formula code.
+			german:Formeltext oder Datei, die den Formeltext enthält.
+	filename.formula file name
+		pattern:*.frml
+		mode:r
+		set:FormulaFileName
+		doc:Enter formula file name.
+			german:Formeldateinamen eingeben.

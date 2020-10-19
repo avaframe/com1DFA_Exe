@@ -1,0 +1,22 @@
+obj.LinBndPat
+	filename.import
+		set:Import
+		pattern:*.lbp
+		mode:r
+	filename.export
+		set:Export
+		pattern:*.lbp
+		mode:w
+	apply.clear
+		set:Clear
+	float2.append point
+		set:AppendPoint
+		pick world
+		pick world multiple
+	apply.close
+		set:Close
+	string.open segments:OpenSegs
+	int.set open segment
+		set:SetOpenSeg
+	bool.display labels:DisplayLabels
+		set:DisplayLabels

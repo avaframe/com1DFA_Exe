@@ -1,0 +1,176 @@
+obj.ScalarField
+	german:Skalarfeld
+	doc:Scalar field values with associated colorbar (->Colorbar.),\
+		that controls the colors assigned to the values.
+		german:Feld mit skalaren Werten mit zugeordneter\
+			Farbskala (->Colorbar.), die die Farbkodierung\
+			der Werte bestimmt.
+	string.data transformation:getDataConversion
+		set:setDataConversion
+		options:getDataConversionOptions
+		german:Datentransformation
+		doc:Configurable data transformations\
+			(see .../files/AK_Attributes/SW_ScalarField.cint).
+			german:Konfigurierbare Transformation der Felddaten\
+				(siehe .../files/AK_Attributes/SW_ScalarField.cint).
+	bool.display color-mapped field:DisplayColorMapped
+		set:DisplayColorMapped
+		german:Farbflächendarstellung
+		doc:If on, the scalar values are displayed as surface\
+			colored according to the values and the colorbar.
+			german:Wenn an, werden die skalaren Werte als Fläche dargestellt,\
+				deren Farbe durch die Werte und die Farbskala bestimmt wird.
+	float.minimal displayed value:MinDisplayedValue
+		set:MinDisplayedValue
+		german:kleinster dargestellter Wert
+	bool.display contour lines:DisplayContourLines
+		set:DisplayContourLines
+		german:Isolinien darstellen
+		doc:If on, scalar-iso-lines are computed and displayed. The iso-values\
+			are determined by the colorbar (->Colorbar.). The color of the lines is\
+			determined by ->VisObj.Color, the line width by ->VisObj.LineWidth.
+			german:Wenn an, werden Isolinien (Linien gleichen Skalarwertes) berechnet und dargestellt.\
+				Die Farbskala (->Colorbar.) bestimmt die Stufung der Iso-Werte. Die Linienfarbe\
+				wird durch ->VisObj.Color, die Liniendicke durch ->VisObj.LineWidth\
+				bestimmt.
+	bool.contour lines colored:ContourLinesColored
+		set:ContourLinesColored
+		german:gefärbte Isolinien
+		doc:If on, contour-lines are displayed according to\
+			the current color mapping.
+			german:Wenn an, werden die Isolinien in der den Werten entsprechenden\
+				Farbe dargestellt.
+	bool.contour lines labels:ContourLinesLabelled
+		set:ContourLinesLabelled
+		german:Isolinien beschriftet
+		doc:If on, countour line labels are displayed.
+			german:Wenn an, werden Isolinien mit ihrem Wert beschriftet.
+	float.label distance:ContourLinesLabelDistance
+		set:ContourLinesLabelDistance
+		vis:ContourLinesLabelDistanceVis
+		german:Beschriftungsabstand
+		doc:Distance along contour lines at which labels\
+			are displayed.
+			german:Abstand zwischen Beschriftungen.
+	float.minimal value:Min
+		german:Minimalwert
+		doc:Minimal field value.
+			german:Kleinster Wert im Feld.
+	float.maximal value:Max
+		german:Maximalwert
+		doc:Maximal field value.
+			german:Größter Wert im Feld.
+	float.average value:Average
+		german:Mittelwert
+		doc:Average field value.
+			german:Feld-Mittelwert.
+	opr.export
+		german:exportieren
+		doc:Export the field values at raster-points or\
+			contour lines as polylines.
+			german:Feldwerte an Rasterpunkten oder Isolinien\
+				als Polygonzüge exportieren.
+		float.export raster size:ExportRasterSize
+			set:ExportRasterSize
+			german:Rastergröße
+		bool.export raster auto range:ExportRasterAutoRange
+			set:ExportRasterAutoRange
+			german:Raster angepasst
+			doc:If on, the raster-area is adapted to the actual\
+				extension of the scalar field. Otherwise, the raster-area\
+				can be specified explicitly.
+				german:Wenn an, wird die Rasterfläche der aktuellen\
+					Ausdehnung des Skalarfeldes angepasst. Andernfalls\
+					kann die Rasterfläche explizit angegeben werden.
+		float2.raster lower left corner:ExportRasterLL
+			set:ExportRasterLL
+			vis:ExportRasterRangeVis
+			german:linker unterer Raster-Eckpunkt
+		int.number of columns:ExportRasterNumColumns
+			set:ExportRasterNumColumns
+			vis:ExportRasterRangeVis
+			german:Anzahl der Raster-Spalten
+		int.number of rows:ExportRasterNumRows
+			set:ExportRasterNumRows
+			vis:ExportRasterRangeVis
+			german:Anzahl der Raster-Reihen
+		string.short id:ShortExportFilename
+			german:Kurzbezeichnung
+		filename.export field raster to ascii
+			set:ExportFieldRasterAscii
+			pattern:*.asc,*.*
+			mode:w
+			german:Feldwerte am Raster exportieren
+		filename.export contour lines
+			set:ExportContourLines
+			pattern:*.dxf,*.DXF,*.nxyz
+			mode:w
+			german:Isolinien exportieren
+	opr.analyze values
+		german:Werte analysieren
+		doc:Analyze scalar field values.
+			german:Feldwerte analysieren.
+		string.value at point:ValueAtPoint
+			german:Wert am Punkt
+			doc:Value at the selected point.
+				german:Feldwert am ausgewählten Punkt.
+		float2.selected point
+			set:ValueAtPoint
+			pick world
+			pick world multiple
+			german:gewählter Punkt
+			doc:Selected point.
+				german:Ausgewählter Punkt.
+		string.select polyline:SelectedPolyline
+			set:SelectedPolyline
+			options:PolylinesList
+			german:gewählter Polygonzug
+			doc:Selected polyline to export values along.
+				german:Ausgewählter Polygonzug entlang dem die\
+					Feldwerte exportiert werden können.
+		string.short id:ShortExportFilename
+			german:Kurzbezeichnung
+		directory.export values along polyline
+			set:export_and_show_values_along_polyline
+			vis:ExportValuesAlongPolylineVis
+			mode:w
+			pattern:*.txt
+			german:Werte entlang Polygonzug exportieren
+			doc:Write values along the selected polyline to selected directory, one file over projected\
+						arc length and one xyz file.
+				german:Werte entlang des gewählten Polygonzuges in gewaehltes Verzeichnis schrieben, eine Datei\
+						über die projizierte Bogenlänge und eine xyz Datei.
+		filename.export and show front velocity
+			set:export_front_velocity_along_polyline
+			vis:export_front_velocity_along_polyline_vis
+			mode:w
+			pattern:*.txt
+			german:Frontgeschwindigkeit entlang Polygonzug exportieren und anzeigen
+			doc:Compute front velocity from front-arrival-times and display it along\
+				selected polyline over projected arc-length. Display values in\
+				->Graph2dViewer..
+				german:Frontgeschwindigkeit entlang des gewählten Polygonzuges aus\
+					der Front-Ankunftszeit berechnen und im ->Graph2dViewer. über der\
+					projizierten Bogenlänge darstellen.
+		filename.export and show time series of values at selected point
+			set:export_and_show_time_series_at_point
+			mode:w
+			pattern:*.txt
+			german:Zeitreihe der Werte am gewählten Punkt exportieren und anzeigen
+		float.area value limit:AreaValueLimit
+			german:Flächenwertlimit
+			set:AreaValueLimit
+		float.area above limit:AreaAboveLimit
+			german:Fläche über Limit
+	apply.gradient vector field
+		set:CreateGradientField
+		vis:CreateGradientFieldVis
+		german:Gradientenfeld
+		doc:Create a gradient-vector-field from the scalar values as sub-object.
+			german:Gradienten-Vektorfeld der Skalarwerte als Unterobjekt erzeugen.
+	apply.remove gradient vector field
+		set:RemoveGradientField
+		vis:RemoveGradientFieldVis
+		german:Gradientenfeld löschen
+		doc:Remove the gradient vector field computed with ->ScalarField.CreateGradientField.
+			german:Gradienten-Vektorfeld löschen.

@@ -1,0 +1,6 @@
+set("", "FlyOverHelp", "1")
+set("", "SetLanguage", "german")
+set("", "FlagPageTimeout", "2.0")
+set("", "ImageFileName", "image_sat.png")
+set("", "$cb_max_prefix", ">=")
+set("", "$no_gl_select", "0")

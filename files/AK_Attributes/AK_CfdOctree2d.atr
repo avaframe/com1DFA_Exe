@@ -1,0 +1,34 @@
+obj.CfdOctree2d
+	int.min octree depth:MinOctreeDepth
+		set:MinOctreeDepth
+	int.max octree depth:MaxOctreeDepth
+		set:MaxOctreeDepth
+	string.set bnd
+		set:SetBnd
+		options:GetSetBndOptions
+	int.displayed level:DisplayedLevel
+		set:DisplayedLevel
+	apply.displayed level++
+		set:IncDisplayedLevel
+	apply.displayed level--
+		set:DecDisplayedLevel
+	bool.display links:DisplayLinks
+		set:DisplayLinks
+	int.number of cells:NumCells
+	int.number of faces:NumFaces
+	string.set bnd cond
+		set:SetBndCond
+	int.remove level
+		set:RemoveLevel
+	int.solver iterations:SolverIterations
+		set:SolverIterations
+	apply.solve Jacobi
+		set:SolveJac
+	apply.solve Multigrid
+		set:SolveMG
+	float.Flops per cell:NumOpsPerCell
+	float.vector length scale:VecScale
+		set:VecScale
+	bool.display residuals:DisplayResiduals
+		set:DisplayResiduals
+	float.max residual:ResMax

@@ -1,0 +1,2 @@
+set("", "MacroFileName", "shortcut_i.cint")
+set("", "ExecMacro", "")

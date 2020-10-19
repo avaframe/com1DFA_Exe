@@ -1,0 +1,19 @@
+obj.Meshes
+	int.dataset number for import:$importDataSetNumber
+		set:$importDataSetNumber
+		doc:Used with flm-import as data set number and with cgns-import as base number.
+	float.scaling factor for import:$importScalingFactor
+		set:$importScalingFactor
+		doc:Only used with import of nas- and stl-files. Coordinates are multiplied by this factor.
+	filename.import
+		set:Import
+		pattern:*.cgns,*.dgr,*.fil,*.flm,*.flma,*.fpmbz,*.grd,*.inp,*.msh,*.nas,*.ntl,*.stl,*.tbp,*.tbs,*.uns,*.wrl
+		mode:r
+	filename.import solid
+		set:import_solid
+		pattern:*.cgns,*.dgr,*.fil,*.flm,*.flma,*.fpmbz,*.grd,*.inp,*.msh,*.nas,*.ntl,*.stl,*.tbp,*.tbs,*.uns,*.wrl
+		mode:r
+	filename.import fluid volume
+		set:import_fluid_volume
+		pattern:*.cgns,*.dgr,*.fil,*.flm,*.flma,*.fpmbz,*.grd,*.inp,*.msh,*.nas,*.ntl,*.stl,*.tbp,*.tbs,*.uns,*.wrl
+		mode:r

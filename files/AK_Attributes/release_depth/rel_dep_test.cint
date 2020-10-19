@@ -1,0 +1,27 @@
+
+double p1 = 1.0;
+double p2 = 0.0;
+
+void init()
+{
+	print "init: no action needed in this case...";
+}
+
+void getpar(
+	char s[])
+{
+	sprintf(s, "p1=%g p2=%g", p1, p2);
+}
+
+void setpar(
+	char s[])
+{
+	sscanf(s, " p1 = %lf p2 = %lf", p1, p2);
+}
+
+double depth(
+	double x[3],
+	double n[3])
+{
+	return p1 * n[2] + p2;
+}

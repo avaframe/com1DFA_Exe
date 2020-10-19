@@ -1,0 +1,9 @@
+obj.Labels
+	german:Beschriftungen
+	doc:A container for text-labels (->Text2d.).
+		german:Ein Behälter für Beschriftungen (->Text2d.).
+	string.new label
+		set:Create
+		german:neue Beschriftung
+		doc:Append a new, emtpy label.
+			german:Neue Beschriftung hinzufügen.

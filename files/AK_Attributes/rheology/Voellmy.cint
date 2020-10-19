@@ -1,0 +1,30 @@
+double my = 0.155;
+double xsi = 4000.0;
+
+
+
+void get_par(
+	char s[])
+{
+	sprintf(s, "my=%g xsi=%g", my, xsi);
+}
+
+void set_par(
+	char s[])
+{
+	sscanf(s, "my=%lf xsi=%lf", my, xsi);
+	if(xsi < 1.0) xsi = 1.0;
+}
+
+
+
+double tau(
+	double p,
+	double v,
+	double h,
+	double d,
+	double t,
+	double x[3])
+{
+	return p * my + d * v * v * 9.81 / xsi;
+}

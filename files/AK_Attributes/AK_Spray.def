@@ -1,0 +1,4 @@
+set("", "RenderAsSpheres", "0")
+set("", "PointSize", "3")
+set("", "Blending", "1")
+set("", "Opacity", "0.3")

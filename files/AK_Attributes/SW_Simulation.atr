@@ -1,0 +1,1280 @@
+obj.ShallowWaterSimulation
+	german:Simulation
+	doc:Shallow water simulation. A shallow water simulation is a topologically two-dimensional free-surface\
+		flow-simulation, assuming that the flow-depth is small compared to the length and width of the flow.\
+		Two-dimensional means, that the motion on two directions tangential to the terrain surface are computed.\
+		Only integral values of the flow-variables (velocity) over the flow-depth are considered. The local\
+		flow depth is computed from mass-balances.\
+		\
+		The forces acting on a fluid-element are: gravitation, centrifugal forces due to flow over surface-curvature,\
+		lateral pressure from neighboring elements and pressure and shear stresses at the bottom-surface.\
+		The normal pressure at the bottom is computed from the momentum balance in direction normal to the surface\
+		and from the kinematic boundary condition (i.e. the forced motion along the bottom surface).\
+		\
+		The bottom shear stresses can be computed according to various predefined and user-definable relations.\
+		In general, it will be a function of bottom-pressure, velocity, flow depth, and, of course, material\
+		parameters as friction angles or dynamic friction coefficients.\
+		The lateral pressure is a function of the bottom pressure and the velocity gradients (i.e. whether\
+		the material is stressed or strained - passive or active state) in flow-direction and normal to the flow\
+		direction.\
+		\
+		The simulation is initialized with the fluid at rest and located in the specified release areas\
+		(sub-object "ReleaseAreas").\
+		The "SecondaryReleaseAreas" (sub-object) are release areas that are activated automatically as soon\
+		as moving fluid touches its boundary.\
+		"EntrainmentAreas" (sub-object) are areas where mass is picked up at the front of the flow.\
+		\
+		Note that changing release areas or other simulation parameter makes an already performed simulation\
+		invalid.\
+		\
+		The scalar-field sub-objects ("FlowDepth" etc.) show the distribution of the various flow field values\
+		for a specified time step.
+		german:Flachwassersimulation. Eine Flachwassersimulation ist eine topologisch zweidimensionale\
+			Simulation einer Strömung mit freier Oberfläche. Es wird angenommen, dass die Fließtiefe klein\
+			ist im Vergleich zur Länge und Breite. Zweidimensional bedeutet, dass die Bewegung in zwei Richtungen\
+			tangential zur Geländeoberfläche berechnet wird. Über der Fließhöhe werden nur Integralwerte der\
+			Strömungsvariablen (Geschwindigkeit) betrachtet. Die lokale Fließhöhe ergibt sich aus Massenbilanzen.\
+			\
+			Folgende Kräfte auf ein Fluid-Element werden berücksichtigt: Gravitation, Zentrifugalkräfte beim\
+			Durchfahren von gekrümmtem Gelände, seitliche Druckkräfte durch Nachbarelementen und Normaldruck und\
+			Schubspannungen an der Bodenfläche. Der Normaldruck am Boden wird aus der Impulsbilanz in Richtung\
+			normal zur Bodenfläche berechnet, unter Berücksichtigung der kinematischen Randbedingung (d.h.\
+			der Zwangsführung an der Bodenfläche).\
+			\
+			Die Schubspannung am Boden kann nach verschiedenen vordefinierten Spannungsgesetzen oder nach\
+			benutzerdefinierten Beziehungen berechnet werden. Im allgemeinen ist sie eine Funktion von Bodendruck,\
+			Geschwindigkeit, Fließtiefe und, natürlich, von Materialkennwerten wie Reibungswinkeln oder dynamischen\
+			Reibungskoeffizienten.\
+			Der seitliche Druck ist eine Funktion der Geschwindigkeitsgradienten (d.h. ob das Material gestreckt\
+			oder gestaucht wird - aktiver oder passiver Zustand) in und normal zur Strömungsgeschwindigkeit.\
+			\
+			Die Simulation wird initialisiert mit dem Fluid ruhend in den Anbruchgebieten (Unterobjekt\
+			"ReleaseAreas").\
+			Sekundäre Anbruchgebiete (Unterobjekt "SecondaryReleaseAreas") sind Anbruchgebiete, die automatisch\
+			aktiviert werden, sobald strömendes Fluid ihre Grenzen berührt.\
+			Aufnahme-Gebiete (Unterobjekt "EntrainmentAreas") sind Gebiete, in denen Fluidmasse an der\
+			Strömungsfront aufgenommen wird.\
+			\
+			Beachten Sie, dass eine Änderung der Anbruchgebiete oder anderer Parameter eine bereits durchgeführte\
+			Simulationsrechnung ungültig machen.\
+			\
+			Die Skalar-Feld-Unterobjekte ("FlowDepth" etc.) zeigen die Verteilung verschiedener Feldgrößen für\
+			einen spezifizierten Zeitpunkt.
+	string.simulation mesh:Mesh
+		options:GetMeshNamesList
+		set:Mesh
+		german:Simulationsnetz
+		doc:Selected simulation mesh. A Cartesian grid with square elements of 5m side length\
+			should be selected,\
+			as generated with ->DHMs.CreateSimulationMesh. Please note that changing the\
+			simulation mesh invalidates a finished simulation. Resetting the mesh will\
+			trigger a re-initilization of the simulation (without deleting any results on disc, however).
+			german:Ausgewähltes Simulationsnetz. Ein Cartesisches Netz mit quadratischen Elementen von\
+				5m Seitenlänge, wie durch ->DHMs.CreateSimulationMesh erzeugt, sollte verwendet werden.\
+				Bitte beachten Sie, dass die Änderung des Netzes eine durchgeführte Simulation ungültig\
+				macht und eine Re-Initialisierung der Simulation bewirkt (ohne allerdings die Ergebnisdaten\
+				auf der Festplatte zu löschen).
+	string.3D PSA simulation mesh:PsaMesh
+		options:GetPsaMeshNamesList
+		set:PsaMesh
+		vis:PsaMeshVis
+		german:3D Staublawinennetz
+		doc:Selected 3D-mesh for the powder-snow-simulation.
+			german:Gewähltes 3D-Netz zur Berechnung der begleitenden Staublawine.
+	string.parameter set:ParameterSet
+		vis:RunVis
+		german:Parameter-Satz
+		options:ParameterSetOptions
+		set:ParameterSet
+		doc:A parameter set defines values for a specific set of object parameters. The sets are\
+			defined in file SW_Simulation.parsets and may be edited there.
+			german:Ein Parameter-Satz definiert Werte für eine bestimmte Menge von Parametern\
+				des Objektes. Die Sätze sind in der Datei SW_Simulation.parsets definiert\
+				und können dort editiert werden.
+	opr.global entrainment
+		vis:RunVis
+		german:Globale Schneeaufnahme
+		doc:Parameters for snow entrainment. The mass of entrainable snow can be defined globally\
+			or region-specifically (see EntrainmentAreas). Snow is always entrained at the front of the\
+			avalanche. Entrainment increases the mass of the avalanche, but reduces also its kinetic energy. \
+			The force per front width @@f_ea/@ needed to accelerate the entrained snow to the velocity of\
+			the avalanche is computed as @@f_ea = q * u^2/@, where @@q/@ is the local mass of entrainable\
+			snow per unit area [kg/m2] and @@u/@ is the local avalanche speed. \
+			The energy per front width and time @@p_s/@  [W/m] needed to shear-off the entrained snow from the ground is\
+			@@p_s = e_s * u/@ (@@e_s/@ ->ShallowWaterSimulation.EntrainmentShearResistance). \
+			The energy per front width and time @@p_d/@ [W/m] needed to deform (compress) the entrained snow is\
+			@@p_d = e_d * q * u/@ (@@e_d/@ ->ShallowWaterSimulation.EntrainmentDeformationResistance).
+			german:Parameter für die Schneeaufnahme. Die Masse aufnehmbaren Schnees kann global oder\
+				gebietsspezifisch (siehe EntrainmentAreas) definiert werden. Schnee wird immer an der Front\
+				aufgenommen. Die Schneeaufnahme erhöht die Masse der Lawine, reduziert aber auch ihre kinetische Energie. \
+				Die Kraft pro Frontbreite @@f_ea/@, die benötigt wird, um den aufgenommenen Schnee auf Fließgeschwindigkeit\
+				zu bringen ist @@f_ea = q * u^2/@, wobei @@q/@ die lokale aufnehmbare Schnee-Flächendichte [kg/m2] ist und\
+				@@u/@ die lokale Fließgeschwindigkeit. \
+				Die Energie pro Frontbreite und Zeit @@p_s/@ [W/m], die verbraucht wird, um den aufgenommenen Schnee vom\
+				Grund zu lösen, ist @@p_s = e_s * u/@ (@@e_s/@ ->ShallowWaterSimulation.EntrainmentShearResistance). \
+				Die Energie pro Frontbreite und Zeit @@p_d/@ [W/m], die zur Deformation (Kompression) des aufgenommenen\
+				Schnees verbraucht wird, ist @@p_d = e_d * q * u/@ (@@e_d/@ ->ShallowWaterSimulation.EntrainmentDeformationResistance).
+		float.entrainment minimal altitude:GlobalEntrainmentMinZ
+			set:GlobalEntrainmentMinZ
+			german:Seehöhen-Untergrenze
+			doc:Global entrainment is active only above the specified altitude [m].
+				german:Die globale Schneeaufnahme ist nur oberhalb der angegebenen Seehöhe [m] aktiv.
+		float.entrainment area weight:GlobalEntrainmentAreaWeight
+			set:GlobalEntrainmentAreaWeight
+			german:Flächendichte
+			doc:Global value for mass of entrainable snow per unit area @@q/@ [kg/m2].\
+				Entrainment areas defined by polygon have priority.\
+				Entrainable mass is automatically set to zero in release areas.
+				german:Globaler Wert der Masse aufnehmbaren Schnees pro Flächeneinheit @@q/@ [kg/m2],\
+					gleich Dichte mal Mächtigkeit. Durch Polygon definierte Aufnahmegebiete\
+					haben Vorrang. In Anbruchgebieten wird die aufnehmbare Schneemasse\
+					automatisch auf 0 gesetzt.
+			vis:VisNone
+		float.entrainment snow temperature (deg Celsius):GlobalEntrainmentTemperature
+			set:GlobalEntrainmentTemperature
+			german:Schneetemperatur (Grad Celsius)
+		float.entrainment snow temperature height gradient (K/m):GlobalEntrainmentTemperatureGradient
+			set:GlobalEntrainmentTemperatureGradient
+			german:Schneetemperatur-Hoehengradient (K/m)
+			doc:Temperature gradient @@dTdz/@ (K/m) in snow cover.\
+				Resulting snow cover temperature at altitude @@z/@ [m] is given by \
+				@@T(z) = T_min + (z - z_min) * dTdz/@ \
+				with @@T_min/@ the ->ShallowWaterSimulation.GlobalEntrainmentTemperature\
+				and @@z_min@@ the ->ShallowWaterSimulation.GlobalEntrainmentMinZ.
+				german:Temperaturgradient @@dTdz/@ (K/m) in der Schneedecke.\
+					Die resultierende Schneetemperatur in der Hoehe @@z/@ [m] ist \
+					@@T(z) = T_min + (z - z_min) * dTdz/@ \
+					mit @@T_min/@ der ->ShallowWaterSimulation.GlobalEntrainmentTemperature\
+					und @@z_min@@ der ->ShallowWaterSimulation.GlobalEntrainmentMinZ.
+		float.snow density:glob_ent_dens_get
+			german:Schneedichte
+			set:glob_ent_dens_set
+			doc:Global entrainment snow density [kg/m3].
+				german:globale Schneeaufnahme - Raumdichte [kg/m3].
+		float.snow depth:glob_ent_dep_get
+			german:Schneemächtigkeit
+			set:glob_ent_dep_set
+			doc:Global entrainment snow depth [m].
+				german:globale Schneeaufnahme - Schneemächtigkeit [m].
+		float.shear resistance:EntrainmentShearResistance
+			set:EntrainmentShearResistance
+			german:Scherwiderstand
+			vis:advanced_options
+			doc:Shear resistance @@e_s/@ in [J/m2]. This is the energy\
+				needed to release entrained snow from the ground.
+				german:Scherwiderstand @@e_s/@ in [J/m2]. Das ist die nötige Energie\
+					um aufgenommenen Schnee vom Grund zu lösen.
+		float.deformation resistance:EntrainmentDeformationResistance
+			set:EntrainmentDeformationResistance
+			german:Verformungswiderstand
+			vis:advanced_options
+			doc:Energy @@e_c/@ in [J/kg] needed to deform entrained snow.
+				german:Energie @@e_c/@ [J/kg], die nötig ist, um aufgenommenen Schnee zu deformieren.
+		float.specific basal entrainment energy:EntrainmentErosionEnergy
+			set:EntrainmentErosionEnergy
+			german:Spezifische Flaechen-Aufnahme-Energie
+			doc:The entrainment parameters above define entrainment at the front of the avalanche. With this\
+				parameter, entrainment along the entire contact surface of the avalanche with the bottom can be\
+				specified. The value @@e_b/@ [J/kg] specifies the energy that is necessary to erode a unit mass\
+				of snow from the ground and to incorporate it into the avalanche.\
+				If the parameter is set to zero, no erosion occurs.
+				german:Die Schneeaufnahmeparameter weiter oben definieren Schneeaufnahme an der Lawinenfront.\
+					Dieser Parameter erlaubt die Spezifikation von Schneeaufnahme ueber die ganze Lawinenkontaktflaeche\
+					mit dem Boden. Der Wert @@e_b/@ [J/kg] gibt an, welche Energie noetig ist, um eine Einheitsmasse Schnee\
+					vom Boden zu erodieren und in die Lawine aufzunehmen. Ein Wert von 0 deaktiviert diese Erosion.
+		opr.point mass source
+			vis:advanced_options
+			german:Punktquelle für Masse
+			float2.point source location:$source_point
+				german:Ort der Punktquelle
+				set:$source_point
+				pick world
+			float.point source radius [m]:$source_radius
+				german:Radius der Punktquelle [m]
+				set:$source_radius
+			float.point source strength [kg/s]:$source_strength
+				german:Massenstrom [kg/s] an Punktquelle
+				set:$source_strength
+			float.source duration [s]:$source_duration
+				german:Dauer [s] der Quelle
+				set:$source_duration
+			float.initial velocity:$source_velo
+				german:Anfangsgeschwindigkeit
+				set:$source_velo
+			float.initial velocity direction angle [°] (N=0°, E=90°):$source_velo_ang
+				german:Anfangsgeschwindigkeitsrichtung [°] (N=0°, O=90°)
+				set:$source_velo_ang
+	opr.release and entrainment depths from DHM
+		vis:RunVis
+		german:Anbruch- und Aufnahmemächtigkeiten von DHM
+		doc:Specification of release-depths and entrainment depths by DHM data (ReleaseDHMs).\
+			The temperature of the snow cover is determined by\
+			->ShallowWaterSimulation.GlobalEntrainmentTemperature and\
+			->ShallowWaterSimulation.GlobalEntrainmentTemperatureGradient.
+			german:Vorgabe von Anbruch- und Schneeaufnahmemächtigkeiten über DHM Daten (ReleaseDHMs).\
+				Die Temperature der Schneedecke ist bestimmt durch\
+				->ShallowWaterSimulation.GlobalEntrainmentTemperature und\
+				->ShallowWaterSimulation.GlobalEntrainmentTemperatureGradient.
+		string.entrainment depths from DHM:EntrainmentDHM
+			set:EntrainmentDHM
+			options:ReleaseDHM_Options
+			german:Schneeaufnahme-Mächtigkeiten von DHM
+			doc:Snow entrainment depths from z-coordinate of the specified DHM.\
+				(Release and entrainment polygons have precedence.)
+				german:Schneeaufnahme-Mächtigkeiten von z-Koordinaten des selektierten DHM.\
+					(Anbruch- und Schneeaufnahmepolygone haben Vorrang.)
+		float.entrainment snow density:EntrainmentDHMDensity
+			set:EntrainmentDHMDensity
+			german:Aufnahme-Schnee-Dichte
+			doc:Snow density for entrainment depths by DHM.
+				german:Schneedichte für Aufnahmemächtigkeiten über DHM.
+		string.release depths from DHM:ReleaseDHM
+			set:ReleaseDHM
+			options:ReleaseDHM_Options
+			german:Anbruchmächtigkeiten über DHM
+			doc:Release depths from z-coordinate of the specified DHM.\
+				(Release and entrainment polygons have precedence.)
+				german:Anbruchmächtigkeiten von z-Koordinaten des selektierten DHM.\
+					(Anbruch- und Schneeaufnahmepolygone haben Vorrang.)
+		float.DHM release snow density:ReleaseDHMDensity
+			set:ReleaseDHMDensity
+			german:DHM-Anbruch-Schnee-Dichte
+			doc:Snow density for entrainment dpeths by DHM.
+				german:Schneedichte für Anbruchmächtigkeiten über DHM.
+	string.friction type:FrictionType
+		set:FrictionType
+		options:FrictionTypeOptions
+		vis:RunVis
+		german:Reibungsgesetz
+		doc:Relation used for the computation of the bottom shear stress @@tau/@ and the\
+			active/passive earth pressure coefficients as, in general, a function of density @@rho/@,\
+			velocity @@u/@, flow-depth @@h/@ and bottom pressure @@p/@.\
+			\
+			"Chezy": \
+			@@tau = rho * c_dyn * u^2 /@\
+			\
+			"Chezy + Mohr-Coulomb": \
+			@@tau = p * tan(delta) + rho * c_dyn * u^2 /@\
+			\
+			"...SAMOS classic": \
+			@@tau = tan(delta) * max(p, rho * c_dyn * u^2 )/@\
+			\
+			Where @@delta/@ is the bed friction angle and @@c_dyn/@ a dynamic friction coefficient. \
+			Other options according to *.cint-files in .../files/rheology.
+			german:Beziehung zur Berechnung der Bodenschubspannung @@tau/@ und der aktiven/passiven\
+				Erddruck-Koeffizienten i.a. als Funktion der Dichte @@rho/@, Geschwindigkeit\
+				@@v/@, Fließmächtigkeit @@h/@ und Bodendruck @@p/@.\
+				\
+				"Chezy": \
+				@@tau = rho * c_dyn * u^2 /@\
+				\
+				"Chezy + Mohr-Coulomb": \
+				@@tau = p * tan(delta) + rho * c_dyn * u^2 /@\
+				\
+				"...SAMOS classic": \
+				@@tau = tan(delta) * max(p, rho * c_dyn * u^2 )/@\
+				\
+				Dabei ist @@delta/@ der Bettreibungswinkel und @@c_dyn/@ ein dynamischer\
+				Reibungskoeffizient. \
+				Weitere Optionen nach den *.cint-Dateien in .../files/AK_Attributes/rheology.
+	bool.powder snow avalanche:get_powder_snow_active
+		set:set_powder_snow_active
+		german:Staublawine
+		vis:PsaVis
+		german:Staublawinenkoppelung
+		doc:If on, the dense flow avalanche generates and interacts a powder snow flow.\
+			Interaction means mass and momentum transfer from the free surface flow\
+			into the fluid above.\
+			\
+			This option activates an interaction model, which\
+			is based on the assumption of a granular fluid-material (particles) at the free surface.\
+			The particels mass flow @@dm/dt/@ into the fluid above is assumed to be basically proportional\
+			to the shear stress @@tau_s/@, exerted by the fluid on to the "free" surface: \
+			@@dm/dt = rho_p * dA * (tau_s / rho_f) * (Deltac / DeltaU) * 1/sigma_t/@ \
+			with the density of the particles @@rho_p/@, that of air, @@rho_f/@, the area of a surface element @@dA/@ and\
+			the particles volume fraction and flow velocity differences @@Deltac/@ and @@DeltaU/@, respectively,\
+			across the "resuspension layer". @@sigma_t/@ is the turbulent Schmidt Number, which is computed\
+			according to ->ShallowWaterSimulation.ParticlesSuspensionCoeff.\
+			The resuspension layer is assumed to be the transition layer\
+			between the free surface and the particles-fluid-suspension above, where the particles\
+			concentration is already so small, that particle-collisions can be neglected.
+			german:Wenn aktiviert, erzeugt die Fließlawine einen Staubanteil und Massen- und Impulsübertragung von der\
+				freien Oberfläche des Fließanteils an die Luft bzw. Staubanteil darüber wird aktiviert.\
+				\
+				Das Interaktionsmodell beruht auf der Annahme eines granularen Materials aus kleinen\
+				Partikeln an der freien Oberfläche der Fließlawine. Der\
+				Partikel-Massenstrom @@dm/dt/@ in die Luft wird im wesentlichen\
+				als proportional zur Schubspannung @@tau_s/@, die die Luft auf die "freie"\
+				Oberfläche ausübt, angenommen: \
+				@@dm/dt = rho_p * dA * (tau_s / rho_f) * (Deltac / DeltaU) * 1/sigma_t/@ \
+				Darin ist @@rho_p/@ die Dichte von Eis, @@dA/@ die Größe eines Oberflächenelementes,\
+				@@rho_f/@ die Dichte von Luft, @@Deltac/@ die\
+				Differenz der Partikel-Volumsfraktion und @@DeltaU/@ die Geschwindigkeitsdifferenz über die\
+				Resuspensionsschicht. @@sigma_t/@ ist die turbulente Schmidt-Zahl, die nach\
+				->ShallowWaterSimulation.ParticlesSuspensionCoeff berechnet wird.\
+				Als "Resuspensionsschicht" wird die Übergangsschicht zwischen\
+				Fließlawinenoberfläche und dem Bereich der Staublawine angenommen, in dem die\
+				Partikel bereits so stark verdünnt sind, daß Partikelkollisionen vernachlässigt\
+				werden können.
+	opr.material parameter
+		vis:RunVis
+		german:Materialkennwerte
+		doc:Parameters of the flowing material.
+			german:Kennwerte des fließenden Materials.
+		string.formula parameters:FormulaParameters
+			set:FormulaParameters
+			vis:FormulaParametersVis
+			german:Formel-Kennwerte
+			doc:Rheological parameter in friction formulas in .../files/rheology/*.cint.
+				german:Rheologische Kennwerte der Reibungsformeln in .../files/rheology/*.cint.
+		float.internal friction angle [deg]:InternalFrictionAngle
+			set:InternalFrictionAngle
+			german:innerer Reibungswinkel
+			vis:advanced_options
+			doc:Internal friction angle (@@Phi/@; angle of repose). From the internal friction angle and\
+				the effective bed friction angle earth-pressure-coefficients are computed according to a\
+				Mohr-Coulomb-behavior of the bulk flow above the (thin) shear layer at the bottom. \
+				If the internal friction angle is set to zero, all earth pressure coefficients are set to one.\
+				This yields isotropic normal stresses as for a Newtonian fluid, i.e. the pressures normal\
+				to and in flow-direction are equal to the pressure normal to the bottom.
+				german:Innerer Reibungswinkel (@@Phi/@, Böschungswinkel des Materials). Aus den inneren Reibungswinkel\
+					und dem effektiven Bettreibungswinkel werden entprechend einem Mohr-Coulombschen Verhalten\
+					der Fließschicht über der (dünnen) Boden-Scherschicht aktive und passive Erddruckkoeffizienten\
+					berechnet. \
+					Wenn der innere Reibungswinkel auf 0 gesetzt wird, werden alle Erddruckkoeffizienten\
+					auf 1 gesetzt, d.h. eine isotrope Normalspannungsverteilung wie in einem Newtonischen Fluid\
+					wird angenommen (damit ist der Druck in Längs- und Querrichtung gleich dem Druck normal\
+					zum Boden).
+		float.bed friction angle [deg]:BedFrictionAngle
+			set:BedFrictionAngle
+			vis:FrictionAngleVisibility
+			german:Bettreibungswinkel
+			doc:Bed friction angle (@@delta/@), determins friction between fluid\
+				and bottom.
+				german:Bettreibungswinkel (@@delta/@), bestimmt die Reibung zwischen Material\
+					und Untergrund.
+		string.earth pressure coefficients:EarthPressureCoefficients
+			vis:EarthPressureCoefficientsVis
+			german:Erddruck-Koeffizienten
+			doc:Active/passive earth pressure coefficients\
+				in/normal to flow direction, according to @@Phi/@ and @@delta_eff/@. @@delta_eff/@\
+				is the effective bed friction angle computed as @@delta_eff = tau / p/@.
+				german:Aktive/passive Erddruck-Koeffizienten\
+					längs und quer zur Strömungsrichtung, bestimmt durch\
+					@@Phi/@ und @@delta_eff/@. @@delta_eff/@ ist der effektive Bettreibungswinkel,\
+					der sich aus @@delta_eff = tau / p/@ berechnet.
+		float.dynamic friction coefficient:DynamicFrictionCoefficient
+			set:DynamicFrictionCoefficient
+			vis:DynamicFrictionCoefficientVis
+			german:dynamischer Reibungskoeffizient
+			doc:Coefficient for velocity-squared friction term (@@c_dyn/2/@).
+				german:Koeffizient des vom Quadrat der Geschwindigkeit (@@v/@)\
+					abhängigen Reibungstermes (@@c_dyn/@).
+		float.flowing density:Density
+			set:Density
+			german:Strömungsdichte
+			doc:Density of the flowing material (@@rho/@).
+				german:Dichte des strömenden Materiales (@@rho/@).
+		float.cohesive surface tension:$cohesiveSurfaceTension
+			set:$cohesiveSurfaceTension
+			german:Kohaesive Oberflaechenspannung
+		float.restitution coefficient:RestitutionCoefficient
+			set:RestitutionCoefficient
+			german:Damm-Restitutionskoeffizient
+			vis:advanced_options
+			doc:Restitution coefficient for wall-reflexion;\
+				0...inelastic - 1...elastic impact.
+				german:Restitutionskoeffizient für Damm-Reflexionen;\
+					0...plastischer - 1...elastischer Stoß.
+		string.interaction with fluid above:InteractionTypeWithFluidAbove
+			set:InteractionTypeWithFluidAbove
+			options:InteractionTypeWithFluidAboveOptions
+			vis:VisNone
+			german:Staublawinenkoppelung
+			doc:Type of interaction with the fluid (air) above the free surface flow.\
+				Interaction means mass and momentum transfer from the free surface flow\
+				into the fluid above. The option "none" selects zero interaction.\
+				\
+				The option "particles suspension" activates an interaction model, which\
+				is based on the assumption of a granular fluid-material (particles) at the free surface.\
+				The particels mass flow @@dm/dt/@ into the fluid above is assumed to be basically proportional\
+				to the shear stress @@tau_s/@, exerted by the fluid on to the "free" surface: \
+				@@dm/dt = rho_p * dA * (tau_s / rho_f) * (Deltac / DeltaU) * 1/sigma_t/@ \
+				with the density of the particles @@rho_p/@, that of air, @@rho_f/@, the area of a surface element @@dA/@ and\
+				the particles volume fraction and flow velocity differences @@Deltac/@ and @@DeltaU/@, respectively,\
+				across the "resuspension layer". @@sigma_t/@ is the turbulent Schmidt Number, which is computed\
+				according to ->ShallowWaterSimulation.ParticlesSuspensionCoeff.\
+				The resuspension layer is assumed to be the transition layer\
+				between the free surface and the particles-fluid-suspension above, where the particles\
+				concentration is already so small, that particle-collisions can be neglected.
+				german:Typ der Interaktion mit der Luft über der Fließlawine.\
+					Interaktion bedeutet Massen- und Impulsübertragung von der\
+					freien Oberfläche an die Luft darüber. Mit der Option "none"\
+					wird jede Interaktion ausgeschaltet (reine Fließlawinensimulation).\
+					\
+					Die Option "particles suspension" aktiviert ein Interaktionsmodell,\
+					das auf der Annahme eines granularen Materials aus kleinen\
+					Partikeln an der freien Oberfläche der Fließlawine beruht. Der\
+					Partikel-Massenstrom @@dm/dt/@ in die Luft wird im wesentlichen\
+					als proportional zur Schubspannung @@tau_s/@, die die Luft auf die "freie"\
+					Oberfläche ausübt, angenommen: \
+					@@dm/dt = rho_p * dA * (tau_s / rho_f) * (Deltac / DeltaU) * 1/sigma_t/@ \
+					Darin ist @@rho_p/@ die Dichte von Eis, @@dA/@ die Größe eines Oberflächenelementes,\
+					@@rho_f/@ die Dichte von Luft, @@Deltac/@ die\
+					Differenz der Partikel-Volumsfraktion und @@DeltaU/@ die Geschwindigkeitsdifferenz über die\
+					Resuspensionsschicht. @@sigma_t/@ ist die turbulente Schmidt-Zahl, die nach\
+					->ShallowWaterSimulation.ParticlesSuspensionCoeff berechnet wird.\
+					Als "Resuspensionsschicht" wird die Übergangsschicht zwischen\
+					Fließlawinenoberfläche und dem Bereich der Staublawine angenommen, in dem die\
+					Partikel bereits so stark verdünnt sind, daß Partikelkollisionen vernachlässigt\
+					werden können.
+		opr.interaction parameter
+			vis:InteractionTypeWithFluidAboveVis
+			german:Staublawinenparameter
+			doc:Parameter determining the interaction with the fluid\
+				above the free surface flow.
+				german:Parameter die die Staublawinenentstehung\
+					und -strömung bestimmen.
+			float.threshold Froude number for suspension:ParticlesMinFroudeSaltation
+				set:ParticlesMinFroudeSaltation
+				german:Mindest-Froude-Zahl für Staubentstehung
+				vis:advanced_options
+				doc:Froude number @@Fr_smin/@, above which particles suspension, i.e. generation\
+					of a powder snow layer, is permitted. Suspension is thus allowed, if \
+					@@Fr = U^2 / (g * d_p) > Fr_smin/@. \
+					Setting @@Fr_smin > 0/@ implies that no suspension takes\
+					place when the free surface flow is at rest.
+					german:Froude-Zahl @@Fr_smin/@, ab der die Entstehung des Staubanteils zugelassen wird.\
+						Staubanteil kann damit nur dort entstehen, wo die Bedingung \
+						@@Fr = U^2 / (g * d_p) > Fr_smin/@ \
+						erfüllt ist. Darin ist @@U/@ die Geschwindigkeit der freien Oberflächenströmung\
+						(Fließlawine), @@g/@ die Erdbeschleunigung und @@d_p/@ der Staub-Partikeldurchmesser.\
+						Ein Wert @@Fr_smin > 0/@ impliziert, dass kein Staubanteil aus ruhender Fließlawinenmasse\
+						entstehen kann.
+			float.suspension coefficient:ParticlesSuspensionCoeff
+				set:ParticlesSuspensionCoeff
+				german:Partikel-Suspensionskoeffizient
+				vis:advanced_options
+				doc:Coefficient @@c_s/@ determining the amount of suspension\
+					->ShallowWaterSimulation.InteractionTypeWithFluidAbove. If a value less than 0.5\
+					is specified, a relation similar to SAMOS99 is used to compute the turbulent\
+					Schmidt-number:\
+					\
+					@@1/sigma_t = c_s * rho_f * c_d / (rho_p * d_p)/@ ,\
+					\
+					otherwise, the alternative relation\
+					\
+					@@1/sigma_t = 1 - 1 / sqrt(c_s*Fr_p)/@,\
+					\
+					is applied. The particle Froude number @@Fr_p/@ is the squared relation of the turbulence lifting velocity\
+					@@u_star = sqrt(tau_s/rho_f)/@ to the particle settling velocity: \
+					@@Fr_p = 6 * u_star^2 * rho_f * c_d / (4 * rho_p * a_n * d_p)/@ \
+					@@a_n/@ is the effective downward acceleration: \
+					@@a_n = p / (rho * h)/@ \
+					which is usually close to @@g/@. @@c_d/@ is the ->ShallowWaterSimulation.ParticlesDragCoefficient.
+					german:Koeffizient @@c_s/@, der mitbestimmt, wieviel Staubanteil entsteht\
+						->ShallowWaterSimulation.InteractionTypeWithFluidAbove. Wenn ein Wert < 0.5 eingestellt wird,\
+						wird die turbulente Schmidt-Zahl, ähnlich wie in SAMOS99, wie folgt berechnet: \
+						\
+						@@1/sigma_t = c_s * rho_f * c_d / (rho_p * d_p)/@ ,\
+						\
+						Andernfall wird die alternative Beziehung\
+						\
+						@@1/sigma_t = 1 - 1 / sqrt(c_s*Fr_p)/@,\
+						\
+						angewandt. Darin ist die Partikel-Froude-Zahl @@Fr_p/@ das Quadrat des Verhältnisses der turbulenten\
+						Auftriebsgeschwindigkeit @@u_star = sqrt(tau_s/rho_f)/@ zur Partikel-Absinkgeschwindigkeit\
+						an der Fließoberfläche und wird wie folgt berechnet: \
+						@@Fr_p = 6 * u_star^2 * rho_f * c_d / (4 * rho_p * a_n * d_p)/@ \
+						@@a_n/@ ist die effektive, bodengerichtete Beschleunigung: \
+						@@a_n = p / (rho * h)/@ \
+						die normalerweise nahe bei @@g/@ liegt. @@c_d/@ ist der ->ShallowWaterSimulation.ParticlesDragCoefficient.
+			float.particles diameter:ParticlesDiameter
+				set:ParticlesDiameter
+				german:Partikeldurchmesser
+				doc:Characteristic diameter @@d_p/@ of the suspended particles.
+					german:Charakteristischer Durchmesser @@d_p/@ der suspendierten Partikel\
+						(Eispartikel in der Staublawine).
+			float.material particles density:ParticlesMaterialDensity
+				set:ParticlesMaterialDensity
+				german:materielle Partikeldichte
+				vis:advanced_options
+				doc:The material density @@rho_p/@ of the suspended particles.
+					german:Die materielle Dichte @@rho_p/@ der suspendierten Partikel\
+						(Dichte von Eis).
+			float.particles drag coefficient:ParticlesDragCoefficient
+				set:ParticlesDragCoefficient
+				german:Partikel-Widerstandskoeffizient
+				vis:advanced_options
+				doc:Drag coefficient @@c_d/@ of the suspended particles. The force @@F_d/@ exerted by the\
+					suspension-fluid on a particle is: \
+					@@F_d = rho_f * (v_f-v_p)^2 / 2 * c_d * d_p^2 * pi/6/@ \
+					with the fluid density @@rho_f/@, the fluid velocity @@v_f/@, the particles velocity @@v_p/@\
+					and the particle-diameter @@d_p/@.
+					german:Widerstandskoeffizient @@c_d/@ der suspendierten Partikel. Die Kraft @@F_d/@ die\
+						das Suspensions-Fluid (Luft) auf ein Partikel ausübt, ist: \
+						@@F_d = rho_f * (v_f-v_p)^2 / 2 * c_d * d_p^2 * pi/6/@ \
+						worin @@rho_f/@ die Dichte und @@v_f/@ die Geschwindigkeit des Suspensions-Fluids bezeichnet,\
+						@@v_p/@ die Partikelgeschwindigkeit und @@d_p/@ den Partikeldurchmesser.
+			float.particles restitution coefficient:ParticlesRestitutionCoefficient
+				set:ParticlesRestitutionCoefficient
+				german:Partikel-Restitutionskoeffizient
+				vis:advanced_options
+				doc:Coefficient of restitution @@c_pr/@ for particle-reflexion at the terrain surface\
+					or the free surface. A value of 1 means perfectly elastic reflexion (lossless),\
+					a value of 0 means entirely plastic collision (loss of entire momentum).
+					german:Restitutionskoeffizient @@c_pr/@ für die Partikel-Reflexion an der Geländeoberfläche\
+						oder der freien Oberfläche (Fließlawinenoberfläche). Ein Wert von 1 bedeuted\
+						vollkommen elastische (verlustlose) Reflexion, ein Wert von 0 einen vollkommen\
+						plastischen Stoß mit Verlust des gesamten Impulses.
+			float.saltation factor:DfaTurbulenceFactor
+				set:DfaTurbulenceFactor
+				vis:VisNone
+				german:Saltationsfaktor
+				doc:The free surface is assumed to vibrate with a normal velocity @@v_sn/@ of \
+					@@v_sn = f_salt * v/@ \
+					where @@v/@ is the free surface flow velocity and @@f_salt/@ the saltation factor.\
+					When particles are reflected at the free surface, @@v_sn/@ is added to the particle\
+					velocity normal to the surface after reflexion.
+					german:Es wird angenommen, dass die freie Oberfläche (der Fließlawine) mit einer\
+						Normalgeschwindigkeit @@v_sn/@ vibriert: \
+						@@v_sn = f_salt * v/@ \
+						wobei @@v/@ die Fließgeschwindigkeit und @@f_salt/@ den Saltationsfaktor bezeichnet.\
+						Wenn ein Partikel an der freien Oberfläche reflektiert wird, wird @@v_sn/@ der\
+						Normalkomponente seiner Geschwindigkeit nach der Reflexion hinzugerechnet.
+			int.turbulence reaction mode:TurbulenceReactionMode
+				set:TurbulenceReactionMode
+				vis:VisNone
+				german:Turbulenzreaktionsmodus
+			float.turbulent dispersion factor:get_turb_dispersion_factor
+				set:set_turb_dispersion_factor
+				vis:advanced_options
+				german:Dispersionsfaktor
+				doc:The turbulent dispersion is multiplied with this factor.
+					german:Die turbulente Dispersion wird mit diesem Faktor multipliziert.\
+						Die Voreinstellung ist 1. Ein hoeherer Faktor macht die Lawine\
+						ausgedehnter und weniger dicht und reduziert den Druck.
+			float.particles reflexion angle [deg]:ParticlesReflexionAngle
+				set:ParticlesReflexionAngle
+				german:Partikelreflexionswinkel [deg]
+				vis:advanced_options
+				doc:Minimal angle @@alfa_refl/@ between particle velocity and surface for reflexion.\
+					If the angle is smaller, the particle is deposited at the surface.
+					german:Minimaler Winkel @@alfa_refl/@ zwischen Geschwindigkeitsvektor und\
+						Oberflächen-Normalvektor für Partikelreflexion.\
+						Ist der Winkel geringer, wird das Partikel an der Oberfläche deponiert.
+			float.particles reflexion minimal velocity:ParticlesReflexionMinimalVelocity
+				set:ParticlesReflexionMinimalVelocity
+				german:minimale Partikelreflexionsgeschwindigkeit
+				vis:advanced_options
+				doc:Minimal velocity difference @@v_minrefl/@ between particle and surface for reflexion.\
+					If velocity difference is below, particle is deposited at surface.
+					german:Minimale Geschwindigkeitsdifferenz @@v_minrefl/@ zwischen Partikel und Oberfläche für eine Reflexion.\
+						Ist die Differenz geringer, wird das Partikel an der Oberfläche deponiert.
+			opr.wall roughness
+				german:Wandrauhigkeit
+				vis:advanced_options
+				doc:The wall for the suspension flow is the terrain-surface or the surface of the dense flow.\
+					The dense flow surface is assumed to be covered with a saltation layer, which leads\
+					to increase roughness for the suspension flow. The effective roughness @@R/@ is computed as\
+					\
+					@@R = R_0 + c_salt * u^2/g + c_res * rho_l * u_star ^2 / (rho_p*g)/@\
+					\
+					where @@u/@ is the velocity of the dense flow and @@u_star/@ the shear velocity @@sqrt(tau_w/rho_l)/@.\
+					@@R_0/@ is a minimal roughness (that of the terrain surface), @@c_salt/@ and @@c_res/@ are empirical\
+					constants for the computation of a saltation-height.
+					german: Die Wand für die Staublawine ist die Geländeoberfläche bzw. die Fließlawinenoberfläche.\
+						Die Fließlawinenoberfläche ist mit einer Saltationsschicht bedeckt, die die Rauhigkeit für den\
+						Staubanteil erhöht. Die effektive Rauhigkeit @@R/@ wird wie folgt berechnet:\
+						\
+						@@R = R_0 + c_salt * u^2/g + c_res * rho_l * u_star ^2 / (rho_p*g)/@\
+						\
+						Dabei ist @@u/@ die Geschwindigkeit des Fließanteils unt @@u_star = sqrt(tau_w/rho_l)/@\
+						die sogenannte Schubspannungsgeschwindigkeit. @@R_0/@ ist eine Mindest-Rauhigkeit (die des\
+						Geländes), @@c_salt/@ und @@c_res/@ empirische Konstanten zur Berechnung der Saltationshöhe.
+				float.minimal wall roughness:PsaMinRoughness
+					set:PsaMinRoughness
+					german:Minimale Wandrauhigkeit
+					doc:Minimal wall roughness @@R_0/@, terrain roughness for suspension-flow.
+						german:Mindest-Bodenrauhigkeit @@R_0/@.
+				float.roughness saltation constant:PsaRoughnessVibrationConst
+					set:PsaRoughnessVibrationConst
+					german:Rauhigkeits-Saltationskonstante
+					doc:Saltation-constant @@c_salt\@ for the computation of the saltation-height\
+						as a function of the dense-flow-velocity.
+						german:Saltationskonstante @@c_salt/@ zur Berechnung der Saltationshöhe\
+							als Funktion der Fließlawinengeschwindigkeit.
+				float.roughness suspension constant:PsaRoughnessSuspensionConst
+					set:PsaRoughnessSuspensionConst
+					german:Rauhigkeits-Suspensionskonstante
+					doc:Roughness suspension constant @@c_res\@ for the computation of the contribution\
+						of the drag of the suspension flow to the saltation height.
+						german:Rauhigkeits-Suspensionskonstante @@c_res/@ zur Berechnung des Beitrages\
+							der Staublawinenströmung an der Saltationshöhe.
+			bool.direct snow entrainment:PsaDirectEntrainment
+				set:PsaDirectEntrainment
+				german:direkte Schneeaufnahme
+				doc:If switched on, direct entrainment of entrainable (resting) snow into the\
+					suspension flow is enabled. The entrainment mass flow is computed in the\
+					same way as the mass entrained from the dense-flow\
+					(see @@dm/dt/@ in ->ShallowWaterSimulation.InteractionTypeWithFluidAbove),\
+					except that the ->ShallowWaterSimulation.ParticlesMinFroudeSaltation is not applied.
+					german:Wenn eingeschaltet, wird die direkte Aufnahme von Schnee aus der ruhenden\
+						Schneedecke in die Staublawine zugelassen. Die aufgenommene Masse wird in\
+						gleicher Weise berechnet, wie die aus der Fließlawine aufgenommene Masse\
+						(siehe @@dm/dt/@ in ->ShallowWaterSimulation.InteractionTypeWithFluidAbove),\
+						ausser dass die ->ShallowWaterSimulation.ParticlesMinFroudeSaltation nicht\
+						berücksichtigt wird.
+			float.entrainment min velocity:get_psa_entrainment_min_vel
+				set:set_psa_entrainment_min_vel
+				vis:advanced_options
+				german:Aufnahme-Minimalgeschwindigkeit
+				doc:If the powder snow velocity is below this value, no direct entrainment occurs.
+					german:Keine direkte Schneeaufnahme erfolgt unter dieser Staublawinengeschwindigkeit.\
+						Die Voreinstellung ist 10.
+			float.particle collision coefficient:get_part_coll_coeff
+				set:set_part_coll_coeff
+				vis:advanced_options
+				german:Partikel-Kollisionskoeffizient
+	opr.numerical parameter
+		vis:RunVis
+		german:Numerische Parameter
+		doc:Parameter that control the numerics of the flow simulation.
+			german:Parameter für die Numerik der Strömungssimulation.
+		float.end time:EndTime
+			set:EndTime
+			german:End-Zeit
+			doc:Simulation end time / duration.
+				german:Simulations-End-Zeit / -dauer.
+		float.time step:DeltaT
+			set:DeltaT
+			german:Zeitschritt
+			vis:advanced_options
+			doc:Simulation time step.
+				german:Simulations-Zeitschritt
+		float.output interval:DeltaOut
+			set:DeltaOut
+			german:Ausgabeintervall
+			doc:Result-output time interval.
+				german:Zeitintervall für die Ergebnisausgabe.
+		string.stop criterion:get_stop_crit
+			set:set_stop_crit
+			options:get_stop_crit_opts
+			german:Abbruchbedingung
+			doc:If activated, the simulation will automatically be terminated as soon as the condition defined\
+				in the selected function is true before the specified ->.EndTime .
+				german:Wenn aktiv, wird die Simulation automatisch beim Erreichen der in der gewählten Funktion\
+					erreichten Abbruchbedingung auch vor der angegebenen ->.EndTime beendet.
+		string.stop criterion parameters:$stop_crit_pars
+			set:$stop_crit_pars
+			german:Abbruchbedingungsparameter
+			vis:get_stop_crit_pars_vis
+			doc:Parameters of the stop criterion function.
+				german:Parameter der Abbruchbedingungsfunktion.
+		string.particle mass determination method:MassPerParticleDeterminationMethod
+			set:MassPerParticleDeterminationMethod
+			options:MassPerParticleDeterminationMethods
+			german:Partikelmassen-Bestimmungsmethode
+			vis:advanced_options
+			doc:Method to determine number of numerical particles.
+				german:Methode zur Bestimmung der Anzahl der numerischen Partikel.
+		float.mass per particle [kg]:MassPerParticle
+			set:MassPerParticle
+			vis:advMassPerParticleVisibility
+			german:Masse pro Partikel
+		float.number of particles per cell:NumParticlesPerCell
+			set:NumParticlesPerCell
+			vis:advNumParticlesPerCellVisibility
+			german:Anzahl der Partikel pro Zelle
+		float.delta depth per particle:DeltaDepthPerParticle
+			set:DeltaDepthPerParticle
+			vis:advDeltaDepthPerParticleVisibility
+			german:Fließmächtigkeit pro Partikel
+		int.number of particles:NumParticles
+			set:NumParticles
+			vis:advNumParticlesVisibility
+			german:Partikelanzahl
+			doc:Absolute number of the numerical flow-particles.
+				german:Gesamtanzahl der numerischen Fließpartikel.
+		float.subgrid mixing factor:SubgridMixingFactor
+			set:SubgridMixingFactor
+			vis:advanced_options
+			german:Subgitter-Mischfaktor
+			doc:Factor that determines the amount of mixing within a mesh cell. \
+				0...no mixing - 100...reasonable mixing. \
+				With that factor particle velocities are fit to the velocity\
+				on the mesh.
+				german:Mischungsfaktor innerhalb einer Zelle. \
+					0...kein Mischen - 100...vernünftiges Mischen. \
+					Mit diesem Faktor wird die Partikelgeschwindigkeit der\
+					Geschwindigkeit am Netz angepasst.
+		float.artificial viscosity:$sph_diffusion_coefficient
+			set:$sph_diffusion_coefficient
+			vis:advanced_options
+			german:artifizelle Viskositaet
+			doc:Alternative option to ->ShallowWaterSimulation.SubgridMixingFactor to account for lateral\
+				diffusion of momentum and heat within avalanche. Reasonable range: 0 to 0.1.
+				german:Alternative zu ->ShallowWaterSimulation.SubgridMixingFactor um\
+					seitliche Diffusion von Impuls und Waerme zu beruecksichtigen.\
+					Wertebereich: 0 bis 0.1.
+			vis:VisNone
+		int.SPH mode:SphMode
+			german:SPH-Modus
+			set:SphMode
+			doc:Mode of computing inter-particle forces: \
+				0...grid-interpolation, fastest, but may lead to grid aligned "fingers" \
+				1...particle-interpolation, smoothing length equal to grid size \
+				n...particle-interpolation, smoothing length equal to n times grid size (slower with higher n) \
+				-n...particle-interpolation, smoothing length equal to 1/n times grid size (for testing only)
+				german:Art der Berechnung der Inter-Partikel-Kräfte: \
+					0...Gitterinterpolation: schnell, kann aber zu gitterausgerichteten "Fingern" führen \
+					1...SPH-Partikelinterpolation, Glättungslänge gleich Gittergröße \
+					n...SPH-Partikelinterpolation, Glättungslänge gleich n Mal Gittergröße (langsamer mit höherem n) \
+					-n...SPH-Partikelinterpolation, Glättungslänge gleich 1/n Mal Gittergröße (nur zum Testen)
+			vis:advanced_options
+		int.number of CPU cores used for DFA:$n_threads
+			set:$n_threads
+			german:Anzahl benutzter Rechenkerne für DFA
+			doc:
+				Number of CPU cores to be used for the DFA simulation (multithreading).\
+					Set zero to turn off multithreading.
+				german:Anzahl der zu verwendenden Rechenkerne für die Fliesslawinensimulation\
+					(Multithreading). Durch Nullsetzen wird Multithreading abgeschaltet.
+		float.curvature factor:CurvatureReductionFactor
+			set:CurvatureReductionFactor
+			vis:VisNone
+			german:Krümmungsfaktor
+			doc:Factor by which the local surface curvature is multiplied for computing\
+				centrifugal forces. The centrifugal forces increase the bottom pressure\
+				and hence the friction. With a highly resolved DHM, the curvatures are\
+				larger, and, as a consequence, also the bottom friction. To get results\
+				comparable to results with a coarser DHM, it might be necessary\
+				to set the factor to a smaller value. An alternative would be to reduce\
+				the friction in the friction model itself.
+				german:Faktor, mit dem die lokale Geländekrümmung multipliziert wird, um\
+					die zentrifugalen Kräfte zu berechnen. Die zentrifugalen\
+					Kräfte erhöhen den Bodendruck und damit die Bodenreibung. Ist das DHM fein\
+					aufgelöst, ergeben sich groessere Krümmungswerte und damit höhere Bodenreibung.\
+					Um mit einem gröberen DHM vergleichbare Simulationsresultate zu erzielen,\
+					kann es notwendig sein, den Reduktionsfaktor herabzusetzen. Eine Alternative ist\
+					die Herabsetzung der Reibung im Reibungsmodell selbst.
+		opr.interaction with fluid above
+			vis:InteractionTypeWithFluidAboveVis
+			german:Staublawinenkoppelung
+			doc:Numerical parameter for the interaction with the fluid above
+				german:Numerische Parameter für die Staublawinenkoppelung.
+			float.interaction time step:ParticlesTimeStep
+				set:ParticlesTimeStep
+				german:Staublawinen-Zeitschritt
+				vis:advanced_options
+				doc:Time step for the interacting (powder snow) simulation.\
+					Must be a multiple of the dense-flow time step (->ShallowWaterSimulation.DeltaT).
+					german:Zeitschritt für die Staublawinensimulation. Muss ein ganzzahliges\
+						Vielfaches des Fließ-Zeitschrittes (->ShallowWaterSimulation.DeltaT) sein.
+			float.particles parcel mass:ParcelMass
+				set:ParcelMass
+				german:Staubpartikel-Paketmasse
+				vis:advanced_options
+				doc:The particle-suspension flow is simulated as flow of a continuum (air) with\
+					interacting particles. Particles are combined to "parcels", whose\
+					motion is computed as that of a single body. The parcel mass determines\
+					the mass of such a parcel and hence how many particles are combined to\
+					a parcel.
+					german:Die Suspensionsströmung (Staublawine) wird als Kontinuum (Luft) mit\
+						interagierenden Partikeln (Eis) simuliert. Partikel werden dabei in Pakete\
+						zusammengefasst, deren Bewegung als Einzelkörper berechnet wird. Die Paketmasse\
+						bestimmt, wieviele Partikel in zu einem Paket zusammengefasst werden.
+			string.additional PSA solver arguments:AdditionalPSASolverArgs
+				set:AdditionalPSASolverArgs
+				german:zusätzliche Staubsimulations-Argumente
+				vis:advanced_options
+				doc:Additional command line arguments for the PSA solver executable.
+					german:Zusätzliche Kommandozeilenargumente für die Staublawinenberechnung.
+	int.number of CPU cores used for PSA:PsaNumMPI
+		set:PsaNumMPI
+		vis:InteractionTypeWithFluidAboveVis
+		german:Anzahl benutzter Rechenkerne für PSA
+		doc:
+			Number of CPU cores to be used for the PSA simulation (MPI-parallelization).
+			german:Anzahl der zu verwendenden Rechenkerne für die Staublawinensimulation\
+				(MPI-Parallelisierung).
+	apply.run
+		set:Run
+		vis:RunVis
+		german:starten
+		doc:Start the simulation within the program. This will block the program until the simulation is\
+			finished or interrupted. The project must be saved before.
+			german:Simulation starten. Das Programm wird blockiert bis die Simulation beendet\
+				ist oder unterbrochen wird. Das Projekt muss zuvor gespeichert werden.
+	apply.continue
+		set:Continue
+		vis:ContinueVis
+		german:fortsetzen
+		doc:Continue a finished or interrupted simulation from the currently loaded time step\
+			to the end time (->ShallowWaterSimulation.EndTime).\
+			This will block the program until the simulation is finished or interrupted.
+			german:Beendete oder unterbrochene Simulation ab dem gerade geladenen Zeitschritt\
+				bis zur angegebenen End-Zeit (->ShallowWaterSimulation.EndTime) fortsetzen.\
+				Das Programm wird wird für die Dauer der Simulation bzw. bis zu einer\
+				Unterbrechung blockiert.
+	apply.run in background
+		set:RunInBackground
+		vis:RunVis
+		german:starten im Hintergrund
+		doc:Start the simulation in background. This will not block the program.\
+			The simulation continues also after closing the program or after logging off.
+			german:Simulation im Hintergrund starten. Das Programm wird dadurch\
+				nicht blockiert. Die Simulation läuft auch nach Beenden des Programmes\
+				oder nach dem Ausloggen vom Rechner weiter.
+	apply.continue in background
+		set:ContinueInBackground
+		vis:ContinueVis
+		german:fortsetzen im Hintergrund
+		doc:Continue a finished or interrupted simulation from the currently loaded time step\
+			in the background (->ShallowWaterSimulation.RunInBackground).
+			german:Beendete oder unterbrochene Simulation im Hintergrund\
+				(->ShallowWaterSimulation.RunInBackground) bis zur End-Zeit fortsetzen.
+	string.simulation status:Status
+		vis:VisRead
+		german:Simulationsstatus
+		doc:Status of an simulation running in background.\
+			The displayed status is only updated on attribute-changes or operations\
+			or on re-opening the attribute-editor.
+			german:Status einer im Hintergrund laufenden Simulation.\
+				Die Statusanzeige wird nur nach Attribut-Änderungen oder\
+				Operationen oder Neu-Öffnen des Attributfensters aktualisiert.
+	string.status info:StatusInfo
+		german:Statusinfo
+	apply.interrupt
+		set:Interrupt
+		vis:InterruptVis
+		confirm
+		german:unterbrechen
+		doc:Interrupt the simulation if started in background.\
+			The simulation need not have been started from the current program-session.
+			german:Im Hintergrund laufende Simulation unterbrechen.\
+				Die Simulation braucht nicht innerhalb der laufenden Programm-Sitzung\
+				gestartet worden sein.
+	apply.reset simulation status
+		set:reset_simulation_status
+		vis:reset_simulation_status_vis
+		confirm
+		german:Simulationsstatus rücksetzen
+		doc:Reset the simulation status. May be needed after a crashed simulation to\
+			allow a restart of the simulation.
+			german:Simulationsstatus zurücksetzen. Nach einer abgebrochenen Simulation\
+				eventuell notwendig um einen Neustart freizuschalten.
+	opr.show log files
+		german:log-Dateien anzeigen
+		doc:Show simulation log files for simulations started in background\
+			in separate windows.
+			german:Log-Dateien von im Hintergrund gestarteten Simulationen\
+				in separaten Fenstern anzeigen.
+		apply.show shallow water log file
+			set:ShowShallowWaterLogFile
+			german:DFA-log-Datei anzeigen
+			doc:Display the shallow water simulation log file.
+				german:Log-Datei der DFA-(Flachwasser-)Simulation anzeigen.
+		apply.show PSA log file
+			set:ShowPSALogFile
+			vis:InteractionTypeWithFluidAboveVis
+			german:PSA-log-Datei anzeigen
+			doc:Display the log file of the particles-suspension-simulation\
+				(PSA/Powder snow avalanche).
+				german:Log-Datei der PSA-Simulation (Staublawinensimulation)\
+					anzeigen.
+		apply.show coupling log file
+			set:ShowCouplingLogFile
+			vis:InteractionTypeWithFluidAboveVis
+			german:Koppelungs-log-Datei anzeigen
+			doc:Display the log file of the simulation-coupling.
+				german:Log-Datei der Simulations-Koppelung anzeigen.
+		apply.show remaining calculation time
+			set:ShowRemainingPSACalculationTime
+			vis:InteractionTypeWithFluidAboveVis
+			german:verbleibende Rechenzeit anzeigen
+			doc:Display the remaining calculation time of the suspension part.\
+				It is read from the PSA log file.
+				german:Verbleibende Rechenzeit laut Suspensions-log-Datei\
+					anzeigen.
+	string.time step:CurrentTimeStep
+		set:LoadTimeStep
+		options:TimeStepsList
+		german:Zeitschritt
+		doc:Currently loaded time step.
+			german:Aktuell geladener Zeitschritt.
+	apply.load next time step
+		set:LoadNextTimeStep
+		vis:NextTimeStepVis
+		german:nächsten Zeitschritt laden
+	apply.load previous time step
+		set:LoadPrevTimeStep
+		vis:PrevTimeStepVis
+		german:vorigen Zeitschritt laden
+	apply.load first time step
+		set:LoadFirstTimeStep
+		german:ersten Zeitschritt laden
+		doc:Load the first time step.
+			german:Ersten Zeitschritt laden.
+	apply.load last time step
+		set:LoadLastTimeStep
+		german:letzten Zeitschritt laden
+		doc:Load the last computed time step.
+			german:Letzten berechneten Zeitschritt laden.
+	float.set time in seconds
+		set:Time
+		german:Zeit in Sekunden setzen
+		doc:Set time step by value in seconds. The closest available\
+			time step is chosen.
+			german:Zeitschritt setzen als Wert in Sekunden. Der nächstliegende\
+				verfügbare Zeitschritt wird geladen.
+	opr.animation options
+		german:Animations-Einstellungen
+		doc:Options for animations.
+			german:Einstellungen für Animationen.
+		bool.save animation images:AnimationWriteImageFiles
+			set:AnimationWriteImageFiles
+			volatile
+			german:Animations-Bilder speichern
+			doc:If on, every image displayed during an animation (->ShallowWaterSimulation.AnimateTimeSteps)\
+				is saved to a file. The filenames are automatically generated from the\
+				base file name (->FOX_Viewer.ImageFileName).
+				german:Wenn an, wird jedes in einer Animation (->ShallowWaterSimulation.AnimateTimeSteps)\
+					dargestellte Bild als Datei gespeichert. Die Dateinamen werden aus\
+					dem Basisnamen (->FOX_Viewer.ImageFileName) automatisch generiert.
+		string.animation image file name:root:ActualImageFileName
+			german:Animations-Bild-Dateinamen
+			doc:Current file name (->FOX_Viewer.ActualImageFileName)\
+				for saving animation-images.
+				german:Aktueller Dateiname (->FOX_Viewer.ActualImageFileName)\
+					für das Speichern von Animations-Bildern.
+		filename.set animation image file name
+			german:Namen für Animations-Bilddateien setzen.
+			set:root:ImageFileName
+			pattern:*.png,*.ppm,*.tga
+			mode:w
+		int.animation step:AnimationStepIncrement
+			set:AnimationStepIncrement
+			german:Animationsschrittweite
+			doc:Time-step-increment for animations. If set to 1,\
+				all stored time steps will be shown, if to 2, each second etc.\
+				The increment affects also the report-generator.
+				german:Zeitschrittweite für Animationen. Wenn auf 1 gesetzt,\
+					werden alle gespeicherten Zeitschritte gezeigt, auf 2\
+					nur jeder zweite etc.
+		float.animation step delay [s]:AnimationStepDelay
+			set:AnimationStepDelay
+			german:Animationsverzögerung [s]
+			doc:Additional time-delay in seconds between time steps displayed in the animation
+				german:Zusätzliche Verzögerung in Sekunden zwischen dargestellten Zeitschritten\
+					in der Animation.
+		string.assigned animation views:get_assigned_views
+			german:zugewiesene Animations-Ansichten
+			set:set_assigned_views
+			vis:VisRead
+		string.assigned animation view:get_assigned_animation_view
+			german:Ansicht zu geladenem Zeitschritt
+			set:set_assigned_animation_view
+			options:get_assigned_animation_view_options
+		apply.clear assigned animation views
+			german:Animationsansichten-Zuweisungen löschen
+			set:clear_animation_views
+			confirm
+		apply.animate with assigned views
+			german:mit zugewiesenen Ansichten animieren
+			set:animate_with_assigned_views
+			doc:Animation of time steps, where the view is additionally interpolated\
+				according to the assigned animation views. The first assigned view is\
+				used for all timesteps before, and the last assigned\
+				view is used for all timesteps after.
+				german:Animation der Zeitschritte, mit gleichzeitiger Animation der Ansicht\
+					entsprechend den den Zeitschritten zugewiesenen Ansichten. Die erste\
+					zugewiesene Ansicht wird für alle Zeitschritte davor und die letzte\
+					für alle Zeitschritte danach verwendet.
+	apply.animate time steps
+		set:AnimateTimeSteps
+		german:Zeitschritte animieren
+		doc:Automatically load and display time steps\
+			according to ->ShallowWaterSimulation.AnimationStepIncrement.\
+			Starts with the next step after the currently loaded step.\
+			If the current step is the last one, the animation starts with\
+			the first step.
+			german:Automatisch Zeitschritte (je nach ->ShallowWaterSimulation.AnimationStepIncrement)\
+				laden und darstellen. Startet mit dem ersten Schritt nach dem aktuell\
+				geladenen, oder mit dem ersten, falls der letzte Schritt geladen ist.
+	opr.info
+		german:Info
+		doc:Information on the mass-balance at current time step.
+			german:Informationen über die Massenbilanz für den geladenen Zeitschritt.
+		float.release mass [kt](without from DHM):ReleaseMass_kt
+			german:Anbruchmasse [kt] (ohne von DHM)
+		float.release mass total (with DHM):release_mass_total_kt
+			german:Anbruchmasse gesamt [kt] (mit von DHM)
+		float.secondary release mass [kt]:SecondaryReleaseMass_kt
+			german:Sekundäre Anbruchmasse [kt]
+		float.entrainment mass [kt] (without global/from DHM):EntrainmentMass_kt
+			german:Schneeaufnahme-Masse [kt] (ohne globale/von DHM)
+			doc:Initial entrainable snow mass without global entrainable snow mass\
+				(->ShallowWaterSimulation.GlobalEntrainmentAreaWeight).
+				german:Anfängliche aufnehmbare Schneemasse ohne globale aufnehmbare Masse\
+					(->ShallowWaterSimulation.GlobalEntrainmentAreaWeight).
+		apply.update masses
+			set:UpdateReleaseMass
+			german:Massen aktualisieren
+			doc:Recompute release- and entrainment-masses. For coupled powder-snow\
+				simulations, also the powder snow mass is recomputed.
+				german:Anbruch- und Aufnahmemassen aktualisieren. Im Fall gekoppelter\
+					Staublawinenberechnungen wird auch die Staubschneemasse aktualisiert.
+		float.current entrainable mass [kt]:EntrainableMass_kt
+			german:aktuell aufnehmbare Masse [kt]
+		float.current mass [kt]:CurrentMass_kt
+			german:aktuelle Masse [kt]
+		float.current powder mass [kt]:CurrentPowderMass_kt
+			vis:InteractionTypeWithFluidAboveVis
+			german:aktuelle Staubmasse [kt]
+			doc:ATTENTION: the current powder mass is displayed correctly only when the powder-snow\
+				particles (Particles) have been displayed for the current time step or\
+				->ShallowWaterSimulation.UpdateReleaseMass has been executed!
+				german:ACHTUNG: die aktuelle Staubmasse wird nur richtig angezeigt, wenn die\
+					Staubpartikel (Particles) im aktuellen Zeitschritt dargestellt worden sind\
+					oder ->ShallowWaterSimulation.UpdateReleaseMass ausgeführt wurde!
+		text.remarks:Remark
+			set:Remark
+			german:Bemerkungen
+			doc:Remarks or comments that should be stored with the simulation.
+				german:Bemerkungen oder Kommentare die mit der Simulation\
+					gespeichert werden sollen.
+		filename.export and show DFA mass balance profile
+			set:write_DFA_mass_balance_profiles
+			mode:w
+			german:Fließ-Massenbilanz-Verlauf exportieren und anzeigen
+			doc:Export DFA mass balance over time to a selected file\
+				and show them in the ->Graph2dViewer.
+				german:Fließ-Massenbilanz über Zeit in eine ausgewählte Datei\
+					schreiben und im ->Graph2dViewer anzeigen.
+		filename.export and show PSA mass balance profile
+			set:write_PSA_mass_balance_profiles
+			mode:w
+			vis:InteractionTypeWithFluidAboveVis
+			german:Staub-Massenbilanz-Verlauf exportieren und anzeigen
+			doc:Export PSA mass balance over time to a selected file\
+				and show them in the ->Graph2dViewer.
+				german:Staub-Massenbilanz über Zeit in eine ausgewählte Datei\
+					schreiben und im ->Graph2dViewer anzeigen.
+		string.evaluate deposition
+			set:EvaluateDepositionWith
+			options:DepositionEvaluationOptions
+			german:Deposition bewerten
+			doc:Display the deposition error relativ to a selected polyline. The desired deposition\
+				area must be to the left of the polyline. Areas above the line through the first\
+				and the last polyline point are not evaluated.
+				german:Depositions-Fehler relativ zu einem gewählten Polygonzug anzeigen. Die gewünschte\
+					Deposition muss sich links des Polygonzuges befinden. Flächen über der Linie\
+					vom ersten zum letzten Polygonzugpunkt werden nicht bewertet.
+	string.on clean up:CleanupBehavior
+		set:CleanupBehavior
+		options:CleanupBehaviorOptions
+		german:beim Bereinigen
+		doc:Determine, how many time steps of simulation\
+			should be kept on ->Simulations.Cleanup.
+			german:Bestimmen, wie viele gespeicherte Zeitschritte\
+				bei ->Simulations.Cleanup behalten werden sollen.
+	string.delete time steps
+		set:DeleteTimesteps
+		options:DeleteTimestepsOptions
+		confirm
+		german:Zeitschritte löschen
+		doc:Delete specified time steps (also from disk).
+			german:Ausgewählte Zeitschritte löschen (auch von der Festplatte).
+	opr.report generator
+		german:Berichtgenerator
+		doc:Configurable report generator. Configuration in\
+			.../files/AK_Attributes/SW_Simulation.cint, function generate_report().\
+			Generates a text-file with the simulation-parameter, dxf- and asc-files,\
+			containing the field values for peak pressures and deposition-depths, and image-files\
+			showing flow-depth and velocities for stored time steps (according to\
+			->ShallowWaterSimulation.AnimationStepIncrement).\
+			Analogous files are generated for the powder part, if present.
+			german:Konfigurierbarer Berichtgenerator. Konfiguration in\
+				.../files/AK_Attributes/SW_Simulation.cint, Funktion generate_report().\
+				Erzeugt eine Textdatei mit den Simulationsparametern, dxf- und asc-Dateien,\
+				die die Spitzendrücke und Depositionshöhen enthalten,\
+				sowie Bilddateien, die die Fließtiefe und -geschwindigkeit an den gespeicherten\
+				Zeitschritten (je nach ->ShallowWaterSimulation.AnimationStepIncrement) darstellen.\
+				Entsprechende Dateien werden auch für die Staublawine erzeugt, falls vorhanden.
+		directory.report directory:get_report_directory
+			set:set_report_directory
+			german:Berichtsverzeichnis
+			doc:Base-directory for the report-files generated. Automatically, a sub-directory\
+				with the simulation-id will be created which will receive the files.
+				german:Ausgangsverzeichnis für die Berichtserstellung. Ein Unterverzeichnis\
+					mit dem Simulationsnamen wird automatisch darin angelegt, unter dem\
+					die Berichtsdateien abgelegt werden.
+		apply.generate report
+			set:generate_report
+			german:Bericht erstellen
+			doc:Actually generate the report.
+				german:Bericht tatsächlich erstellen.
+		opr.report settings 
+			german:Berichtseinstellungen
+			float.psa cut distance:get_psa_cut_height
+				set:set_psa_cut_height
+				vis:InteractionTypeWithFluidAboveVis
+				german:Staublawinen-Schnittflächenabstand
+				doc:Height of the powder avalanche display surface over ground.
+					german:Höhe der Staublawinen-Darstellungs-Schnittfläche über Grund.
+			int.colorbar steps:get_color_bar_segments
+				set:set_color_bar_segments
+				german:Farbskalenstufen
+				doc:Number of segments for colorbar.
+					german:Anzahl der Segmente des Farbbalkens.
+			float.flow depth max:get_dep_max
+				set:set_dep_max
+				german:Fließtiefen-Maximum
+				doc:Colorbar-maximum for flow-depth-scaling.
+					german:Farbskala-Maximum zur Fließtiefendarstellung.
+			float.velocity max:get_vel_max
+				set:set_vel_max
+				german:Geschwindigkeits-Maximum
+				doc:Colorbar-maximum for velocity-scaling.
+					german:Farbskala-Maximum zur Geschwindigkeitsdarstellung.
+			float.velocity vector scale:get_vel_scl
+				set:set_vel_scl
+				german:Geschwindigkeitsvektorskalierung
+				doc:Scalingfactor for velocity vector length.
+					german:Skalierung für die Geschwindigkeitsvektorlänge.
+			string.peak pressure step values:get_step_pp_values
+				set:set_step_pp_values
+				german:Spitzendruck-Stufenwerte
+				doc:Values for peak-pressure-isolines in the generated dxf-files.
+					german:Werte für die Spitzendruck-Isolinen in den erzeugten dxf-Dateien.
+			float.peak pressure max:get_pp__max
+				set:set_pp__max
+				german:Spitzendruck-Maximum
+				doc:Colorbar-maximum for peak-pressure-scaling.
+					german:Farbskala-Maximum zur Spitzendruckdarstellung.
+			float.peak pressure max - PSA:get_pp__max_psa
+				set:set_pp__max_psa
+				vis:InteractionTypeWithFluidAboveVis
+				german:Staub-Spitzendruck-Maximum
+				doc:Colorbar-maximum for PSA-peak-pressure-scaling.
+					german:Farbskala-Maximum zur Staub-Spitzendruckdarstellung.
+			float.psa parcels size scale:get_part_scl
+				set:set_part_scl
+				vis:InteractionTypeWithFluidAboveVis
+				german:Staubpaket-Skalierung
+				doc:Size-scaling factor for displaying PSA-parcels.
+					german:Größen-Skalierungsfaktor für Staubpartikel-Pakete.
+			int.report content:get_short_report
+				set:set_short_report
+				german:Berichtsumfang
+				doc:A number in the range 0 to 3 that defines the extent of the report: \
+					0...full report including images of velocity and pressure at various time steps and peak values \
+					1...images of deposition-depth and peak values of flow-depth, flow-velocity and dynamic pressure \
+					2...images of DFA and PSA peak pressure only \
+					3...no images included, text only
+					german:Eine Zahl zwischen 0 und 3 definiert den Berichtsumfang: \
+						0...Bericht mit Momentan- und Spitzenwerten von Fliesstiefe, Geschwindigkeit und Druck \
+						1...Darstellung nur von Depositionstiefe und Spitzendruck und -geschwindigkeit \
+						2...Darstellung nur von Druckspitzenwerten \
+						3...keine Darstellungen, nur Text
+				vis:VisNone
+			string.report content:get_report_content
+				german:Berichtsumfang
+				set:set_report_content
+				options:get_report_content_options
+				doc:See options.
+					german:Siehe Auswahloptionen.
+			bool.isoline output:get_dxf_out
+				set:set_dxf_out
+				vis:get_long_report_vis
+				german:Isolinien-Ausgabe
+				doc:If active, field-isolines are exported to dxf-files.
+					german:Wenn aktiv, werden Feld-Isolinien auf dxf-Dateien geschrieben.
+			bool.raster output:get_asc_out
+				set:set_asc_out
+				vis:get_long_report_vis
+				german:Raster-Ausgabe
+				doc:If active, raster-field-data are written to asc-files.
+					german:Wenn aktiv, werden Raster-Felddaten auf asc-Dateien geschrieben.
+			bool.images time series:get_tim_ser
+				set:set_tim_ser
+				vis:get_long_report_vis
+				german:Bilder-Zeitserien
+				doc:If on, time series of images are generated. Otherwise,\
+					only images at the last time step are generated.
+					german:Wenn an, werden Zeitserien von Bildern erzeugt.\
+						Ansernfalls werden nur Bilder des letzten Zeitschrittes erzeugt.
+			string.total view:get_total_view
+				set:set_total_view
+				options:get_view_options
+				german:Gesamtansicht
+				doc:View for generating report images. If undefined, the current view is used.
+					german:Ansicht zur Erzeugung der Berichts-Bilder. Fall undefiniert, wird\
+						die aktuelle Ansicht verwendet.
+			string.runout view:get_runout_view
+				set:set_runout_view
+				options:get_view_options
+				german:Auslaufansicht
+				doc:Report view for runout. If defined, peak pressure and deposition images will\
+					additionally be generated in this view.
+					german:Ansicht für den Auslaufbereich. Falls definiert, werden Bilder\
+						mit dem Spitzendruck und den Ablagerungen zusätzlich in\
+						dieser Ansicht generiert.
+			string.page orientation:get_page_orientation
+				set:set_page_orientation
+				options:get_page_orientation_opts
+				german:Seitenausrichtung
+				doc:Page orientation for later printing. This affects only the scaling of the images.\
+					If the orientation is portrait, the image width is scaled to fit the page width\
+					on printing. If it is landscape, the image height is scaled to fit the page height.\
+					ATTENTION: the orientation must be additionally selected on printing in the html-browser!
+					german:Seitenausrichtung beim Drucken. Betrifft lediglich die Skalierung der Bilder.\
+						Wenn auf portrait ausgerichtet wird, wird die Bildbreite auf die Seitenbreite skaliert.\
+						Auf landscape wird die Bildhöhe auf Seitenhöhe skaliert.\
+						ACHTUNG: die Ausrichtung muss zusätzlich beim Drucken im HTML-Browser eingestellt werden!
+	opr.BFW parameter variations
+		german:BFW Parametervariationen
+		vis:advanced_options
+		doc:Functions of BFW (http://bfw.ac.at) for parameter studies.
+			german:Funktionen für Parameterstudien des BFW (http://bfw.ac.at).
+		directory.path for simulation results:$BFW_sim_results_dir
+			set:$BFW_sim_results_dir
+			german:Ergebnisverzeichnis
+			mode:r
+		bool.model parameters variations:$BFW_mdl_par_var
+			set:$BFW_mdl_par_var
+			german:Modell-Parameter-Variationen
+		filename.model parameters variation file:$BFW_mdl_par_var_file
+			set:$BFW_mdl_par_var_file
+			german:Modell-Parameter-Variationsdatei
+			mode:r
+			pattern:*.txt
+			vis:BFW_mdl_par_var_vis
+		bool.numerical parameters variations:$BFW_num_par_var
+			set:$BFW_num_par_var
+			german:Numerik-Parameter-Variationen
+		filename.numerical parameters variation file:$BFW_num_par_var_file
+			set:$BFW_num_par_var_file
+			german:Numerik-Parameter-Variationsdatei
+			mode:r
+			pattern:*.txt
+			vis:BFW_num_par_var_vis
+		bool.release depth variations:$BFW_rel_dep_var
+			set:$BFW_rel_dep_var
+			german:Anbruchmächtigkeits-Variationen
+		filename.release depth variation file:$BFW_rel_dep_var_file
+			set:$BFW_rel_dep_var_file
+			german:Anbruchmächtigkeit-Variationsdatei
+			mode:r
+			pattern:*.txt
+			vis:BFW_rel_dep_var_vis
+		apply.start parameter variations in background
+			german:Parameter-Variationen im Hintergrund starten
+			set:BFW_run_parameter_variations
+			doc:Log-output goes to file run.log in the results directory.
+				german:Log-Meldungen werden in die Datei run.log im\
+					 Ergebnisverzeichnis geschrieben.
+	bool.show advanced options:get_show_advanced_options
+		set:set_show_advanced_options
+		german:erweiterte Optionen anzeigen

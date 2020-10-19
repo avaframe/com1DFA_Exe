@@ -1,0 +1,2 @@
+set("", "$cont_lines_inv_bg_col", "1")
+set("", "$cont_lines_col", "1 1 1")

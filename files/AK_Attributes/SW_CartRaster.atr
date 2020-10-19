@@ -1,0 +1,10 @@
+obj.SW_CartRaster
+	opr.Define
+		point2.x lower left:Xll
+			set:Xll
+		point2.x upper right:Xor
+			set:Xor
+		float.dx:Dx
+			set:Dx
+		apply.Set
+			set:Define

@@ -1,0 +1,1738 @@
+int MAXSTRLEN = 512;
+
+
+
+void get_powder_snow_active(
+	char s[])
+{
+	get("", "InteractionTypeWithFluidAbove", s);
+	if(strcmp(s, "particles suspension") == 0){
+		sprintf(s, "1");
+	}else{
+		sprintf(s, "0");
+	}
+}
+void set_powder_snow_active(
+	char s[])
+{
+	if(s[0] == '1'){
+		set("", "InteractionTypeWithFluidAbove", "particles suspension");
+	}else{
+		set("", "InteractionTypeWithFluidAbove", "none");
+	}
+}
+
+void convert_kg_kt(
+	char s[])
+{
+	double v;
+	sscanf(s, "%lf", v);
+	sprintf(s, "%g", 1.0e-6*v);
+}
+void ReleaseMass_kt(
+	char s[])
+{
+	get("", "ReleaseMass", s);
+	convert_kg_kt(s);
+}
+
+void SecondaryReleaseMass_kt(
+	char s[])
+{
+	get("", "SecondaryReleaseMass", s);
+	convert_kg_kt(s);
+}
+void EntrainmentMass_kt(
+	char s[])
+{
+	get("", "EntrainmentMass", s);
+	convert_kg_kt(s);
+}
+void CurrentMass_kt(
+	char s[])
+{
+	get("", "CurrentMass", s);
+	convert_kg_kt(s);
+}
+void EntrainableMass_kt(
+	char s[])
+{
+	get("", "EntrainableMass", s);
+	convert_kg_kt(s);
+}
+void CurrentPowderMass(
+	char s[])
+{
+	int n;
+	double v;
+	get("Powder", "NumberOfDroplets", s);
+	sscanf(s, "%d", n);
+	get("", "ParcelMass", s);
+	sscanf(s, "%lf", v);
+	sprintf(s, "%g", v*n);
+}
+void CurrentPowderMass_kt(
+	char s[])
+{
+	CurrentPowderMass(s);
+	convert_kg_kt(s);
+}
+
+
+
+int adv_opts = 0;
+void advanced_options( char s[]) { if(adv_opts) strcpy(s, "w"); else strcpy(s, "-"); }
+void get_show_advanced_options( char s[]) { sprintf(s, "%d", adv_opts); }
+void set_show_advanced_options( char s[]) { sscanf(s, "%d", adv_opts); }
+
+void advMassPerParticleVisibility( char s[]) { if(!adv_opts) strcpy(s, "-"); else get("", "MassPerParticleVisibility", s); }
+void advNumParticlesPerCellVisibility( char s[]) { if(!adv_opts) strcpy(s, "-"); else get("", "NumParticlesPerCellVisibility", s); }
+void advDeltaDepthPerParticleVisibility( char s[]) { if(!adv_opts) strcpy(s, "-"); else get("", "DeltaDepthPerParticleVisibility", s); }
+void advNumParticlesVisibility( char s[]) { if(!adv_opts) strcpy(s, "-"); else get("", "NumParticlesVisibility", s); }
+
+char report_directory[MAXSTRLEN] = "";
+void get_report_directory( char s[]) { strcpy(s, report_directory); }
+void set_report_directory( char s[]) { strcpy(report_directory, s); }
+
+char depMax[16] = "5";
+void get_dep_max( char s[]) { strcpy(s, depMax); }
+void set_dep_max( char s[]) { strcpy(depMax, s); }
+
+char velMax[16] = "50";
+void get_vel_max( char s[]) { strcpy(s, velMax); }
+void set_vel_max( char s[]) { strcpy(velMax, s); }
+
+char velScl[16] = "1";
+void get_vel_scl( char s[]) { strcpy(s, velScl); }
+void set_vel_scl( char s[]) { strcpy(velScl, s); }
+
+char pp_Max[16] = "50";
+void get_pp__max( char s[]) { strcpy(s, pp_Max); }
+void set_pp__max( char s[]) { strcpy(pp_Max, s); }
+
+char pp_MaxPsa[16] = "50";
+void get_pp__max_psa( char s[]) { strcpy(s, pp_MaxPsa); }
+void set_pp__max_psa( char s[]) { strcpy(pp_MaxPsa, s); }
+
+char pp_step_values[64] = "1 3 5 10 25 50 100";
+void get_step_pp_values( char s[]) { strcpy(s, pp_step_values); }
+void set_step_pp_values( char s[]) { strcpy(pp_step_values, s); }
+
+char psaCutHeight[16] = "2";
+void get_psa_cut_height( char s[]) { strcpy(s, psaCutHeight); }
+void set_psa_cut_height( char s[]) { strcpy(psaCutHeight, s); }
+
+char partScl[16] = "3";
+void get_part_scl( char s[]) { strcpy(s, partScl); }
+void set_part_scl( char s[]) { strcpy(partScl, s); }
+
+char timSer[4] = "0";
+void get_tim_ser( char s[]) { strcpy(s, timSer); }
+void set_tim_ser( char s[]) { strcpy(timSer, s); }
+
+char colorBarSegments[4] = "10";
+void get_color_bar_segments( char s[]) { strcpy(s, colorBarSegments); }
+void set_color_bar_segments( char s[]) { strcpy(colorBarSegments, s); }
+
+char dxf_out = 1;
+void get_dxf_out( char s[]) { if(dxf_out) strcpy(s, "1"); else strcpy(s, "0"); }
+void set_dxf_out( char s[]) { if(s[0] == '1') dxf_out = 1; else dxf_out = 0; }
+
+char asc_out = 1;
+void get_asc_out( char s[]) { if(asc_out) strcpy(s, "1"); else strcpy(s, "0"); }
+void set_asc_out( char s[]) { if(s[0] == '1') asc_out = 1; else asc_out = 0; }
+
+int short_report = 1;
+void get_short_report( char s[]) { sprintf(s, "%d", short_report); }
+void set_short_report( char s[]) { sscanf(s, "%d", short_report); }
+
+int n_rep_cnt_opts = 0;
+char rep_cnt_opts[0][128];
+void set_report_content_options()
+{
+	char s[32];
+	if(n_rep_cnt_opts != 4){
+		n_rep_cnt_opts = 4;
+		resize(rep_cnt_opts, n_rep_cnt_opts);
+		get("", "Language", s);
+		if(!strcmp(s, "german")){
+			rep_cnt_opts[0] = "Momentan-, Spitzenwerte von Fliesstiefe, Geschwindigkeit, Druck";
+			rep_cnt_opts[1] = "Depositionstiefe, Spitzendruck, -geschwindigkeit";
+			rep_cnt_opts[2] = "nur Druckspitzenwerte";
+			rep_cnt_opts[3] = "keine Bilder, nur Text";
+		}else{
+			rep_cnt_opts[0] = "momentary and peak values of flow-depth, velocity, pressure";
+			rep_cnt_opts[1] = "deposition-depth and peak values of flow-depth, velocity, pressure";
+			rep_cnt_opts[2] = "peak pressure only";
+			rep_cnt_opts[3] = "no images, text only";
+		}
+	}
+}
+void get_report_content_options(char s[])
+{
+	int i;
+	set_report_content_options();
+	s[0] = 0;
+	for(i = 0; i < n_rep_cnt_opts; i++){
+		strcat(s, rep_cnt_opts[i]);
+		strcat(s, AK_SEP);
+	}
+}
+void set_report_content(char s[])
+{
+	int i;
+	set_report_content_options();
+	for(i = 0; i < n_rep_cnt_opts; i++){
+		if(!strcmp(s, rep_cnt_opts[i])) short_report = i;
+	}
+}
+void get_report_content(char s[])
+{
+	set_report_content_options();
+	strcpy(s, rep_cnt_opts[short_report]);
+}
+
+void get_long_report_vis( char s[]) { if(short_report > 2) strcpy(s, "-"); else strcpy(s, "w"); }
+
+void get_view_options(
+	char s[])
+{
+	int i; int n;
+	char x[MAXSTRLEN+0];
+	char aux[1];
+	set("/", "CreateGroup", "views_tmp");
+	set("/views_tmp", "SelectedObjectType", "KeyView");
+	set("/views_tmp", "AppendAllObjectsOfType", "");
+	get("/views_tmp", "ContainedObjectsList", s);
+	// remove leading '..' from list elements
+	n = list_size(s);
+	resize(aux, strlen(s)+1);
+	aux[0] = 0;
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, x);
+		strcat(aux, x[2]);
+		strcat(aux, AK_SEP);
+	}
+	set("/", "DeleteComponent", "views_tmp");
+	strcpy(s, aux);
+	resize(aux, 1);
+}
+char totalView[MAXSTRLEN] = "";
+void get_total_view( char s[]) { strcpy(s, totalView); }
+void set_total_view( char s[]) { strcpy(totalView, s); }
+char runoutView[MAXSTRLEN] = "";
+void get_runout_view( char s[]) { strcpy(s, runoutView); }
+void set_runout_view( char s[]) { strcpy(runoutView, s); }
+
+
+int page_orientation = 0;
+char page_orientation_opts[64] = "portrait%AK_SEP%landscape%AK_SEP%";
+void get_page_orientation_opts( char s[]) { strcpy(s, page_orientation_opts); }
+void get_page_orientation( char s[]) {
+	get_list_element(page_orientation_opts, page_orientation, s);
+}
+void set_page_orientation( char s[]) {
+	char aux[32]; int i; int n = list_size(page_orientation_opts);
+	for(i = 0; i < n; i++){
+		get_list_element(page_orientation_opts, i, aux);
+		if(!strcmp(aux, s)) page_orientation = i;
+	}
+}
+
+int iname(
+	char s[])
+{
+	int i = istrrchr(s, '/');
+	if(i < 0) i = istrrchr(s, '\\');
+	return i+1;
+}
+
+void fprintlist(
+	FILE *fp,
+	char s[],
+	char fmt[])
+{
+	int i;
+	int n = list_size(s);
+	char x[MAXSTRLEN+0];
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, x);
+		fprintf(fp, fmt, x[iname(x)]);
+	}
+}
+void getAnnot(
+              char s[],
+              char annot[])
+{
+	int n, i;
+	char id[MAXSTRLEN+0];
+
+	n = list_size(s);
+	if(n < 1) return;
+
+	get_list_element(s, 0, id);
+  get(id[3], "Annotations", annot);
+}
+
+void listReleaseAreas(
+	char title[],
+	char s[],
+	FILE *fp,
+	int german)
+{
+	int n, i;
+	char id[MAXSTRLEN+0];
+	char x[MAXSTRLEN+0];
+	double dep, den;
+
+	n = list_size(s);
+	if(n < 1) return;
+
+	fprintf(fp, "<H2>%s</H2>\n", title);
+	fprintf(fp, "<TABLE FRAME=BOX RULES=ALL><TBODY>\n");
+	if(german)
+		fprintf(fp, "<B><TR><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR></B>\n",
+			"Name",
+			"Masse [kt]",
+			"Mächtigkeit [m]",
+			"Dichte [kg/m3]",
+			"Flächendichte [kg/m2]",
+			"Fläche [ha]",
+			"projizierte Fläche [ha]");
+	else
+		fprintf(fp, "<B><TR><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR></B>\n",
+			"name",
+			"mass [kt]",
+			"depth [m]",
+			"density [kg/m3]",
+			"surface density [kg/m2]",
+			"area [ha]",
+			"projected [ha]");
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, id);
+		fprintf(fp, "<TR><TD>%s</TD>", id[iname(id)]);
+		get(id[3], "Mass_kt", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "Depth", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		sscanf(x, " %lf", dep);
+		get(id[3], "Density", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		sscanf(x, " %lf", den);
+		sprintf(x, "%g", dep * den);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "TrueAreaHa", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "ProjectedAreaHa", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "get_temperature", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "get_water_fraction", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		fprintf(fp, "</TR>\n");
+	}
+	fprintf(fp, "</TBODY></TABLE>\n");
+}
+
+void listResistanceAreas(
+	char title[],
+	char s[],
+	FILE *fp,
+	int german)
+{
+	int n;
+	int i;
+	char id[MAXSTRLEN+0];
+	char x[MAXSTRLEN+0];
+
+	n = list_size(s);
+	if(n < 1) return;
+
+	fprintf(fp, "<H2>%s</H2>\n", title);
+	fprintf(fp, "<TABLE FRAME=BOX RULES=ALL><TBODY>\n");
+	if(german)
+		fprintf(fp, "<B><TR><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR></B>\n",
+			"Name", "Typ", "Höhe [m]",
+			"DFA:effektiver Widerstandskoeffizient",
+			"PSA:effektiver Widerstandskoeffizient");
+	else
+		fprintf(fp, "<B><TR><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR></B>\n",
+			"name", "type", "height [m]",
+			"DFA:effective resistance coefficient"
+			"PSA:effective resistance coefficient");
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, id);
+		fprintf(fp, "<TR><TD>%s</TD>", id[iname(id)]);
+		get(id[3], "get_resistance_type", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "Height", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "get_cres_dfa", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "get_cres_psa", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		fprintf(fp, "</TR>\n");
+	}
+	fprintf(fp, "</TBODY></TABLE>\n");
+}
+
+void listWallLines(
+	char title[],
+	char s[],
+	FILE *fp,
+	int german)
+{
+	int n;
+	int i;
+	char id[MAXSTRLEN+0];
+	char x[MAXSTRLEN+0];
+
+	n = list_size(s);
+	if(n < 1) return;
+
+	fprintf(fp, "<H2>%s</H2>\n", title);
+	fprintf(fp, "<TABLE FRAME=BOX RULES=ALL><TBODY>\n");
+	if(german)
+		fprintf(fp, "<B><TR><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR></B>\n",
+			"Name", "Projizierte Länge [m]", "Absolute Kronenhöhe [m]", "Böschung [deg]");
+	else
+		fprintf(fp, "<B><TR><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR></B>\n",
+			"name", "projected length [m]", "absolute crown heights [m]", "slopes [deg]");
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, id);
+		fprintf(fp, "<TR><TD>%s</TD>", id[iname(id)]);
+		get(id[3], "ProjectedLength", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "Heights", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		get(id[3], "Slopes", x);
+		fprintf(fp, "<TD>%s</TD>", x);
+		fprintf(fp, "</TR>\n");
+	}
+	fprintf(fp, "</TBODY></TABLE>\n");
+}
+
+void quote(
+	char value[])
+{
+	char quote[2] = {'"', 0};
+	char quoted[MAXSTRLEN+0];
+	strcpy(quoted, quote);
+	strcat(quoted, value);
+	strcat(quoted, quote);
+	strcpy(value, quoted);
+}
+
+void makeRelPath(
+	char path[],
+	char root[])
+{
+	int i = 0; int j = 0;
+	while(path[i] && root[i] && path[i] == root[i]) i++;
+	if(path[i]){
+		if(path[i] == '/' || path[i] == '\\') i++;
+		while(path[i]) path[j++] = path[i++];
+		path[j] = 0;
+	}
+	for(i = 0; i < strlen(path); i++) if(path[i] == '\\') path[i] = '/';
+}
+
+void replace_AKSEP(
+	char s[])
+{
+	int i; int j;
+	int n = strlen(AK_SEP);
+	while((i = istrstr(s, AK_SEP)) >= 0){
+		for(j = 0; j < n; j++) s[i+j] = ' ';
+		s[i+n/2] = '|';
+	}
+}
+
+void convertToShape(char filename[],
+                    char annot[]) {
+	char x[1024+0];
+  int windows = 0;
+	char argv[256*10];
+	int argc;
+  int lastSlash;
+  char parent[1024];
+  char allp[1024];
+	char cmd[1024+0];
+	char s[1024+0];
+
+
+  strcpy(s,filename);
+  // FSO--- get path of executable
+  // find out if we are on windows
+  printf("Convert to Shape %s\n",filename);
+
+  strcpy(x, "a");
+  add_name(x, "b");
+  if(istrchr(x, '/') < 0) windows = 1;
+
+  get("/", "ArglistSep", argv);
+  argc = list_size(argv);
+
+  // get first element of the first argv list (as this might include
+  // -project or similar)
+  get_list_element(argv[0], 0, allp);
+
+  if(windows){
+    lastSlash = istrrchr(allp, '\\');
+  }else{
+    lastSlash = istrrchr(allp, '/');
+  }
+
+  // FSO--- get string up to lastSlash
+  strncpy(parent, allp,lastSlash+1);
+
+
+  // FSO--- construct command
+  strcpy(x,parent);
+  add_name(x, "SHPConv.exe");
+  sprintf(cmd, "%s -a export -i %s -s '%s' ",x, filename, annot);
+  printf("CMD: %s\n",cmd);
+
+  // FSO--- execute command
+  system(cmd);
+}
+
+
+void add_link(FILE *fp, char text[], char filename[])
+{
+	fprintf(fp, "<P><A HREF=%s>%s:%s</A></P>\n", filename, text, filename);
+}
+
+void export_var(
+                char current_var[],
+                char id[],
+                char repDir[],
+                char suffix[],
+                char annot[])
+{
+	char filename[MAXSTRLEN+0];
+	char dirname[MAXSTRLEN+0];
+	char name[MAXSTRLEN+0];
+	char expname[MAXSTRLEN+0];
+	int short_filenames = 1;
+
+  printf("In export var: %s \n", current_var);
+
+  get(current_var, "ShortExportFilename", name);
+  if(short_filenames) sprintf(name, "%s_%s", id, suffix);
+
+  // ASCII Export
+  strcpy(filename, repDir);
+  add_name(filename, "raster");
+  if(make_directory(filename)){ set_error("cannot create raster directory"); return; }
+  add_name(filename, name); add_extension(filename, "asc");
+  set(current_var, "ExportFieldRasterAscii", filename);
+
+  // SHP Export
+  strcpy(filename, repDir);
+  add_name(filename, "shp");
+  if(make_directory(filename)){ set_error("cannot create shp directory"); return; }
+  add_name(filename, name); add_extension(filename, "nxyz");
+	set(current_var, "ExportContourLines", filename);
+
+  // set(current_var, "ExportContourLinesDxf", filename);
+  convertToShape(filename, annot);
+}
+
+
+
+void generate_report(
+	char value[])
+{
+	FILE *fp;
+	char s[1000*MAXSTRLEN];
+	char s1[1000*MAXSTRLEN];
+	char filename[MAXSTRLEN+0];
+	char name[MAXSTRLEN+0];
+	char id[MAXSTRLEN+0];
+	char idAbs[MAXSTRLEN+0];
+	char x[MAXSTRLEN+0];
+	char firstRel[MAXSTRLEN+0];
+	char annot[MAXSTRLEN+0];
+	double d;
+	char repDir[MAXSTRLEN+0];
+	int timeSeries = 0;
+	char cbSegs[4];
+
+	char pStart[32];
+	char pEnd[8];
+	char percent = '%';
+
+	int i; int n;
+	int n_entrainment_areas;
+	int german = 0;
+
+	char sao[2];
+	char endTime[32];
+
+	int short_filenames = 1;
+	char explainCommands[2];
+
+  char SUFFIX_DEPO[16];
+  char SUFFIX_PEAK_FLOW_DEPTH[16];
+	char SUFFIX_FLOW_DEPTH[16];
+  char SUFFIX_PEAK_VELOCITY[16];
+  char SUFFIX_PEAK_PRESSURE[16];
+  char SUFFIX_PSA_PEAK_PRESSURE[16];
+
+  get("", "ExplainCommands", explainCommands);;
+	set("", "ExplainCommands", "0");;
+	strcpy(s, "page-break-before:always");
+	quote(s);
+	strcpy(pStart, "<P style=");
+	strcat(pStart, s);
+	strcat(pStart, ">");
+	strcpy(pEnd, "</P>");
+
+	get("", "Language", s);
+	if(!strcmp(s, "german")) german = 1;
+
+	sscanf(timSer, "%d", timeSeries);
+	get("", "get_color_bar_segments", cbSegs);
+
+	if(totalView[0] == 0){
+		set("/KeyViewSequences/Views", "Create", "_report_tmp_");
+		strcpy(totalView, "/KeyViewSequences/Views/_report_tmp_");
+	}
+	get("", "Id", id);
+
+	if(strlen(report_directory) == 0){
+		get("/", "ProjectDir", report_directory);
+		if(make_directory(report_directory)){
+			sprintf(x, "cannot create report directory %s", report_directory);
+			set_error(x);
+			return;
+		}
+		add_name(report_directory, "reports");
+	}
+	if(make_directory(report_directory)){
+		sprintf(x, "cannot create report directory %s", report_directory);
+		set_error(x);
+		return;
+	}
+//	subdirectory named according to Id
+	strcpy(repDir, report_directory);
+	add_name(repDir, id);
+	if(short_report < 3 && make_directory(repDir)){
+		sprintf(x, "cannot create report directory %s", repDir);
+		set_error(x);
+		return;
+	}
+
+	set("", "LoadLastTimeStep", "");
+	set("", "UpdateReleaseMass", "");
+
+	get("/", "ProjectDir", s);
+	if(s[strlen(s) - 1] == '\\') s[strlen(s) - 1] = 0;
+	cut_name(s, idAbs);
+
+//	html file
+	sprintf(name, "%s.html", id);
+	strcpy(filename, report_directory);
+	add_name(filename, name);
+	fp = fopen(filename, "w");
+	if(!fp){
+		sprintf(s, "cannot open html file %s!", filename);
+		set_error(s);
+		return;
+	}
+
+  // txt file
+  sprintf(name, "%s.txt", id);
+  printf("txt html file %s!", filename);
+
+	get("", "set_show_advanced_options", sao);
+	set("", "set_show_advanced_options", "1");
+
+	fprintf(fp, "<HTML>\n");
+	fprintf(fp, "<HEAD>\n");
+	strcpy(s, "text/css"); quote(s);
+	fprintf(fp, "<style type=%s>\n", s);
+	fprintf(fp, "@media print {\n");
+ 	fprintf(fp, "body { font-size:small; }\n");
+	if(page_orientation == 0)
+ 		fprintf(fp, "img { width:100%c; }\n", percent);
+	else
+ 		fprintf(fp, "img { height:85%c; }\n", percent);
+ 	fprintf(fp, "table { page-break-inside:avoid; }\n");
+	fprintf(fp, "}\n");
+	fprintf(fp, "</style>\n");
+	fprintf(fp, "<TITLE>Simulation %s</TITLE>\n", id);
+	fprintf(fp, "</HEAD>\n");
+	fprintf(fp, "<BODY>\n");
+	fprintf(fp, "<H1>com1Exe  (AvaFrame 2020)<BR>%s<BR>%s</H1>\n", idAbs, id);
+
+  // Simulations parameters
+	get("", "VisibleGetCommandsList", s);
+	get("", "VisibleGetLabelsList", s1);
+	n = list_size(s);
+	if(german)
+		fprintf(fp, "<H2>Simulationsparameter</H2>\n");
+	else
+		fprintf(fp, "<H2>Simulation parameter</H2>\n");
+	fprintf(fp, "<TABLE FRAME=BOX RULES=ALL><TBODY>\n");
+	for(i = 0; i < n; i++){
+		get_list_element(s, i, name);
+		if(istrstr(name, "VariableValues") >= 0) continue;
+		get("", name, x);
+		get_list_element(s1, i, name);
+		replace_AKSEP(x);
+		fprintf(fp, "<TR><TD>%s</TD><TD>%s</TD></TR>\n", name, x);
+		if(istrstr(name, "3D ") >= 0){
+			get(x, "$dx", x);
+			fprintf(fp, "<TR><TD>%s</TD><TD>%s</TD></TR>\n", "", x);
+		}
+	}
+	fprintf(fp, "</TBODY></TABLE>\n");
+
+	get("ReleaseAreas", "ContainedObjectsList", s);
+	if(german)
+		listReleaseAreas("Anbruchgebiete", s, fp, german);
+	else
+		listReleaseAreas("Release areas", s, fp, german);
+
+  // Get Annotations of first relarea (for sks info)
+  getAnnot(s, annot);
+
+	get("EntrainmentAreas", "ContainedObjectsList", s);
+	n_entrainment_areas = list_size(s);
+	if(german)
+		listReleaseAreas("Schneeaufnahmegebiete", s, fp, german);
+	else
+		listReleaseAreas("Entrainment areas", s, fp, german);
+	get("SecondaryReleaseAreas", "ContainedObjectsList", s);
+	if(german)
+		listReleaseAreas("Sekundäre Anbruchgebiete", s, fp, german);
+	else
+		listReleaseAreas("Secondary release areas", s, fp, german);
+	get("ResistanceAreas", "ContainedObjectsList", s);
+	if(german)
+		listResistanceAreas("Widerstandsgebiete", s, fp, german);
+	else
+		listResistanceAreas("Resistance areas", s, fp, german);
+	get("WallLines", "ContainedObjectsList", s);
+	if(german)
+		listWallLines("Dämme", s, fp, german);
+	else
+		listWallLines("Dams/walls", s, fp, german);
+
+	set("", "set_show_advanced_options", sao);
+	if(short_report > 2){
+		fprintf(fp, "</BODY></HTML>\n");
+		fclose(fp);
+		return;
+	}
+
+  //	save current attribute values to temp files (and restore it at the end)
+	strcpy(s, report_directory); add_name(s, ".fd.atr"); set("FlowDepth", "SaveAttributesRecursively", s);
+	strcpy(s, report_directory); add_name(s, ".pfd.atr"); set("PeakFlowDepth", "SaveAttributesRecursively", s);
+	strcpy(s, report_directory); add_name(s, ".dpp.atr"); set("DynamicPeakPressure", "SaveAttributesRecursively", s);
+	strcpy(s, report_directory); add_name(s, ".fat.atr"); set("FrontArrivalTime", "SaveAttributesRecursively", s);
+	strcpy(s, report_directory); add_name(s, ".em.atr"); set("EntrainmentMass", "SaveAttributesRecursively", s);
+	strcpy(s, report_directory); add_name(s, ".prt.atr"); set("Particles", "SaveAttributesRecursively", s);
+	strcpy(s, report_directory); add_name(s, ".pc.atr"); set("PsaCuts", "SaveAttributesRecursively", s);
+	strcpy(s, report_directory); add_name(s, ".pwd.atr"); set("Powder", "SaveAttributesRecursively", s);
+
+	set("PeakFlowDepth", "Active", "0");
+	set("Velocity", "Active", "0");
+	set("DynamicPeakPressure", "Active", "0");
+	set("FrontArrivalTime", "Active", "0");
+	set("EntrainmentMass", "Active", "0");
+	set("Particles", "Active", "0");
+	set("PsaCuts", "Active", "0");
+	set("Powder", "Active", "0");
+
+	get("", "Id", id);
+
+  printf("%s \n",id);
+
+  // check for dfa/psa indicator in simulation name
+	if(istrstr(id, "dfa") > 0 || istrstr(id, "DFA") > 0 ||
+     istrstr(id, "psa") >0  || istrstr(id, "PSA") > 0
+     ) {
+    SUFFIX_DEPO = "fd";
+    SUFFIX_PEAK_FLOW_DEPTH = "pfd";
+		SUFFIX_FLOW_DEPTH = "fd";
+    SUFFIX_PEAK_VELOCITY = "pv";
+    SUFFIX_PEAK_PRESSURE = "ppr";
+    SUFFIX_PSA_PEAK_PRESSURE = "ppr";
+  } else {
+    message("WARNING: Please add _dfa or _psa to your simulation names! \n (to indicate avalanche type)", "SW_Simulation.cint");
+    SUFFIX_DEPO = "dfa_fd";
+    SUFFIX_PEAK_FLOW_DEPTH = "dfa_pfd";
+		SUFFIX_FLOW_DEPTH = "dfa_fd";
+    SUFFIX_PEAK_VELOCITY = "dfa_pv";
+    SUFFIX_PEAK_PRESSURE = "dfa_ppr";
+    SUFFIX_PSA_PEAK_PRESSURE = "psa_ppr";
+  }
+
+	// activate only DHM of this simulation
+	set("/", "CreateGroup", "tmp");
+	set("/tmp", "SelectedObjectType", "DHM");
+	set("/tmp", "AppendAllObjectsOfType", "");
+	set("/tmp", "Active", "0");
+	set("/", "DeleteComponent", "tmp");
+	get("", "Mesh", s);
+	get(s, "BaseMesh", name);
+	if(strcmp(name, "")) add_id(s, name);
+	set(s, "Active", "1");
+	// if base mesh does not exist, use simulation mesh
+	if(error(s1)){ get("", "Mesh", s); set(s, "Active", "1"); }
+
+	// activate only this simulation
+	set("/", "CreateGroup", "tmp");
+	set("/tmp", "SelectedObjectType", "ShallowWaterSimulation");
+	set("/tmp", "AppendAllObjectsOfType", "");
+	set("/tmp", "Active", "0");
+	set("/", "DeleteComponent", "tmp");
+	set("", "Active", "1");
+
+	strcpy(filename, repDir);
+	add_name(filename, "images");
+	if(make_directory(filename)){
+		sprintf(s, "cannot create images directory '%s'", filename);
+		set_error(s);
+		return;
+	}
+	set("/", "ImageFileDir", filename);
+	get("", "IdAbs", idAbs);
+	set("", "AnimationWriteImageFiles", "1");
+
+	set("PeakFlowDepth", "Active", "0");
+	set("Velocity", "Active", "0");
+	set("DynamicPeakPressure", "Active", "0");
+	set("FrontArrivalTime", "Active", "0");
+	set("EntrainmentMass", "Active", "0");
+	set("Particles", "Active", "0");
+	set("PsaCuts", "Active", "0");
+	set("Powder", "Active", "0");
+
+  //	initial and final state of entrainment areas
+	if(!short_report && n_entrainment_areas){
+		set("EntrainmentMass", "Active", "1");
+		set("EntrainmentMass", "Blending", "1");
+		set("EntrainmentMass", "Opacity", "0.5");
+		set("EntrainmentMass", "DisplayContourLines", "0");
+		set("EntrainmentMass/Colorbar", "DiscreteColors", "1");
+		set("EntrainmentMass/Colorbar", "Autoscale", "0");
+		// draw needed to force update of actual Min/Max
+		set("/", "Draw", "");
+		set("EntrainmentMass/Colorbar", "Min", "0");
+		set("EntrainmentMass/Colorbar", "Max", "100");
+		set("EntrainmentMass/Colorbar", "Segments", cbSegs);
+		set("", "LoadFirstTimeStep", "");
+		set("/", "ImageFileNameEvaluator", "explicit");
+		sprintf(s, "%s_entr_mass_initial.png", id);
+		strcpy(filename, repDir);
+		add_name(filename, "images");
+		add_name(filename, s);
+		set("/", "ImageFileName", filename);
+		set("/", "WriteImageFile", "");
+		get("/", "ActualImageFileName", s);
+		makeRelPath(s, report_directory);
+		quote(s);
+		fprintf(fp, "%s", pStart);
+		if(german)
+			fprintf(fp, "<H2>Anfänglich aufnehmbare Schneemasse</H2>");
+		else
+			fprintf(fp, "<H2>Initial entrainable mass</H2>");
+		fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+		fprintf(fp, "%s", pEnd);
+		set("", "LoadLastTimeStep", "");
+		set("/", "ImageFileNameEvaluator", "explicit");
+		sprintf(s, "%s_entr_mass_final.png", id);
+		strcpy(filename, repDir);
+		add_name(filename, "images");
+		add_name(filename, s);
+		set("/", "ImageFileName", filename);
+		set("/", "WriteImageFile", "");
+		get("/", "ActualImageFileName", s);
+		makeRelPath(s, report_directory);
+		quote(s);
+		fprintf(fp, "%s", pStart);
+		if(german)
+			fprintf(fp, "<H2>Verbleibende aufnehmbare Schneemasse</H2>");
+		else
+			fprintf(fp, "<H2>Remaining entrainable mass</H2>");
+		fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+		fprintf(fp, "%s", pEnd);
+		set("EntrainmentMass", "Active", "0");
+	}
+
+  // dfa stuff
+	get("", "InteractionTypeWithFluidAboveVis", s);
+	if(strcmp(s, "w")){
+    //	dfa velocity
+    set("Velocity/Colorbar", "HorizontalAlignment", "right");
+    set("Velocity", "Active", "1");
+    set("Velocity", "VectorScaling", velScl);
+    set("Velocity/Colorbar", "Autoscale", "0");
+    // draw needed to force update of actual Min/Max
+    set("/", "Draw", "");
+    set("Velocity/Colorbar", "DiscreteColors", "1");
+    set("Velocity/Colorbar", "Min", "0");
+    set("Velocity/Colorbar", "Max", velMax);
+    set("Velocity/Colorbar", "Segments", cbSegs);
+    sprintf(s, "%s/Velocity/Colorbar:Label", idAbs);
+    set("/", "ImageFileNameEvaluator", s);
+    if(!short_report && timeSeries){
+      set("", "AnimateTimeSteps", "");
+      get("", "$animationFiles", s);
+      n = list_size(s);
+      fprintf(fp, "%s", pStart);
+      if(german)
+        fprintf(fp, "<H2>Fließgeschwindigkeiten - Zeitschritte</H2>\n");
+      else
+        fprintf(fp, "<H2>Flow velocities - time steps</H2>\n");
+      for(i = 0; i < n; i++){
+        get_list_element(s, i, name);
+        makeRelPath(name, report_directory);
+        quote(name);
+        fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", name, name);
+      }
+      fprintf(fp, "%s", pEnd);
+      set("", "LoadLastTimeStep", "");
+      // draw needed to force update of actual image file name!
+      set("/", "Draw", "");
+    }
+    set("Velocity", "Active", "0");
+
+    //      dfa peak depth
+    set("PeakFlowDepth", "Active", "1");
+    set("PeakFlowDepth", "Blending", "1");
+    set("PeakFlowDepth", "Opacity", "0.5");
+    set("PeakFlowDepth", "AutoColored", "1");
+    set("PeakFlowDepth", "DisplayContourLines", "1");
+    set("PeakFlowDepth", "LineWidth", "1");
+    set("PeakFlowDepth/Colorbar", "DiscreteColors", "1");
+    set("PeakFlowDepth/Colorbar", "Autoscale", "0");
+    // draw needed to force update of actual Min/Max
+    set("/", "Draw", "");
+    set("PeakFlowDepth/Colorbar", "Min", "0");
+    set("PeakFlowDepth/Colorbar", "Max", depMax);
+    set("PeakFlowDepth/Colorbar", "Segments", cbSegs);
+    set("PeakFlowDepth/Colorbar", "ArbitrarySteps", "1");
+    set("PeakFlowDepth/Colorbar", "StepValues", "0.5 1 1.5 2 3 4 5 7.5 10 12.5 15");
+    set("/", "ImageFileNameEvaluator", "explicit");
+    sprintf(s, "%s_pfd.png", id);
+    strcpy(filename, repDir);
+    add_name(filename, "images");
+    add_name(filename, s);
+    set("/", "ImageFileName", filename);
+    if(short_report < 2){
+      set("/", "WriteImageFile", "");
+      get("/", "ActualImageFileName", s);
+      makeRelPath(s, report_directory);
+      quote(s);
+      fprintf(fp, "%s", pStart);
+      if(german)
+        fprintf(fp, "<H2>Fließhöhenmaxima</H2>");
+      else
+        fprintf(fp, "<H2>Peak flow depth</H2>");
+      fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+      fprintf(fp, "%s", pEnd);
+    }
+
+    export_var("PeakFlowDepth", id, repDir, SUFFIX_PEAK_FLOW_DEPTH, annot);
+
+    set("FlowDepth", "Active", "0");
+
+		//      dfa flow depth
+		set("FlowDepth", "Active", "1");
+		set("FlowDepth", "Blending", "1");
+		set("FlowDepth", "Opacity", "0.5");
+		set("FlowDepth", "AutoColored", "1");
+		set("FlowDepth", "DisplayContourLines", "1");
+		set("FlowDepth", "LineWidth", "1");
+		set("FlowDepth/Colorbar", "DiscreteColors", "1");
+		set("FlowDepth/Colorbar", "Autoscale", "0");
+		// draw needed to force update of actual Min/Max
+		set("/", "Draw", "");
+		set("FlowDepth/Colorbar", "Min", "0");
+		set("FlowDepth/Colorbar", "Max", depMax);
+		set("FlowDepth/Colorbar", "Segments", cbSegs);
+		set("FlowDepth/Colorbar", "ArbitrarySteps", "1");
+		set("FlowDepth/Colorbar", "StepValues", "0.5 1 1.5 2 3 4 5 7.5 10 12.5 15");
+		set("/", "ImageFileNameEvaluator", "explicit");
+		sprintf(s, "%s_fd.png", id);
+		strcpy(filename, repDir);
+		add_name(filename, "images");
+		add_name(filename, s);
+		set("/", "ImageFileName", filename);
+		if(short_report < 2){
+			set("/", "WriteImageFile", "");
+			get("/", "ActualImageFileName", s);
+			makeRelPath(s, report_directory);
+			quote(s);
+			fprintf(fp, "%s", pStart);
+			if(german)
+				fprintf(fp, "<H2>Fließhöhen</H2>");
+			else
+				fprintf(fp, "<H2>Flow depth</H2>");
+			fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+			fprintf(fp, "%s", pEnd);
+		}
+
+		export_var("FlowDepth", id, repDir, SUFFIX_FLOW_DEPTH, annot);
+
+		set("FlowDepth", "Active", "0");
+
+    //	dfa peak velocity
+    set("DynamicPeakPressure", "Active", "1");
+    set("DynamicPeakPressure", "Blending", "1");
+    set("DynamicPeakPressure", "Opacity", "0.5");
+    set("DynamicPeakPressure", "DisplayContourLines", "1");
+    set("DynamicPeakPressure", "LineWidth", "1");
+    set("DynamicPeakPressure", "setDataConversion", "peak_velocity_from_dynamic_pressure");
+    set("DynamicPeakPressure/Colorbar", "Autoscale", "0");
+    // draw needed to force update of actual Min/Max
+    set("/", "Draw", "");
+    set("DynamicPeakPressure/Colorbar", "DiscreteColors", "1");
+    set("DynamicPeakPressure/Colorbar", "Min", "0");
+    set("DynamicPeakPressure/Colorbar", "Max", velMax);
+    set("DynamicPeakPressure/Colorbar", "Segments", cbSegs);
+    set("DynamicPeakPressure/Colorbar", "ArbitrarySteps", "0");
+    set("DynamicPeakPressure/Colorbar", "ArbitrarySteps", "1");
+    set("DynamicPeakPressure/Colorbar", "StepValues", "1 5 10 12.5 15 17.5 20 22.5 25 27.5 30 35 40 50");
+    set("/", "ImageFileNameEvaluator", "explicit");
+    sprintf(s, "%s_pfv.png", id);
+    strcpy(filename, repDir);
+    add_name(filename, "images");
+    add_name(filename, s);
+    set("/", "ImageFileName", filename);
+    if(short_report < 2){
+      set("/", "WriteImageFile", "");
+      get("/", "ActualImageFileName", s);
+      makeRelPath(s, report_directory);
+      quote(s);
+      fprintf(fp, "%s", pStart);
+      if(german)
+        fprintf(fp, "<H2>Fließ-Spitzengeschwindigkeiten</H2>");
+      else
+        fprintf(fp, "<H2>Peak flow velocity</H2>");
+      fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+      fprintf(fp, "%s", pEnd);
+    }
+
+    export_var("DynamicPeakPressure", id, repDir, SUFFIX_PEAK_VELOCITY, annot);
+
+    set("DynamicPeakPressure", "setDataConversion", "none");
+    set("DynamicPeakPressure", "Active", "0");
+
+    //	dfa peak dyn pressure
+    set("DynamicPeakPressure", "Active", "1");
+    set("DynamicPeakPressure/Colorbar", "Autoscale", "0");
+    // draw needed to force update of actual Min/Max
+    set("/", "Draw", "");
+    set("DynamicPeakPressure/Colorbar", "DiscreteColors", "1");
+    set("DynamicPeakPressure/Colorbar", "Min", "0");
+    set("DynamicPeakPressure/Colorbar", "Max", pp_Max);
+    set("DynamicPeakPressure/Colorbar", "ArbitrarySteps", "1");
+    set("DynamicPeakPressure/Colorbar", "StepValues", pp_step_values);
+    set("/", "ImageFileNameEvaluator", "explicit");
+    sprintf(s, "%s_pp.png", id);
+    strcpy(filename, repDir);
+    add_name(filename, "images");
+    add_name(filename, s);
+    set("/", "ImageFileName", filename);
+    set("/", "WriteImageFile", "");
+    get("/", "ActualImageFileName", s);
+    makeRelPath(s, report_directory);
+    quote(s);
+    fprintf(fp, "%s", pStart);
+    if(german)
+      fprintf(fp, "<H2>Fließ-Spitzendrücke</H2>");
+    else
+      fprintf(fp, "<H2>Flow dynamic peak pressure</H2>");
+    fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+    fprintf(fp, "%s", pEnd);
+
+    if(short_report < 2 && runoutView[0] != 0){
+      get("/", "ActualImageFileName", s);
+      cut_extension(s, x);
+      strcat(s, "_runout");
+      add_extension(s, x);
+      set(runoutView, "Apply", "");
+      set("/", "WriteToImageFile", s);
+      makeRelPath(s, report_directory);
+      quote(s);
+      fprintf(fp, "%s", pStart);
+      if(german)
+        fprintf(fp, "<H2>Fließ-Spitzendrücke - Detailansicht</H2>");
+      else
+        fprintf(fp, "<H2>Flow dynamic peak pressure - detailed view</H2>");
+      fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+      fprintf(fp, "%s", pEnd);
+      set(totalView, "Apply", "");
+    }
+
+    export_var("DynamicPeakPressure", id, repDir, SUFFIX_PEAK_PRESSURE, annot);
+
+    set("DynamicPeakPressure/Colorbar", "ArbitrarySteps", "0");
+    set("DynamicPeakPressure", "Active", "0");
+  }
+
+//	psa stuff
+	get("", "InteractionTypeWithFluidAboveVis", s);
+	if(!strcmp(s, "w")){
+
+		set("PsaCuts", "Active", "1");
+		set("PsaCuts/isocut", "Active", "1");
+		set("PsaCuts/isocut", "Blending", "0");
+		set("PsaCuts/isocut", "IsoValue", psaCutHeight);
+		set("PsaCuts/isocut", "SetAttribute", "ElementData:Flow:Velocity:m/s");
+		set("PsaCuts/isocut", "Vectors", "1");
+		set("PsaCuts/isocut", "VectorLengthScale", velScl);
+		set("PsaCuts/isocut/Colorbar", "DiscreteColors", "1");
+		set("PsaCuts/isocut/Colorbar", "Autoscale", "0");
+		// draw needed to force update of actual Min/Max
+		set("/", "Draw", "");
+		set("PsaCuts/isocut/Colorbar", "Segments", cbSegs);
+		set("/", "Draw", "");
+		set("PsaCuts/isocut/Colorbar", "Min", "0");
+		set("PsaCuts/isocut/Colorbar", "Max", velMax);
+		sprintf(s, "%s/PsaCuts/isocut/Colorbar:Label", idAbs);
+		set("/", "ImageFileNameEvaluator", s);
+		if(!short_report && timeSeries){
+			set("", "AnimateTimeSteps", "");
+			get("", "$animationFiles", s);
+			n = list_size(s);
+			fprintf(fp, "%s", pStart);
+			if(german)
+				fprintf(fp, "<H2>Luftgeschwindigkeiten - Zeitschritte</H2>\n");
+			else
+				fprintf(fp, "<H2>Air velocities - time steps</H2>\n");
+			for(i = 0; i < n; i++){
+				get_list_element(s, i, name);
+				makeRelPath(name, report_directory);
+				quote(name);
+				fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", name, name);
+			}
+			fprintf(fp, "%s", pEnd);
+			set("", "LoadLastTimeStep", "");
+			// draw needed to force update of actual image file name!
+			set("/", "Draw", "");
+		}
+
+		set("PsaCuts/isocut", "SetAttribute", "ElementData:Flow:DynamicPeakPressure:kPa");
+		set("PsaCuts/isocut", "Blending", "1");
+		set("PsaCuts/isocut", "Opacity", "0.5");
+		set("PsaCuts/isocut", "DisplayContourLines", "1");
+		set("PsaCuts/isocut", "LineWidth", "1");
+		set("PsaCuts/isocut", "AutoColored", "1");
+		set("PsaCuts/isocut/Colorbar", "Autoscale", "0");
+		set("/", "Draw", "");
+		set("PsaCuts/isocut/Colorbar", "DiscreteColors", "1");
+		set("PsaCuts/isocut/Colorbar", "Min", "0");
+		set("PsaCuts/isocut/Colorbar", "Max", pp_MaxPsa);
+		set("PsaCuts/isocut/Colorbar", "Segments", cbSegs);
+		set("PsaCuts/isocut/Colorbar", "ArbitrarySteps", "1");
+		set("PsaCuts/isocut/Colorbar", "StepValues", pp_step_values);
+		set("/", "ImageFileNameEvaluator", "explicit");
+		sprintf(s, "%s_pp_psa.png", id);
+		strcpy(filename, repDir);
+		add_name(filename, "images");
+		add_name(filename, s);
+		set("/", "ImageFileName", filename);
+		set("/", "WriteImageFile", "");
+		get("/", "ActualImageFileName", s);
+		makeRelPath(s, report_directory);
+		quote(s);
+		fprintf(fp, "%s", pStart);
+		if(german)
+			fprintf(fp, "<H2>Staub-Spitzendrücke</H2>");
+		else
+			fprintf(fp, "<H2>Powder snow dynamic peak pressure</H2>");
+		fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+		fprintf(fp, "%s", pEnd);
+
+		if(short_report < 2 && runoutView[0] != 0){
+			get("/", "ActualImageFileName", s);
+			cut_extension(s, x);
+			strcat(s, "_runout");
+			add_extension(s, x);
+			set(runoutView, "Apply", "");
+			set("/", "WriteToImageFile", s);
+			makeRelPath(s, report_directory);
+			quote(s);
+			fprintf(fp, "%s", pStart);
+			if(german)
+				fprintf(fp, "<H2>Staub-Spitzendrücke - Detailansicht</H2>");
+			else
+				fprintf(fp, "<H2>Powder snow dynamic peak pressure - detailed view</H2>");
+			fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+			fprintf(fp, "%s", pEnd);
+			set(totalView, "Apply", "");
+		}
+
+    export_var("PsaCuts/isocut", id, repDir, SUFFIX_PSA_PEAK_PRESSURE, annot);
+
+    set("PsaCuts", "Active", "0");
+
+		if(!short_report){
+			set("Powder", "Active", "1");
+			set("Powder", "Blending", "1");
+			set("Powder", "Opacity", "0.3");
+			set("Powder", "RenderAsSpheres", "0");
+			set("Powder", "PointSize", partScl);
+			set("Powder", "SetAttribute", "DropletData:Spray:Velocity:m/s");
+			set("Powder/Colorbar", "Autoscale", "0");
+			set("/", "Draw", "");
+			set("Powder/Colorbar", "DiscreteColors", "1");
+			set("Powder/Colorbar", "Min", "0");
+			set("Powder/Colorbar", "Max", velMax);
+			set("Powder/Colorbar", "Segments", cbSegs);
+			sprintf(s, "%s/Powder/Colorbar:Label", idAbs);
+			set("/", "ImageFileNameEvaluator", s);
+			if(!short_report && timeSeries){
+				set("", "AnimateTimeSteps", "");
+				get("", "$animationFiles", s);
+				n = list_size(s) - 1;
+				fprintf(fp, "%s", pStart);
+				if(german)
+					fprintf(fp, "<H2>Staubgeschwindigkeiten - Zeitschritte</H2>\n");
+				else
+					fprintf(fp, "<H2>Powder velocities - time steps</H2>\n");
+				for(i = 0; i < n; i++){
+					get_list_element(s, i, name);
+					makeRelPath(name, report_directory);
+					quote(name);
+					fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", name, name);
+				}
+				fprintf(fp, "%s", pEnd);
+				set("", "LoadLastTimeStep", "");
+				// draw needed to force update of actual image file name!
+				set("/", "Draw", "");
+			}
+			set("/", "WriteImageFile", "");
+			get("/", "ActualImageFileName", s);
+			makeRelPath(s, report_directory);
+			quote(s);
+			fprintf(fp, "%s", pStart);
+			if(german)
+				fprintf(fp, "<H2>Verbleibende Staubschneemasse</H2>");
+			else
+				fprintf(fp, "<H2>Final powder snow cloud</H2>");
+			fprintf(fp, "<IMG SRC=%s ALT=%s VSPACE=10>\n", s, s);
+			fprintf(fp, "%s", pEnd);
+			set("Powder", "Active", "0");
+		}
+	}
+	set("PeakFlowDepth", "Active", "1");
+	set("", "AnimationWriteImageFiles", "0");
+
+  // DFA mass balance
+  strcpy(filename, repDir);
+  add_name(filename, "DFA_mass_balance.txt");
+  // set("", "write_DFA_mass_balance_profiles", filename);
+
+  // // PSA mass balance
+  // get("", "InteractionTypeWithFluidAboveVis", s);
+  // if(!strcmp(s, "w")){
+  //   strcpy(filename, repDir);
+  //   add_name(filename, "PSA_mass_balance.txt");
+  //   set("", "write_PSA_mass_balance_profiles", filename);
+	// }
+
+	fprintf(fp, "</BODY></HTML>\n");
+	fclose(fp);
+
+	if(strcmp(totalView, "/KeyViewSequences/Views/_report_tmp_") == 0){
+		set("/KeyViewSequences/Views", "DeleteComponent", "_report_tmp_");
+		totalView[0] = 0;
+	}
+
+  //	restore attribute values
+	strcpy(s, report_directory); add_name(s, ".fd.atr"); set("FlowDepth", "ExecMacro", s);
+	strcpy(s, report_directory); add_name(s, ".pfd.atr"); set("PeakFlowDepth", "ExecMacro", s);
+	strcpy(s, report_directory); add_name(s, ".dpp.atr"); set("DynamicPeakPressure", "ExecMacro", s);
+	strcpy(s, report_directory); add_name(s, ".fat.atr"); set("FrontArrivalTime", "ExecMacro", s);
+	strcpy(s, report_directory); add_name(s, ".em.atr"); set("EntrainmentMass", "ExecMacro", s);
+	strcpy(s, report_directory); add_name(s, ".prt.atr"); set("Particles", "ExecMacro", s);
+	strcpy(s, report_directory); add_name(s, ".pc.atr"); set("PsaCuts", "ExecMacro", s);
+	strcpy(s, report_directory); add_name(s, ".pwd.atr"); set("Powder", "ExecMacro", s);
+	set("", "ExplainCommands", explainCommands);;
+}
+
+
+
+void write_PSA_mass_balance_profiles(
+	char value[])
+{
+	FILE *fp;
+	FILE *fpOut;
+	char s[MAXSTRLEN+0];
+	int inBalanceSection = 0;
+	int validStep = 0;
+	double d;
+	double generated = 0.0;
+	double entrained = 0.0;
+	double deposited = 0.0;
+	double deposited_at_obstacles = 0.0;
+	double outflow = 0.0;
+	double loss = 0.0;
+	double current = 0.0;
+	double released = 1.0;
+	double time = -1.0;
+	int i;
+	char aux[1];
+	char id[MAXSTRLEN+0];
+	char idAbs[MAXSTRLEN+0];
+	int n;
+
+	get("", "PSALogFileName", s);
+  printf("%s \n",s);
+	fp = fopen(s, "r");
+	if(!fp){
+		set_error("cannot open PSA log file");
+		return;
+	}
+	fpOut = fopen(value, "w");
+	if(!fpOut){
+		set_error("cannot open output file");
+		fclose(fp);
+		return;
+	}
+
+	set("", "UpdateReleaseMass", "");
+	get("", "ReleaseMass_kt", s);
+	get("", "release_mass_total_kt", s);
+	sscanf(s, " %lf", d);
+	released = d;
+	get("", "SecondaryReleaseMass_kt", s);
+	sscanf(s, " %lf", d);
+//	released += d;
+
+	fprintf(fpOut, "#time\tcurrent\tgenerated\tentrained\tdeposited\toutflow\trelocated\n");
+	fprintf(fpOut, "#s\t-\t-\t-\t-\t-\n");
+	while(fgets(s, 512, fp)){
+		if(sscanf(s, " * %d. Time Step   Time = %lf", i, d)  == 2){
+      printf("%s \n",s);
+			if(d > time){
+				time = d;
+				validStep = 1;
+        printf("Valid \n");
+			}else{
+				validStep = 0;
+        printf("inValid \n");
+			}
+		}else if(validStep && (istrstr(s, "entrainment from snow cover [kt]") >= 0)){
+			while((i = istrchr(s, 'D')) >= 0) s[i] = 'E';
+			if(sscanf(s, " entrainment from snow cover [kt] %lf", d) == 1)
+				entrained += d;
+		}else if(validStep && (istrstr(s, "PSA mass balance") >= 0)){
+			inBalanceSection = 1;
+		}else if(inBalanceSection){
+			while((i = istrchr(s, 'D')) >= 0) s[i] = 'E';
+			if(sscanf(s, " generated %lf", d) == 1)
+				generated += d;
+			else if(sscanf(s, " deposited at obstacles %lf", d) == 1)
+				deposited_at_obstacles += d;
+			else if(sscanf(s, " deposited %lf", d) == 1)
+				deposited += d;
+			else if(sscanf(s, " outflow %lf", d) == 1)
+				outflow += d;
+			else if(sscanf(s, " loss %lf", d) == 1)
+				loss += d;
+			else if(sscanf(s, " current %lf", d) == 1){
+				current = d;
+				inBalanceSection = 0;
+				fprintf(fpOut, "%g\t%g\t%g\t%g\t%g\t%g\t%g\n",
+					time,
+					current,
+					generated,
+					entrained,
+					(deposited+deposited_at_obstacles),
+					outflow,
+					loss);
+			}
+		}
+	}
+	fclose(fp);
+	fclose(fpOut);
+}
+
+
+
+
+void release_mass_total_kt(
+	char value[])
+{
+	char s[MAXSTRLEN+0]; double d, released;
+	FILE *fp;
+	set("", "UpdateReleaseMass", "");
+	get("", "ReleaseMass_kt", s);
+	sscanf(s, " %lf", released);
+	get("", "ProjectDir", s);
+	add_name(s, "start.log");
+	fp = fopen(s, "r");
+	if(fp){
+		while(fgets(s, 512, fp)){
+			if(sscanf(s, " total mass: %lf", d)  == 1 && istrstr(s, "cells") > 0){
+				released = d * 1.0e-6;
+			}
+		}
+		fclose(fp);
+	}
+	sprintf(value, "%g", released);
+}
+
+
+
+void write_DFA_mass_balance_profiles(
+	char value[])
+{
+	FILE *fp;
+	FILE *fpOut;
+	char s[MAXSTRLEN+0];
+	int validStep = 0;
+	double d;
+	double entr = 0.0;
+	double current = 0.0;
+	double released = 1.0, releasedSec = 0.0;
+	double time = -1.0;
+	int i;
+	char aux[1];
+	char id[MAXSTRLEN+0];
+	char idAbs[MAXSTRLEN+0];
+	int n;
+
+	get("", "ProjectDir", s);
+	add_name(s, "start.log");
+	fp = fopen(s, "r");
+	if(!fp){
+		set_error("cannot open DFA log file");
+		return;
+	}
+	fpOut = fopen(value, "w");
+	if(!fpOut){
+		set_error("cannot open output file");
+		fclose(fp);
+		return;
+	}
+
+	set("", "UpdateReleaseMass", "");
+	get("", "ReleaseMass_kt", s);
+	sscanf(s, " %lf", d);
+	released = d;
+	get("", "SecondaryReleaseMass_kt", s);
+	sscanf(s, " %lf", releasedSec);
+//	released += releasedSec;
+
+	fprintf(fpOut, "#time\tcurrent\tentrained\n");
+	fprintf(fpOut, "#s\tkt\tkt\n");
+	while(fgets(s, 512, fp)){
+		if(sscanf(s, " total mass: %lf", d)  == 1 && istrstr(s, "cells") > 0){
+//			released = d * 1.0e-6 + releasedSec;
+		}else if(sscanf(s, " computing time step %lf...", d)  == 1){
+			if(d > time){
+				time = d;
+				validStep = 1;
+			}else{
+				validStep = 0;
+			}
+		}else if(validStep && sscanf(s, " entrained DFA mass: %lf", d) == 1){
+			entr += d;
+		}else if(validStep && sscanf(s, " total DFA mass: %lf", d) == 1){
+			current = d;
+			fprintf(fpOut, "%g\t%g\t%g\n",
+				time,
+				current/(1.0e6*released),
+				entr/(1.0e6*released) );
+			validStep = 0;
+		}
+	}
+	fclose(fp);
+	fclose(fpOut);
+}
+
+
+
+void reset_simulation_status_vis(char s[])
+{
+	int vis = 0;
+	get("", "RunVis", s);
+	if(strcmp(s, "w")){
+		get("", "InterruptVis", s);
+		if(strcmp(s, "w")){
+			vis = 1;
+		}
+	}
+	if(vis)
+		get("", "VisWrite", s);
+	else
+		get("", "VisNone", s);
+}
+void reset_simulation_status(char s[])
+{
+	FILE *fp;
+	char filename[1];
+	resize(filename, 512);
+	get("", "ProjectDir", filename);
+	add_name(filename, ".simulation_status");
+	if(fp = fopen(filename, "w")) fclose(fp);
+	resize(filename, 1);
+}
+
+
+
+void get_solver_arg(
+	char key[],
+	char default[],
+	char s[])
+{
+	int i, len;
+	char x[1*4096];
+	double f;
+	len = strlen(key);
+	get("", "AdditionalPSASolverArgs", x);
+	i = istrstr(x, key);
+	if(i > 4 && x[i-1] == ' ' && x[i + len] == '=' &&
+		sscanf(x[i + len + 1], "%lf", f) == 1){
+		sprintf(s, "%g", f);
+	}else{
+		sprintf(s, default);
+	}
+}
+void set_solver_arg(
+	char key[],
+	char s[])
+{
+	int i, j, len;
+	char x[1*4096];
+	char y[1*4096];
+	get("", "AdditionalPSASolverArgs", x);
+	i = istrstr(x, key);
+	len = strlen(key);
+	if(i > 4 && x[i - 1] == ' ' && x[i + len] == '='){
+		j = istrchr(x[i], ' ');
+		x[i + len + 1] = 0;
+		if(j >= 0){
+			strcpy(y, x[i + j]);
+			strcat(x, s);
+			strcat(x, y);
+		}else{
+			strcat(x, s);
+		}
+	}else{
+		strcat(x, " -env ");
+		strcat(x, key);
+		strcat(x, "=");
+		strcat(x, s);
+	}
+	set("", "AdditionalPSASolverArgs", x);
+}
+
+void get_turb_dispersion_factor(char s[]) { get_solver_arg("TURB_EXAGGERATION", "1", s); }
+void set_turb_dispersion_factor(char s[]) { set_solver_arg("TURB_EXAGGERATION", s); }
+
+void get_psa_entrainment_min_vel(char s[]) { get_solver_arg("ENTRAINMENT_MIN_VEL", "10", s); }
+void set_psa_entrainment_min_vel(char s[]) { set_solver_arg("ENTRAINMENT_MIN_VEL", s); }
+
+void get_part_coll_coeff(char s[]) { get_solver_arg("PART_COLL_COEFF", "0", s); }
+void set_part_coll_coeff(char s[]) { set_solver_arg("PART_COLL_COEFF", s); }
+
+
+
+double glob_ent_q()
+{
+	char aux[128+0];
+	double q = 0.0;
+	get("", "GlobalEntrainmentAreaWeight", aux);
+	sscanf(aux, "%lf", q);
+	return q;
+}
+double glob_ent_dens()
+{
+	char aux[128+0];
+	double d;
+	get("", "$glob_ent_dens", aux);
+	if(sscanf(aux, "%lf", d) != 1) d = 100.0;
+	return d;
+}
+void glob_ent_dens_get(char s[])
+{
+	sprintf(s, "%g", glob_ent_dens());
+}
+void glob_ent_dens_set(char s[])
+{
+	set("", "$glob_ent_dens", s);
+}
+void glob_ent_dep_get(char s[])
+{
+	sprintf(s, "%g", glob_ent_q() / glob_ent_dens());
+}
+void glob_ent_dep_set( char s[])
+{
+	char aux[128+0];
+	double q, d;
+	sscanf(s, "%lf", d);
+	q = glob_ent_dens() * d;
+	sprintf(aux, "%g", q);
+	set("", "GlobalEntrainmentAreaWeight", aux);
+}
+
+
+
+void get_stop_crit_opts(char s[])
+{
+	strcpy(s, "none"); strcat(s, AK_SEP);
+	// add all available stop criterion functions here (with AK_SEP as separator)
+	strcat(s, "Energieverhaeltnis"); strcat(s, AK_SEP);
+}
+void get_stop_crit(char s[])
+{
+	get("", "$stop_crit", s);
+	if(strlen(s) == 0) strcpy(s, "none");
+}
+void set_stop_crit(char s[])
+{
+	set("", "$stop_crit", s);
+	// depending on stop criterion function, $stop_crit_pars to default parameters
+	if(strcmp(s, "Energieverhaeltnis") == 0){
+		set("", "$stop_crit_pars", "Mindestenergie 1 Prozent");
+	}else{
+		set("", "$stop_crit", "");
+		set("", "$stop_crit_pars", "");
+	}
+}
+void get_stop_crit_pars_vis(char s[])
+{
+	get("", "$stop_crit", s);
+	if(strcmp(s, "") == 0) strcpy(s, "-"); else strcpy(s, "w");
+}
+
+// put stop criterion functions here; they must set s to "" if simulation should continue, else
+// the stopping reason should be written to s;
+void Energieverhaeltnis(char s[])
+{
+	char x[0];
+	double pke, ke, min_ratio, ratio_dfa = 100.0, ratio_psa = 0.0;
+	s[0] = 0; // set s to "" (empty string), which means no stop
+	resize(x, 4096);
+	get("", "$stop_crit_pars", x);
+	if(sscanf(x, "Mindestenergie %lf Prozent", min_ratio) != 1){
+		set_error("stop criterion parameters not given in correct format");
+	}else{
+		// DFA: compute ratio_dfa = current kinetic energy / peak kinetic energy
+		get("", "PeakKineticEnergy", x);
+		sscanf(x, " %lf", pke);
+		get("Particles", "TotalParticlesKineticEnergy", x);
+		sscanf(x, " %lf", ke);
+		if(pke > 0.0) ratio_dfa = 100.0 * ke / pke;
+
+		// to retrieve DFA-area (m2) where dynamic peak pressure > 1 kPa e.g. use the following:
+		//set("DynamicPeakPressure", "AreaValueLimit", "1");
+		//get("DynamicPeakPressure", "AreaAboveLimit", x);
+		//print "DFA - area of dynamic peak pressure > 1 kPa [m2]:", x;
+		// print dynamic peak pressure from current timestep to temporarfile
+		//FILE * fpDfaArea;
+		//fpDfaArea = fopen ("dfaPprAreaAbove1kPa.txt", "a");
+		//fprintf(fpDfaArea, "%s\n", "hallo");
+		//fclose (fpDfaArea);
+
+		// PSA: compute ratio_psa = current kinetic energy / peak kinetic energy
+		get("", "$psa_tot_kin_energy", x);
+		if(sscanf(x, " %lf %lf", ke, pke) == 2 && pke > 0.0) ratio_psa = 100.0 * ke / pke;
+
+		// to access size of PSA volume with peak pressure > limit, use the following:
+		//get("", "$psa_vol_above_peak_pressure", x);
+		//print "PSA - volume of dynamic peak pressure > 1 kPa [m3]:", x;
+		// note that returned string x contains the volumes (m3) for n limits in steps of dp, where
+		// n is defined with set("","psa_press_levels_num", n) and
+		// dp in Pa (!) is defined with set("", "psa_press_levels_delta", dp)
+		// in SW_Simulation.def!
+		// string x is in format: ' n dp V1 V2 ... Vn'
+
+		// both DFA and PSA ratio must be below limit to stop
+		if(ratio_dfa < min_ratio && ratio_psa < min_ratio){
+			sprintf(s, "Kinetische Energie DFA %g "
+				" PSA %g Prozent vom Maximum, beide unter Limit",
+				ratio_dfa, ratio_psa);
+		}
+	}
+	resize(x, 0);
+}
+
+
+
+void BFW_mdl_par_var_vis(char s[])
+{ get("", "$BFW_mdl_par_var", s); if(s[0] == '1') strcpy(s, "w"); else strcpy(s, "-"); }
+void BFW_num_par_var_vis(char s[])
+{ get("", "$BFW_num_par_var", s); if(s[0] == '1') strcpy(s, "w"); else strcpy(s, "-"); }
+void BFW_rel_dep_var_vis(char s[])
+{ get("", "$BFW_rel_dep_var", s); if(s[0] == '1') strcpy(s, "w"); else strcpy(s, "-"); }
+void cut_term_sep(char s[])
+{ while(s[strlen(s)-1] == '/' || s[strlen(s)-1] == '\\') s[strlen(s)-1] = 0; }
+
+
+void BFW_run_parameter_variations(char s[])
+{
+	char arglist[256*8], x[256*1], aux[256*1];
+	FILE *fp;
+	// get BFW_parameter_variations.cint with path
+	get("", "UserApplicationDirectory", x);
+	add_name(x, "BFW_parameter_variations.cint");
+	fp = fopen(x, "r");
+	if(!fp){
+		get("", "AttributesDirectory", x);
+		add_name(x, "BFW_parameter_variations.cint");
+		fp = fopen(x, "r");
+	}
+	if(!fp){
+		message("WARNING: BFW_parameter_variations.cint found neither"
+			" in user application directory nor in attributes directory"
+			" - cannot start parameter variations",
+		"BFW_start_parameter_variations");
+		return;
+	}
+	fclose(fp);
+
+	// note that file names need to be quoted since they might contain blanks
+	sprintf(arglist, "-offscreen %c%s%c", '"', x, '"');
+
+	get("/", "ProjectDir", x); cut_term_sep(x);
+	sprintf(aux, " -project %c%s%c", '"', x, '"');
+	strcat(arglist, aux);
+
+	get("", "Id", x);
+	sprintf(aux, " -sim %s", x);
+	strcat(arglist, aux);
+
+	get("", "$BFW_sim_results_dir", x); cut_term_sep(x);
+	sprintf(aux, " -results %c%s%c", '"', x, '"');
+	strcat(arglist, aux);
+
+	get("", "$BFW_mdl_par_var", x);
+	if(x[0] == '1'){
+		get("", "$BFW_mdl_par_var_file", x);
+		sprintf(aux, " -mdl_pars %c%s%c", '"', x, '"');
+		strcat(arglist, aux);
+	}
+
+	get("", "$BFW_num_par_var", x);
+	if(x[0] == '1'){
+		get("", "$BFW_num_par_var_file", x);
+		sprintf(aux, " -num_pars %c%s%c", '"', x, '"');
+		strcat(arglist, aux);
+	}
+
+	get("", "$BFW_rel_dep_var", x);
+	if(x[0] == '1'){
+		get("", "$BFW_rel_dep_var_file", x);
+		sprintf(aux, " -rel_pars %c%s%c", '"', x, '"');
+		strcat(arglist, aux);
+	}
+
+	get("", "$BFW_sim_results_dir", x);
+	add_name(x, "run.log");
+	sprintf(aux, " > %c%s%c", '"', x, '"');
+	strcat(arglist, aux);
+
+	set("", "StartInBackground", arglist);
+}

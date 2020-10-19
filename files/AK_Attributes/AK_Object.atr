@@ -1,0 +1,169 @@
+obj.Object
+	german:Objekt
+	doc:An object has modifiable attributes (properties) and allows operations\
+		to be performed on it. An object may contain sub-objects.
+		german:Ein Objekt hat veränderbare Attribute (Eigenschaften) und erlaubt die\
+			Anwendung von Operationen. Ein Objekt kann Sub-Objekte beinhalten.
+	string.identifier:Id
+		set:Id
+		vis:IdVis
+		german:Name
+		doc:Identifier (name). Must not contain special characters.
+			german:Objektname. Darf keine Sonderzeichen enthalten.
+	bool.active:Active
+		german:aktiv
+		set:Active
+		doc:Activate / deactivate object. Deactivated objects are not shown\
+			in the drawing area.
+			german:Aktivieren / deaktivieren. Deaktivierte Objekte werden nicht\
+				dargestellt.
+	string.object directory:ProjectDir
+		german:Objektverzeichnis
+		doc:Directory to which the object is saved with ->Object.SaveProject.
+			german:Verzeichnis, in dem das Objekt mit ->Object.SaveProject gespeichert wird.
+	directory.set object directory
+		german:Objektverzeichnis setzen
+		set:ProjectDir
+	apply.save
+		german:speichern
+		set:SaveProject
+		vis:SaveVis
+		doc:Save the object with all its sub-objects to the directory ->Object.ProjectDir.\
+			For each sub-object a sub-directory with the name of the object is generated.\
+			The attributes of the object are saved in a text-file *.atr, other data\
+			are saved binary, compressed and platform-independent to a *.dat-file.
+			german:Speichern des Objekts mit allen Unterobjekten in das Verzeichnis ->Object.ProjectDir.\
+				Jedes Unterobjekt wird in ein gleichnamiges Unterverzeichnis gespeichert.\
+				Die Objektattribute werden in eine Textdatei *.atr gespeichert, andere Daten\
+				werden binär, komprimiert und Plattformunabhängig in eine *.dat-Datei gespeichert.
+	directory.save as
+		german:speichern unter
+		set:SaveProjectAs
+		doc:Set object directory and save (->Object.SaveProject).
+			german:Objektverzeichnis setzen und speichern (->Object.SaveProject).
+	directory.load
+		german:laden
+		set:LoadProject
+		doc:Load the object with all sub-objects from the selected directoy.
+			german:Objekt mit allen Unterobjekten vom gewählten Verzeichnis laden.
+	apply.save object
+		german:Objekt speichern
+		set:Save
+		doc:Save the object without any sub-objects to the ->Object.ProjectDir.
+			german:Speichern des Objektes ohne Unterobjekte in das ->Object.ProjectDir.
+	directory.save object as
+		set:SaveAs
+		german:Objekt speichern unter
+		doc:Save the object without any sub-objects to the selected directory.
+			german:Speichern des Objektes ohne Unterobjekte in das gewählte Verzeichnis.
+	directory.load object
+		german:Objekt laden
+		set:Load
+		doc:Load object without sub-objects from selected directory.
+			german:Objekt ohne Unterobjekte von gewähltem Verzeichnis laden.
+	opr.attributes / macros
+		german:Attribute / Makros
+		doc:Attributes and operations for loading and saving attributes and\
+			recording and playing macros.
+			german:Attribute und Operationen zum Laden und Speichern von Attributen und\
+				zum Aufnehmen und Abspielen von Makros.
+		filename.filename:MacroFileName
+			german:Dateiname
+			set:MacroFileName
+			volatile
+			pattern:*.atr,*.macro,*.cint
+			doc:Attribute or macro filename. atr-files contain set-commands to set attribute\
+				values. macro-files contain arbitrary set- or get-commands. cint-files have to\
+				be in C-syntax (AST-SCI), i.e. with colons at the end of each statement, and must\
+				implement the function "void main()", which is executed on replaying. cint-macros\
+				cannot be recoreded directly.
+				german:Attribut- oder Makrodateiname. atr-Dateien enthalten set-Befehle\
+					zum setzen von Attributwerten. macro-Dateien enthalten beliebige set- oder\
+					get-Befehle. cint-Dateien müssen in C-syntax (AST-SCI) vorliegen, also mit Strichpunkten\
+					am Ende jedes Befehls, und müssen die Funktion "void main()" implementieren.\
+					Diese Funktion wird beim Abspielen ausgeführt. cint-macros können nicht\
+					direkt aufgezeichnet werden.
+		apply.save attributes
+			german:Attribute speichern
+			set:SaveAttributes
+			doc:Save object attributes to file ->Object.MacroFileName.
+				german:Objektattribute in Datei ->Object.MacroFileName speichern.
+		apply.save attributes recursively
+			german:Attribute rekursiv speichern
+			set:SaveAttributesRecursively
+			doc:Save attributes of object and all sub-objects to file ->Object.MacroFileName.
+				german:Attribute des Objektes und seiner Unterobjekte in Datei ->Object.MacroFileName speichern.
+		int.macro repetitions:MacroRepetitions
+			german:Makro-Wiederholungen
+			set:MacroRepetitions
+			volatile
+			doc:Number of times the macro is played on ->Object.ExecMacro.
+				german:Anzahl der Wiederholungen beim Abspielen eines Makros ->Object.ExecMacro.
+		bool.explain macro commands:ExplainCommands
+			german:Makrobefehle erklären
+			set:ExplainCommands
+			volatile
+			doc:If on, macro commands are explained step by step playing.
+				german:Wenn an, werden Makrobefehle Schritt für Schritt beim Abspielen erklärt.
+		apply.play macro / load attributes
+			german:Makro abspielen / Attribute laden
+			set:ExecMacro
+			doc:Load attributes or execute macro commands in file ->Object.MacroFileName.
+				german:Attribute laden oder Makrobefehle ausführen aus Datei ->Object.MacroFileName.
+		string.take over attributes values
+			german:Attribute übernehmen
+			set:AssignAttributesOf
+			options:AllObjectsOfSameTypeList
+			doc:Take over the attributes values from a selected object of the same type.
+				german:Attributwerte von gewähltem Objekt selben Typs übernehmen.
+	opr.variables
+		german:Variable
+		doc:Edit object variables.
+			german:Objektvariable editieren.
+		col.variable values:VariableValues
+			german:Variablenwerte
+			set:VariableValues
+			doc:Set variable values.
+				german:Variablenwerte setzen.
+		string.set variable
+			set:SetVariableValue
+	apply.list predefined variables and functions of AST-SCI-Interpreter
+		german:vordefinierte Variablen und Funktionen des AST-SCI-Interpreters auflisten
+		set:List_AST_SCI_predefined
+		doc:List all predefined variables and functions of the AST-SCI-Interpreter.\
+			The interpreter allows configure additional attributes and operations for an object.
+			german:Alle vordefinierten Variablen und Funktionen des AST-SCI-Interpreters auflisten.\
+				Der Interpreter erlaubt die Konfiguration zusätzlicher Attribute und Operationen für ein Objekt.
+	bool.report commands:ReportCommands
+		german:Befehle melden
+		set:ReportCommands
+		volatile
+		doc:If on, the corresponding macro commands are displayed whenever\
+			an operation is performed or an attribute is modified. Applies to all objects.
+			german:Wenn an, werden die entsprechenden Makrobefehle angezeigt wenn\
+				eine Operation ausgeführt wird oder ein Attribut geändert wird. Gilt für alle Objekte.
+	string.language:Language
+		german:Sprache
+		options:LanguageOptions
+		set:SetLanguage
+		volatile
+		doc:Set the language for the user interface.
+			german:Sprache der Benutzerschnittstelle setzen.
+	opr.software documentation
+		german:Software-Dokumentation
+		doc:Create documentation files.
+			german:Dokumentationsdateien erzeugen.
+		filename.create HTML documentation file
+			set:WriteHtmlReferenceRecursive
+			pattern:*.html
+			mode:w
+			german:HTML-Dokumentation erzeugen
+			doc:Create a HTML files with documentation on this object and all sub-objects.
+				german:HTML-Datei mit Dokumentation zu diesem Objekt und allen Unterobjekten erzeugen.
+		filename.create HTML documentation for all objects
+			set:WriteEntireHtmlReference
+			pattern:*.html
+			mode:w
+			german:HTML-Dokumentation aller Objekte erzeugen
+			doc:Create a HTML files with documentation on all object types.
+				german:HTML-Datei mit Dokumentation zu allen Objekt-Typem erzeugen.

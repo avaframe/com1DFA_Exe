@@ -1,0 +1,117 @@
+
+
+
+void get_mesh_center_coords(int icomp, char buf[], int p)
+{
+	int nc, nf, i, j;
+	double x[3];
+	nc = NumCells();
+	for(i = 0; i < nc; i++){
+		GetCellCenter(i, x);
+		sprintf(buf[p], "%g;", x[icomp]);
+		p += strlen(buf[p]);
+	}
+	for(i = 0; i < nc; i++){
+		nf = NumCellFaces(i);
+		for(j = 0; j < nf; j++){
+			if(CellNeighborIndex(i, j) < 0){
+				GetFaceCenter(i, j, x);
+				sprintf(buf[p], "%g;", x[icomp]);
+				p += strlen(buf[p]);
+			}
+		}
+	}
+}
+
+
+void test_write_results_coords(char value[])
+{
+	int nc, nb, i, j, nf, p, mesh;
+	char buf[0];
+	double x[3];
+	resize(buf, 512);
+
+	get("", "MeshFileFull", buf);
+	mesh = MeshCreate();
+	MeshRead(mesh, buf, 1);
+	ResetCurrentMesh(mesh);
+
+	nc = NumCells();
+
+	// count boundary faces
+	nb = 0;
+	for(i = 0; i < nc; i++){
+		nf = NumCellFaces(i);
+		for(j = 0; j < nf; j++){
+			if(CellNeighborIndex(i, j) < 0){
+				nb++;
+			}
+		}
+	}
+	// write bnd-ids
+	resize(buf, 64 + 2*nb*9);
+	get("", "BndIdsId", buf);
+	strcat(buf, ";");
+	p = strlen(buf);
+	sprintf(buf[p], "int;%d;", 2*nb);
+	p = strlen(buf);
+	for(i = 0; i < nc; i++){
+		nf = NumCellFaces(i);
+		for(j = 0; j < nf; j++){
+			if(CellNeighborIndex(i, j) < 0){
+				sprintf(buf[p], "%d;%d;", i+1, j+1);
+				p += strlen(buf[p]);
+			}
+		}
+	}
+	set("", "Write", buf);
+
+	resize(buf, 64 + (nc + 2*nb)*12);
+
+	sprintf(buf, "ElementData:Test:center.U:m;float;%d;", nc + nb);
+	p = strlen(buf);
+	get_mesh_center_coords(0, buf, p);
+	set("", "Write", buf);
+
+	sprintf(buf, "ElementData:Test:center.V:m;float;%d;", nc + nb);
+	p = strlen(buf);
+	get_mesh_center_coords(1, buf, p);
+	set("", "Write", buf);
+
+	sprintf(buf, "ElementData:Test:center.W:m;float;%d;", nc + nb);
+	p = strlen(buf);
+	get_mesh_center_coords(2, buf, p);
+	set("", "Write", buf);
+
+	resize(buf, 0);
+	MeshDelete(mesh);
+	ResetCurrentMesh(1);
+}
+
+void test2(char value[])
+{
+	char s[256]; double vals[0]; int mesh, nc, i;
+
+	get("", "MeshFileFull", s);
+	mesh = MeshCreate();
+	MeshRead(mesh, s, 1);
+	ResetCurrentMesh(mesh);
+	nc = NumCells();
+	MeshDelete(mesh);
+	ResetCurrentMesh(1);
+
+	get("", "ProjectDir", s);
+	i = SetResultProject(s);
+	if(i != 0) return;
+	get("", "MeshFile", s);
+        i = OpenResultCase(value, s, "iteration", "fl3");
+	if(i != 0) return;
+	i = OpenResultStep(4);
+	if(i != 0) return;
+	resize(vals, nc);
+	for(i = 0; i < nc; i++) vals[i] = i;
+	i = WriteResultFloat("ElementData:Test:Num:-", nc, vals);
+	resize(vals, 0);
+	CloseResult();
+}
+

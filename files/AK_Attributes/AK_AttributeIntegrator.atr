@@ -1,0 +1,51 @@
+obj.AttributeIntegrator
+	apply.show formula signature
+		set:ShowFormulaSignature
+	filename.dat file name
+		set:DatFileName
+		pattern:*.dat
+	filename.asix file name
+		set:AsixFileName
+		pattern:*.asix
+	filename.mesh file:MeshFileName
+		set:MeshFileName
+		pattern:*.flm,*.fmo
+	filename.result file:ResultFileName
+		set:ResultFileName
+		pattern:*.fl3
+	apply.list steps (iterations / times / angles)
+		set:ListSteps
+	string.steps:Steps
+		set:Steps
+		options:StepOptions
+	float.start step (iteration/time/angle):MinStep
+		set:MinStep
+		options:StepsList
+		vis:StepVisibility
+	float.end step (iteration/time/angle):MaxStep
+		set:MaxStep
+		options:StepsList
+		vis:StepVisibility
+	string.add cell / face selection
+		set:AddSelection
+		options:MeshSelectionsList
+	string.add selections containing string
+		set:AddSelectionsContainingString
+	string.selections:SelectionsList
+	string.remove selection
+		set:RemoveSelection
+		options:SelectionsList
+	filename.examples formula path:ExampleFormulasPath
+	apply.list example formulas
+		set:ListExampleFormulas
+	filename.add formula
+		set:AddFormula
+		pattern:*.frml
+	string.formulas:FormulasList
+	string.remove formula
+		set:RemoveFormula
+		options:FormulasList
+	filename.output file name:OutputFileName
+		set:OutputFileName
+	apply.compute integrals
+		set:ComputeIntegrals

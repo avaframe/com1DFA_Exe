@@ -1,0 +1,4 @@
+set("", "DiscreteColors", "1")
+set("", "Segments", "10")
+set("", "DisplayInterLabels", "1")
+set("", "MinColorToBackgroundFadingRange", "0.0")

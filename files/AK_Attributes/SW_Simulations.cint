@@ -1,0 +1,512 @@
+char rel_depth_mult[32] = "1.0";
+char rel_depth_diff[32] = "0.0";
+void get_rel_depth_mult( char s[]) { strcpy(s, rel_depth_mult); }
+void set_rel_depth_mult( char s[]) { strcpy(rel_depth_mult, s); }
+void get_rel_depth_diff( char s[]) { strcpy(s, rel_depth_diff); }
+void set_rel_depth_diff( char s[]) { strcpy(rel_depth_diff, s); }
+
+
+
+void get_clone_name(
+	char obj[],
+	char name[],
+	char clone[])
+{
+	char aux[1*4096];
+	char x[1*256];
+	int n;
+	int i;
+	int maxLen = 0;
+
+	clone[0] = 0;
+
+	get(obj, "GetComponentList", aux);
+	n = list_size(aux);
+	for(i = 0; i < n; i++){
+		get_list_element(aux, i, x);
+		if(istrstr(x, "_cloned") >= 0 && istrstr(x, name) >= 0 && strlen(x) > maxLen){
+			strcpy(clone, x);
+			maxLen = strlen(x);
+		}
+	}
+}
+
+
+
+void replace_specials_chars(
+	char s[])
+{
+	int i;
+	for(i = 0; i < strlen(s); i++) if(
+		s[i] == '.' ||
+		s[i] == '-' ||
+		s[i] == '+')
+		s[i] = '_';
+}
+
+
+
+void clone_simulation_with_relas(
+	char s[])
+{
+	double mult;
+	double diff;
+	double d;
+	char aux[1*4096];
+	char x[1*256];
+	char y[1*256];
+	char relas[1*256];
+	char origAbs[1*256];
+	char cloneAbs[1*256];
+	int n;
+	int i;
+
+	sscanf(rel_depth_mult, " %lf", mult);
+	sscanf(rel_depth_diff, " %lf", diff);
+	set("", "CloneSimulation", s);
+
+	get_clone_name("", s, x);
+	sprintf(relas, "%s_depth_m%g_d%g", s, mult, diff);
+	replace_specials_chars(relas);
+	set(x, "Id", relas);
+	strcat(relas, "/ReleaseAreas");
+
+	get(relas, "GetComponentList", aux);
+	n = list_size(aux);
+	for(i = 0; i < n; i++){
+		get_list_element(aux, i, x);
+		sprintf(y, "%s/%s", relas, x);
+		get(y, "IdAbs", origAbs);
+		set(relas, "RemoveObject", x);
+		sprintf(y, "%s_depth_m%g_d%g", x, mult, diff);
+		replace_specials_chars(y);
+		set("../ReleaseAreas", "Create", y);
+		sprintf(x, "../ReleaseAreas/%s", y);
+		get(x, "IdAbs", cloneAbs);
+		set(cloneAbs, "AssignAttributesOf", origAbs);
+		set(cloneAbs, "CopyCoordsOf", origAbs);
+		get(cloneAbs, "Depth", x);
+		sscanf(x, " %lf", d);
+		d *= mult;
+		d += diff;
+		if(d < 0.0) d = 0.0;
+		sprintf(x, "%g", d);
+		set(cloneAbs, "Depth", x);
+		set(cloneAbs, "UpdateMass", "");
+		set(relas, "AppendObject", cloneAbs);
+	}
+}
+
+
+
+char res_psa_width_diff[32] = "0.0";
+void get_psa_res_width_diff( char s[]) { strcpy(s, res_psa_width_diff); }
+void set_psa_res_width_diff( char s[]) { strcpy(res_psa_width_diff, s); }
+
+char res_psa_spacing_diff[32] = "0.0";
+void get_psa_res_spacing_diff( char s[]) { strcpy(s, res_psa_spacing_diff); }
+void set_psa_res_spacing_diff( char s[]) { strcpy(res_psa_spacing_diff, s); }
+
+char res_psa_coeff_diff[32] = "0.0";
+void get_psa_res_coeff_diff( char s[]) { strcpy(s, res_psa_coeff_diff); }
+void set_psa_res_coeff_diff( char s[]) { strcpy(res_psa_coeff_diff, s); }
+
+
+
+void clone_simulation_with_resis(
+	char s[])
+{
+	double m_width; double m_spacing; double m_coeff;
+	double d;
+	char aux[1*4096];
+	char x[1*256];
+	char y[1*256];
+	char resis[1*256];
+	char origAbs[1*256];
+	char cloneAbs[1*256];
+	int n;
+	int i;
+
+	sscanf(res_psa_width_diff, " %lf", m_width);
+	sscanf(res_psa_spacing_diff, " %lf", m_spacing);
+	sscanf(res_psa_coeff_diff, " %lf", m_coeff);
+	set("", "CloneSimulation", s);
+
+	get_clone_name("", s, x);
+
+	sprintf(aux, "Clone of simulation %s with psa-resistance-differences:\nwidth %+g\nspacing %+g\ncoefficient %+g\n",
+		s, m_width, m_spacing, m_coeff);
+	set(x, "Remark", aux);
+
+	sprintf(resis, "%s_psa_res_wid_%g_spac_%g_coeff_%g", s, m_width, m_spacing, m_coeff);
+	replace_specials_chars(resis);
+	set(x, "Id", resis);
+	strcat(resis, "/ResistanceAreas");
+
+	get(resis, "GetComponentList", aux);
+	n = list_size(aux);
+	for(i = 0; i < n; i++){
+		get_list_element(aux, i, x);
+		sprintf(y, "%s/%s", resis, x);
+		get(y, "IdAbs", origAbs);
+		set(resis, "RemoveObject", x);
+		sprintf(y, "%s_psa_wid_%g_spac_%g_coeff_%g", x, m_width, m_spacing, m_coeff);
+		replace_specials_chars(y);
+		set("../ResistanceAreas", "Create", y);
+		sprintf(x, "../ResistanceAreas/%s", y);
+		get(x, "IdAbs", cloneAbs);
+		set(cloneAbs, "AssignAttributesOf", origAbs);
+		set(cloneAbs, "CopyCoordsOf", origAbs);
+		get(cloneAbs, "PsaWidth", x);
+		sscanf(x, " %lf", d); d += m_width; if(d < 0.0) d = 0.0; sprintf(x, "%g", d);
+		set(cloneAbs, "PsaWidth", x);
+		get(cloneAbs, "PsaSpacing", x);
+		sscanf(x, " %lf", d); d += m_spacing; if(d < 0.001) d = 0.001; sprintf(x, "%g", d);
+		set(cloneAbs, "PsaSpacing", x);
+		get(cloneAbs, "PsaResistanceCoefficient", x);
+		sscanf(x, " %lf", d); d += m_coeff; if(d < 0.0) d = 0.0; sprintf(x, "%g", d);
+		set(cloneAbs, "PsaResistanceCoefficient", x);
+		set(resis, "AppendObject", cloneAbs);
+	}
+}
+
+
+
+void activate_only_peak_pressure_fields(
+	char s[])
+{
+	char sims[4096+0], sim[256+0], fields[1024+0], field[64+0], v[256+0];
+	int i, n, j, m, psa;
+	get("", "GetComponentList", sims);
+	n = list_size(sims);
+	for(i = 0; i < n; i++){
+		get_list_element(sims, i, sim);
+		get(sim, "InteractionTypeWithFluidAbove", v);
+		if(strcmp(v, "none")) psa = 1; else psa = 0;
+		get(sim, "GetComponentList", fields);
+		m = list_size(fields);
+		for(j = 0; j < m; j++){
+			get_list_element(fields, j, field);
+			sprintf(v, "%s/%s", sim, field);
+			if(psa && istrstr(field, "PsaCuts") >= 0 ||
+			   !psa && istrstr(field, "DynamicPeakPressure") >= 0)
+			   set(v, "Active", "1");
+			else if(istrstr(field, "Areas") < 0 && istrstr(field, "Lines") < 0)
+			   set(v, "Active", "0");
+		}
+	}
+}
+
+
+
+void get_simulations_of_status(
+	char status[],
+	char value[])
+{
+	char sims[4096+0], sim[256+0], stat[64+0];
+	int i, n;
+	get("", "GetComponentList", sims);
+	n = list_size(sims);
+	for(i = 0; i < n; i++){
+		get_list_element(sims, i, sim);
+		get(sim, "Status", stat);
+		if(!strcmp(stat, status)){
+			strcat(value, sim);
+			strcat(value, AK_SEP);
+		}
+	}
+}
+
+void get_finished_simulations(
+	char value[])
+{
+	value[0] = 0;
+	get_simulations_of_status("finished", value);
+}
+
+void get_running_simulations(
+	char value[])
+{
+	value[0] = 0;
+	get_simulations_of_status("running", value);
+}
+
+void delete_all_non_finished(
+	char value[])
+{
+	char sims[4096+0], sim[256+0];
+	int i, n;
+	sims[0] = 0;
+	get_simulations_of_status("unknown", sims);
+	get_simulations_of_status("interrupted", sims);
+	n = list_size(sims);
+	for(i = 0; i < n; i++){
+		get_list_element(sims, i, sim);
+		set("", "DeleteObject", sim);
+	}
+}
+
+
+
+// stuff for starting arbitrary projects in parallel (with some time-delay in order to
+// avoid interference with project files, if in same project
+
+void cut_term_sep(char s[])
+{ while(s[strlen(s)-1] == '/' || s[strlen(s)-1] == '\\') s[strlen(s)-1] = 0; }
+
+char scheduled_simulations[1] = 0;
+int scheduled_simulations_read = 0;
+
+// write to user-specific "database"
+void scheduled_sims_read()
+{
+	char line[256+0]; FILE *fp; int n;
+	get("", "UserApplicationDirectory", line);
+	add_name(line, "SW_Simulations.scheduled");
+	fp = fopen(line, "r");
+	if(fp){
+		while(fgets(line, 256, fp)){
+			n = strlen(line) - 1;
+			while(n >= 0 && line[n] == '\n' || line[n] == 13) line[n--] = 0;
+			n = strlen(scheduled_simulations);
+			resize(scheduled_simulations, n + strlen(line) + 1);
+			strcat(scheduled_simulations, line);
+			n = strlen(scheduled_simulations);
+			resize(scheduled_simulations, n + strlen(AK_SEP) + 1);
+			strcat(scheduled_simulations, AK_SEP);
+		}
+		fclose(fp);
+		scheduled_simulations_read = 1;
+	}
+}
+
+// load from user-specific "database"
+void scheduled_sims_write()
+{
+	char fname[256+0], sim[256+0]; FILE *fp; int i, n;
+	get("", "UserApplicationDirectory", fname);
+	add_name(fname, "SW_Simulations.scheduled");
+	fp = fopen(fname, "w");
+	if(fp){
+		n = list_size(scheduled_simulations);
+		for(i = 0; i < n; i++){
+			get_list_element(scheduled_simulations, i, sim);
+			fprintf(fp, "%s\n", sim);
+		}
+		fclose(fp);
+	}
+}
+
+void get_scheduled_sims(char s[])
+{
+	if(!scheduled_simulations_read) scheduled_sims_read();
+	strcpy(s, scheduled_simulations);
+}
+
+void set_scheduled_sims(char s[])
+{
+	resize(scheduled_simulations, strlen(s));
+	strcpy(scheduled_simulations, s);
+	scheduled_sims_write();
+}
+
+void schedule_simulation(char s[])
+{
+	char sim[1*256];
+	int i, n = strlen(AK_SEP);
+	strcpy(sim, s);
+	cut_term_sep(sim);
+	strcat(sim, AK_SEP);
+	i = istrstr(scheduled_simulations, sim);
+	if(i == 0 || (i > n && (istrstr(scheduled_simulations[i - n], AK_SEP) == 0))){
+		message("WARNING: simulation already selected", "schedule_simulation");
+	}else{
+		n = strlen(scheduled_simulations) + strlen(sim) + 1;
+		resize(scheduled_simulations, n);
+		strcat(scheduled_simulations, sim);
+	}
+	scheduled_sims_write();
+}
+
+void remove_scheduled_simulation(char s[])
+{
+	int i, j, n = strlen(AK_SEP);
+	char sim[256+0];
+	strcpy(sim, s);
+	strcat(sim, AK_SEP);
+	i = istrstr(scheduled_simulations, sim);
+	if(i == 0 || (i > n && (istrstr(scheduled_simulations[i - n], AK_SEP) == 0))){
+		j = i + strlen(sim);
+		n = strlen(scheduled_simulations[j]);
+		while(n--) scheduled_simulations[i++] = scheduled_simulations[j++];
+		scheduled_simulations[i] = 0;
+	}
+	scheduled_sims_write();
+}
+
+void clear_scheduled_simulations(char s[])
+{
+	scheduled_simulations[0] = 0;
+	scheduled_sims_write();
+}
+
+// type: 0=read status, 1=read info, 2=write status, 3=write info
+void edit_sim_stat_info(char sim[], int type, char stat[])
+{
+	FILE *fp; char fname[256+0]; int i;
+	strcpy(fname, sim);
+	if(type == 0 || type == 2)
+		add_name(fname, ".simulation_status");
+	else
+		add_name(fname, ".simulation_info");
+	if(type < 2){
+		strcpy(stat, "");
+		fp = fopen(fname, "r");
+		if(fp){
+			fgets(stat, 256, fp);
+			fclose(fp);
+			i = strlen(stat);
+			if(i > 0) while(i--){
+				if(stat[i] == '\n' || stat[i] == 13 || stat[i] == ' ')
+					stat[i] = 0;
+				else
+					break;
+			}
+		}
+	}else{
+		fp = fopen(fname, "w");
+		if(fp){
+			fprintf(fp, "%s\n", stat);
+			fclose(fp);
+		}
+	}
+}
+
+void start_simulations(char s[])
+{
+	char q = '"';
+	char sim[1*256], simId[128+0], x[1024+0], logf[128+0], y[3*256];
+	int i, j, n, num_parallel_simulations, windows = 0;
+	double pauseTime;
+	FILE *fp;
+	FILE *fp2;
+	// find out if we are on windows
+	strcpy(x, "a");
+	add_name(x, "b");
+	if(istrchr(x, '/') < 0) windows = 1;
+	get("", "$num_parallel_simulations", x);
+	if(sscanf(x, " %d", num_parallel_simulations) != 1) num_parallel_simulations = 1;
+	num_parallel_simulations = max(1, num_parallel_simulations);
+	get("", "PauseTime", x);
+	if(sscanf(x, " %lf", pauseTime) != 1) pauseTime = 0.0;
+	// write start macros
+	n = list_size(scheduled_simulations);
+	for(i = 0; i < n; i++){
+		get_list_element(scheduled_simulations, i, sim);
+		cut_term_sep(sim);
+		// check sim state: if already running, don't start!
+		edit_sim_stat_info(sim, 0, x);
+		if(istrstr(x, "running") >= 0 || istrstr(sim, "started") >= 0){
+			sprintf(x, "ERROR:Simulation %s is already started or running - please remove it from list", sim);
+			message(x, "start_simulations");
+			return;
+		}
+		set("", "WriteStartMacroAndBat", sim);
+	}
+	// write start scripts, for each parallel thread a separate one
+	for(j = 0; j < num_parallel_simulations && j < n; j++){
+		get("", "UserApplicationDirectory", x);
+		sprintf(simId, "batch_%d.bat", j+1);
+		add_name(x, simId);
+		fp = fopen(x, "w");
+		if(!fp){
+			message("cannot open temporary batch file", "start_simulations");
+			return;
+		}
+		if(windows){
+			fprintf(fp, "timeout %d\n", j * (int) (pauseTime + 0.5));
+		}else{
+			fprintf(fp, "sleep %g\n", j * pauseTime);
+		}
+		for(i = 0; i < n; i++){
+			if(i % num_parallel_simulations == j){
+				get_list_element(scheduled_simulations, i, sim);
+				cut_term_sep(sim);
+				edit_sim_stat_info(sim, 2, "");
+				edit_sim_stat_info(sim, 3, "scheduled for start");
+				add_name(sim, "start.bat");
+				fp2 = fopen(sim, "r");
+				if(fp2){
+					fgets(y, 3*256, fp2);
+					fprintf(fp, "%s", y);
+					fclose(fp2);
+					if(windows){
+						fprintf(fp, "timeout %d\n", (int) (pauseTime + 0.5));
+					}else{
+						fprintf(fp, "sleep %g\n", pauseTime);
+					}
+				}
+			}
+		}
+		fclose(fp);
+		// start script
+		strcpy(logf, x);
+		strcat(logf, ".log");
+		strcpy(simId, x);
+		if(windows){
+			sprintf(x, "START /B CMD /C CALL %c%s%c > %c%s%c 2>&1", q, simId, q, q, logf, q);
+		}else{
+			sprintf(x, "source '%s' >& '%s' &", simId, logf);
+		}
+		message(x, "start_simulations");
+		system(x);
+	}
+}
+
+void interrupt_simulations(char s[])
+{
+	char sim[256+0], x[128+0];
+	int i, n;
+	n = list_size(scheduled_simulations);
+	for(i = 0; i < n; i++){
+		get_list_element(scheduled_simulations, i, sim);
+		cut_term_sep(sim);
+		// check sim state: if started or running, interrupt it
+		edit_sim_stat_info(sim, 0, x);
+		if(istrstr(x, "running") >= 0 || istrstr(sim, "started") >= 0){
+			edit_sim_stat_info(sim, 2, "interrupted");
+		}
+	}
+}
+
+char scheduled_simulations_state[1] = 0;
+void get_scheduled_sims_state(char s[]) { strcpy(s, scheduled_simulations_state); }
+void update_sim_states(char s[])
+{
+	char sim[1*256], stat[32+0], info[256+0], msg[16*256], simId[256+0], fname[256+0];
+	int i, n;
+	scheduled_simulations_state[0] = 0;
+	n = list_size(scheduled_simulations);
+	scheduled_simulations_state[0] = 0;
+	strcpy(msg, "INFO:Status of simulations\n");
+	for(i = 0; i < n; i++){
+		get_list_element(scheduled_simulations, i, sim);
+		cut_term_sep(sim);
+		edit_sim_stat_info(sim, 0, stat);
+		edit_sim_stat_info(sim, 1, info);
+		strcpy(fname, sim);
+		cut_name(sim, simId);
+		strcat(msg, simId);
+		strcat(msg, " : ");
+		strcat(msg, stat);
+		strcat(msg, " : ");
+		strcat(msg, info);
+		strcat(msg, "\n");
+		resize(scheduled_simulations_state, strlen(scheduled_simulations_state)+strlen(stat)+1);
+		strcat(scheduled_simulations_state, stat);
+		resize(scheduled_simulations_state, strlen(scheduled_simulations_state)+strlen(AK_SEP)+1);
+		strcat(scheduled_simulations_state, AK_SEP);
+	}
+	message(msg, "update_sim_states");
+}
+

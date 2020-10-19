@@ -1,0 +1,84 @@
+
+void reduce_grid(
+	char value[])
+{
+	char s[0];
+	int i, j, red = 5;
+	int ncols, nrows;
+	double xll, yll, dx, nodata;
+	double z;
+	FILE *fp;
+	FILE *fpout;
+	char ncolstr[16], nrowstr[16], xllstr[16], yllstr[16], cellsizestr[16], nodatastr[16];
+
+	print "reading", value;
+	fp = fopen(value, "r");
+	if(!fp){
+		set_error("cannot read input file!");
+		resize(s, 0);
+		return;
+	}
+	if(
+		fscanf(fp, " %s %d", ncolstr, ncols) != 2 ||
+		fscanf(fp, " %s %d", nrowstr, nrows) != 2 ||
+		fscanf(fp, " %s %lf", xllstr, xll) != 2 ||
+		fscanf(fp, " %s %lf", yllstr, yll) != 2 ||
+		fscanf(fp, " %s %lf", cellsizestr, dx) != 2 ||
+		fscanf(fp, " %s %lf", nodatastr, nodata) != 2){
+		fclose(fp);
+		resize(s, 0);
+		set_error("unexpected file format!");
+		return;
+	}
+	print "ncols, nrows:", ncols, nrows;
+	print "dx, Xll, Yll:", dx, xll, yll;
+
+	i = strlen(value);
+	while(i--) if(value[i] == '.') break;
+	if(i > 0){
+		resize(s, strlen(value) + 9);
+		strcpy(s, value);
+		s[i] = 0;
+		strcat(s, "_reduced");
+		strcat(s, value[i]);
+	}else{
+		resize(s, 12);
+		strcpy(s, "reduced.asc");
+	}
+	print "writing output file", s;
+	fpout = fopen(s, "w");
+	get("", "$reductionFactor", s);
+	sscanf(s, " %d", red);
+	resize(s, 0);
+	if(!fpout){
+		set_error("cannot open output file!");
+		fclose(fp);
+		return;
+	}
+	fprintf(fpout, "%s %d\n", ncolstr, (ncols - 1) / red + 1);
+	fprintf(fpout, "%s %d\n", nrowstr, (nrows - 1) / red + 1);
+	if(istrstr(xllstr, "corner") >= 0 || istrstr(xllstr, "CORNER") >= 0){
+		fprintf(fpout, "%s %.9g\n", xllstr, xll - ( (dx/2)*red - (dx/2) ) );
+		fprintf(fpout, "%s %.9g\n", yllstr, yll - ( (dx/2)*red - (dx/2) ) );
+	}else{
+		fprintf(fpout, "%s %.9g\n", xllstr, xll);
+		fprintf(fpout, "%s %.9g\n", yllstr, yll);
+	}
+	fprintf(fpout, "%s %g\n", cellsizestr, dx * red);
+	fprintf(fpout, "%s %g\n", nodatastr, nodata);
+	
+	for(j = 0; j < nrows; j++){
+		if((nrows - j - 1) % red == 0){
+			for(i = 0; i < ncols; i++){
+				fscanf(fp, " %lf", z);
+				if(i % red == 0) fprintf(fpout, "%g ", z);
+			}
+			fprintf(fpout, "\n");
+		}else{
+			for(i = 0; i < ncols; i++) fscanf(fp, " %lf", z);
+		}
+	}
+	fprintf(fpout, "\n");
+	fclose(fp);
+	fclose(fpout);
+}

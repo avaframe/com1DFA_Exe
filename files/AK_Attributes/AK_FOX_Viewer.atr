@@ -1,0 +1,386 @@
+obj.FOX_Viewer
+	german:Benutzeroberfläche
+	doc:The FOX_Viewer is an object-controller and viewer. It is implemented based on the FOX-library\
+		(www.fox-toolkit.org).\
+		It consists of a tool bar (top), an object-tree (on the left), a drawing window (right) and\
+		a status line (bottom).\
+		It allows to select objects and edit their attributes or perform operations on them and\
+		to control the view (zooming, rotation, clipping) in the drawing window.\
+		\
+		Pressing F5 resets the window position to the upper left corner and sets the window size to\
+		default values.\
+		\
+		To edit an object, double-left-click on an object in the object-tree. An attribute-editor for\
+		the object will open, showing tabs on the top for the major attribute-sub-sections, and\
+		an attribute-tree below each tab. To edit an attribute or perform an operation, click on the\
+		respective tree-item. To repeat the same operation for all objects of the same type, press F2.\
+		To make an attribute value the default value for the respective object-type, press F3.\
+		\
+		The attribute editor window\
+		can be resized by dragging its corners or edges. It can be closed by pressing the Esc-key.\
+		A help-text on an attribute or tab under the mouse-cursor is displayed automatically after\
+		some time without mouse-motion. Display of the help-text can be forced by pressing F1.\
+		Alternatively, object attributes can be edited by right-click on the object in the object-tree.\
+		A cascaded pull-down-menu pops up, providing access to all attributes.\
+		The pull down menu contains the entry "show subtree level" to control the expansion-level of the\
+		object-sub-tree below. The expansion-level can also be defined by pressing the keys 0 to 9\
+		while the mouse is positioned over the object.\
+		\
+		More than one object can be edited at the same time by selecting ranges with shift-left-click\
+		in the tree, or adding/removing single entries by Ctrl-left-click. Then right click on the selection and\
+		click on "Edit" in the pull-down-menu. In the attribute-editor that will appear the attributes\
+		common to all selected objects can be edited.\
+		\
+		In the drawing area all active, visible objects are displayed.\
+		The view can be shifted by right-click-drag, rotated by left-click-drag\
+		and zoomed in/out by middle-click-drag (or mouse-wheel, if present).\
+		To reset the view, click in the drawing area and press Home.\
+		The view can be rotated in defined angle-steps by pressing the cursor-up/down/right/left-keys, and rolled\
+		by pressing PageUp/PageDown. The angle-step can be adjusted in "View:Rotation increment".\
+		Predefined view directions as Top/Bottom/South/North/East/West can be selected under "View".\
+		The options available in "View" are also available on right-click in the drawing-area.\
+		\
+		The entire project (i.e. all objects in the object tree) can be saved with "File:SaveAs" or "File:Save".\
+		Each object is saved to a separate directory. The directory structure exactly reflects the object hierarchy.\
+		Projects can be loaded with "File:Open" or by selecting one of the recent projects listed at the bottom of the\
+		"File"-pull-down-menu.\
+		"File:Close" closes a project, so that another project can be loaded.\
+		\
+		By clicking on an object in the drawing area, the coordinates of the selected point are displayed in\
+		the status line, together with the distance to the previously selected point and the inclination\
+		between the points.\
+		\
+		A help text on objects can be displayed by moving the cursor over the object in the object tree\
+		and pressing the F1-key.\
+		A help text on object attributes/operations can be displayed by opening the attribute editor,\
+		moving the cursor over the attribute/operation and pressing F1.\
+		A help text on major attribute-sub-sections can be displayed activating the sub-section-tab,\
+		moving the cursor over it and pressing F1.\
+		\
+		The recent program messages of the current session can be displayed with "File:Show messages".
+		german:Die Benutzeroberfläche erlaubt die Kontrolle und Visualisierung von Objekten. Sie basiert auf\
+			dem FOX-Toolkit (siehe www.fox-toolkit.org).\
+			\
+			Die Oberfläche besteht aus einer Werkzeugleiste (ganz oben), einem Objekt-Baum (links), einer\
+			Zeichenfläche (rechts) und einer Statuszeile (unten). Sie erlaubt das Selektieren von Objekten,\
+			das Editieren ihrer Eigenschaften (Attribute) und das Ausführen von Operationen auf ihnen,\
+			sowie die Einstellung der Ansicht (Vergößerung, Verschiebung, Drehung) in der Zeichenfläche.\
+			\
+			Um ein Objekt zu editieren, doppel-klicken Sie mit der linken Maustaste auf das Objekt im Objekt-Baum.\
+			Ein Attribut-Fenster mit einer Leiste von Reitern (oben) für die Haupt-Eigenschaftsgruppen wird\
+			geöffnet. Unter jedem Reiter befindet sich der dazugehörige Attribut-Baum. Um einen Attributwert zu\
+			ändern oder eine Operation auszuführen, klicken Sie mit der linken Maustaste auf das entsprechende\
+			Baum-Element. Um die Operation für alle Objekte desselben Typs zu wiederholen, drücken Sie F2.\
+			Um einen Attributwert zum Default-Wert für alle Objekte des betreffenden Typs zu machen, drücken Sie F3.\
+			\
+			Das Attributfenster kann durch Ziehen seiner Ecken oder Kanten vergrößert oder verkleinert\
+			werden. Durch Drücken der Esc-Taste wird es geschlossen.\
+			Ein Hilfe-Text über das Attribut oder den Reiter unter dem Maus-Cursor wird nach kurzer Zeit\
+			ohne Mausbewegung automatisch angezeigt.\
+			\
+			Alternativ können Attribute auch durch Rechts-Klick auf ein Objekt im Objekt-Baum in der darauf\
+			erscheinenden (kaskardierten) Menükarte editiert werden. Die Menükarte enthält den Eintrag\
+			"show subtree level", mit dem eingestellt werden kann, wieviele Objekt-Ebenen unter dem betreffenden\
+			Objekt im Objektbaum angezeigt werden sollen. Die Anzahl der Ebenen kann auch durch Drücken der Tasten\
+			0 bis 9 eingestellt werden, solange der Maus-Cursor sich über dem Objekt befindet.\
+			\
+			Die gemeinsamen Eigenschaften mehrerer Objekte können gleichzeitig editiert werden, indem diese\
+			Objekte durch Bereichs-Klicks (Shift-Links-Klick) und/oder einzeln durch Strg-Links-Klicks\
+			ausgewählt werden. Danach kann nach Rechts-Klick in der Menükarte durch Wahl von "Edit" das\
+			entsprechende Attributfenster geöffnet werden.\
+			\
+			In der Zeichenfläche werden die aktiven, sichtbaren Objekte dargestellt. Die Ansicht kann durch\
+			Ziehen mit der linken Maustaste rotiert und durch Ziehen mit der rechten Maustaste verschoben\
+			werden. Vergrößern oder Verkleinern ist durch Ziehen mit der mittleren Maustaste nach unten oder\
+			nach oben möglich (bzw. durch das Mausrad, falls vorhanden). Um die Ansicht zurückzusetzen, klicken\
+			Sie in die Zeichenfläche und drücken Sie die Pos1-Taste.\
+			Die Ansicht kann durch Drücken der Pfeil-nach-oben, -unten, -links und -rechts-Tasten in definierten\
+			Schritten gedreht werden. Der Drehwinkel pro Schritt kann unter "View:Rotation increment" in der\
+			Werkzeugleiste eingestellt werden. Durch Drücken der Bild-nach-oben und Bild-nach-unten-Tasten\
+			kann die Ansicht entsprechend um die Sichtachse gerollt werden.\
+			Unter "View" können auch fixe Ansichtsrichtungen (Top/Bottom/East/West/North/South) eingestellt\
+			werden. Die Optionen unter "View" sind auch durch Rechts-Klick in der Zeichenfläche aktivierbar.\
+			\
+			Das gesamte Projekt, also alle Objekte im Objektbaum, kann mit "File:SaveAs" in ein beliebiges\
+			Daten-Verzeichnis gespeichert werden. Jedes Objekt wird in ein eigenes Unterverzeichnis\
+			gespeichert, so daß die sich ergebende Verzeichnisstruktur genau der Objekthierarchie im\
+			Objektbaum entspricht. Mit "File:Save" kann danach das Projekt im selben Verzeichnis neu\
+			abgespeichert werden. Mit "File:Close" wird ein Projekt geschlossen, so daß ein anderes\
+			geöffnet werden kann. Ein Projekt kann mit "File:Open" geladen werden, oder durch Wahl eines\
+			der aktuellen Projekte am Ende der "File"-Menükarte.\
+			\
+			Beim Klicken auf ein Objekt in der Zeichenfläche werden die entsprechenden Koordinatenwerte\
+			in der Statuszeile angezeigt, zusammen mit der Distanz zum letzen, davor geklickten Punkt.\
+			\
+			Ein Hilfe-Text zum selektierten Objekt (im Objektbaum) oder Attribut (im Attribut-Baum im\
+			Attribut-Fenster) unter dem Mauspfeil wird durch Drücken der F1-Taste angezeigt. Hilfetexte\
+			zu den Reitern im Attributfenster werden durch das Aktivieren des Reiters und anschließendem\
+			Drücken von F1 angezeigt.\
+			\
+			Die letzten Programm-Meldungen der laufenden Sitzung können mit "File:Show messages" angezeigt werden.
+	apply.redraw
+		set:Draw
+		german:Aktualisieren
+		doc:Redraw the scene.
+			german:Szene aktualisiert zeichnen.
+	color3.background color:BgColor
+		set:BgColor
+		german:Hintergrundfarbe
+		doc:Background color of the drawing area.
+			german:Hintergrundfarbe der Zeichenfläche.
+	bool.perspective:Perspective
+		set:Perspective
+		german:Perspektive
+		doc:Switch on/off perspective.
+			german:Perspectivische Darstellung an-/abschalten.
+	apply.reset view
+		set:ResetView
+		german:Ansicht zurücksetzen
+		doc:Reset the view to standard position (top view).
+			german:Ansicht auf Standardposition (Ansicht von oben) zurücksetzen.
+	string.transformation:Transformation
+		set:Transformation
+		german:Transformation
+		doc:Set the viewing transformation (rotation, translation, scaling). It is not\
+			intended to directly enter the transformation values, but to set the transformation\
+			after rotating/translating/scaling by mouse to the current value so\
+			as to record the position in macros. Changing the view by mouse is not recorded.
+			german:Ansichts-Transformation setzen (Drehung, Verschiebung, Vergößerung). Die direkte\
+				Eingabe der Transformation ist nicht beabsichtigt, vielmehr kann die Transformation\
+				auf den Momentanwert gesetzt werden, um diese in Makros aufzuzeichnen.
+	apply.fit
+		set:Autofit
+		german:Anpassen
+		doc:Reset the view so that all active objects are visible.
+			german:Ansicht so anpassen, dass alle aktiven, sichtbaren Objekte im Fenster\
+				sichtbar sind.
+	opr.lighting
+		german:Beleuchtung
+		doc:Determine lighting of the scene.
+			german:Beleuchtung kontrollieren.
+		bool.directional:LightDirectional
+			set:LightDirectional
+			german:direktionales Licht
+			doc:If on, the coordinates ->FOX_Viewer.LightPosition are used as light-direction\
+				vector instead of as absolute light position-vector.
+				german:Wenn an, werden die Koordinaten in ->FOX_Viewer.LightPosition als Richtungsvektor\
+					interpretiert, anstatt als Positionsvektor der Lichtquelle.
+		float3.direction / position vector:LightPosition
+			set:LightPosition
+			german:Lichtposition
+			doc:Light position or light direction vector.
+				german:Position der Lichtquelle bzw. Licht-Richtung.
+		bool.tied to objects:LightModelBound
+			set:LightModelBound
+			german:objektgebunden
+			doc:If on, the light position/direction rotates with the objects.
+				german:Wenn an, wird die Lichtposition/Lichtrichtung mit den\
+					Objekten bewegt.
+	string.image file name generator:ImageFileNameEvaluator
+		set:ImageFileNameEvaluator
+		options:ImageFileNameEvaluatorOptions
+		german:Bild-Dateiname
+		doc:Determine how image file names are generated for ->FOX_Viewer.WriteImageFile: \
+			"explicit" = file name is explicitly defined by ->FOX_Viewer.ImageFileName \
+			"numbered" = file name is ->FOX_Viewer.ImageFileName plus appended ->FOX_Viewer.ImageFileNumber \
+			The other option select some attribute value of some object to be used as image file name.\
+			In this case, the ->FOX_Viewer.ImageFileDir is applied. \
+			The file extension given under ->FOX_Viewer.ImageFileName determines the image file format\
+			in all cases.\
+			The actual file name used for the next image is shown by ->FOX_Viewer.ActualImageFileName.
+			german:Namen für Bild-Dateien bestimmen, die mit ->FOX_Viewer.WriteImageFile erzeugt werden: \
+				"explicit" = Dateiname explizit durch ->FOX_Viewer.ImageFileName bestimmt \
+				"numbered" = Bildnummer ->FOX_Viewer.ImageFileNumber wird an ->FOX_Viewer.ImageFileName\
+				angefügt \
+				Die anderen Optionen bestimmen einen Attributwert eines Objektes als Dateinamen.\
+				In diesem Fall wird als Verzeichnis ->FOX_Viewer.ImageFileDir benutzt. \
+				In allen Fällen bestimmt die Dateierweiterung in ->FOX_Viewer.ImageFileName das Bild-Dateiformat.\
+				Der tatsächliche Dateiname für das nächste Bild\
+				wird unter ->FOX_Viewer.ActualImageFileName angezeigt.
+	int.image number:ImageFileNumber
+		set:ImageFileNumber
+		vis:ImageFileNumberVis
+		german:Bildnummer
+		doc:If ->FOX_Viewer.ImageFileNameEvaluator is "numbered", this is the number\
+			appended to the ->FOX_Viewer.ImageFileName when the next image file is written.\
+			It is automatically incremented after writing an image.
+			german:Wenn ->FOX_Viewer.ImageFileNameEvaluator gleich "numbered", wird diese Nummer\
+				an den Dateinamen ->FOX_Viewer.ImageFileName angefügt, wenn eine Bilddatei erzeugt\
+				wird. Nach jedem Bild wird die Bildnummer automatisch erhöht.
+	filename.image file (base) name:ImageFileName
+		set:ImageFileName
+		vis:ImageFileNameVis
+		pattern:*.png,*.ppm,*.tga
+		mode:w
+		german:Bilddatei-(Basis-)Name
+		doc:Image file name or image file base-name, if ->FOX_Viewer.ImageFileNameEvaluator is "numbered".\
+			The extension always determines the used image file format.
+			german:Bilddateiname oder -basisname, falls ->FOX_Viewer.ImageFileNameEvaluator gleich\
+				"numbered" ist. Die Namenserweiterung bestimmt das Bilddateiformat.
+	directory.image file directory:ImageFileDir
+		set:ImageFileDir
+		vis:ImageFileDirVis
+		german:Bilddateiverzeichnis
+		doc:The image file directory is used if ->FOX_Viewer.ImageFileNameEvaluator is set\
+			to an attribute value of an object.
+			german:Das Bilddatei-Verzeichnis wird benutzt, wenn unter ->FOX_Viewer.ImageFileNameEvaluator\
+				ein Attributwert eines Objektes eingestellt wurde.
+	string.actual image file name:ActualImageFileName
+		german:tatsächlicher Bilddateiname
+		doc:Expanded name for the next image file, according to ->FOX_Viewer.ImageFileNameEvaluator.
+			german:Tatsächlich verwendeter Bilddateiname für das nächste Bild,\
+				je nach ->FOX_Viewer.ImageFileNameEvaluator.
+	apply.write image file
+		set:WriteImageFile
+		german:Bilddatei schreiben
+		doc:Print the scene in the drawing area to the image file ->FOX_Viewer.ActualImageFileName.
+			german:Szene im Zeichenfenster als Bilddatei ->FOX_Viewer.ActualImageFileName sichern.
+	filename.write to image file
+		set:WriteToImageFile
+		pattern:*.png,*.ppm,*.tga
+		mode:w
+		german:in Bilddatei schreiben
+		doc:Print the scene in the drawing area to a selected image file.
+			german:Szene im Zeichenfenster in einer gewählten Bilddatei speichern.
+	bool.record frames to image files:RecordFrames
+		set:RecordFrames
+		german:Einzelbilder in Datei speichern
+		doc:Save every displayed frame as with ->FOX_Viewer.WriteImageFile.
+			german:Jedes angezeigte Bild wie mit ->FOX_Viewer.WriteImageFile in Bilddatei speichern.
+	opr.record and replay
+		german:Aufzeichnen und Abspielen
+		doc:Functions for recording and replaying macros and movies.
+			german:Funktionen zum Aufzeichnen und Abspielen von Makros und Movies.
+		bool.record on:Recording
+			german:Aufzeichnen
+		filename.start recording to file
+			set:StartRecording
+			vis:StartRecordingVis
+			pattern:*.macro
+			mode:w
+			german:Makro in Datei aufzeichnen
+			doc:All following attribute-changes and operations on objects are\
+				recorded in the specified macro-file and can be replayed after\
+				->FOX_Viewer.EndRecording with ->FOX_Viewer.PlayMovie.
+				german:Alle folgenden Attributänderungen und Operationen auf Objekten werden\
+					in der angegebenen Makrodatei aufgezeichnet und können\
+					nach ->FOX_Viewer.EndRecording\
+					mit ->FOX_Viewer.PlayMovie abgespielt werden.
+		apply.end recording
+			set:EndRecording
+			vis:EndRecordingVis
+			german:Aufzeichnen beenden
+		apply.start motion
+			set:StartFrames
+			vis:StartFramesVis
+			german:Bewegungs-Sequenz starten
+		apply.end motion
+			set:EndFrames
+			vis:EndFramesVis
+			german:Bewegungs-Sequenz beenden
+		int.(motion) frames
+			set:Frames
+			vis:StartFramesVis
+			german:(Sequenz-) Bilder
+		bool.write image files on playing:RecordPlaying
+			set:RecordPlaying
+			volatile
+			german:beim Movie abspielen Bilddateien generieren
+			doc:If active, each frame is saved as image file\
+				->FOX_Viewer.ActualImageFileName on ->FOX_Viewer.PlayMovie.
+				german:Falls aktiv, wird bei ->FOX_Viewer.PlayMovie jedes Sequenz-Bild als Datei\
+					ja nach ->FOX_Viewer.ActualImageFileName gespeichert.
+		filename.play macro or movie
+			set:PlayMovie
+			vis:StartRecordingVis
+			pattern:*.macro,*.cint
+			mode:r
+			german:Makro oder Movie abspielen
+			doc:Replay a macro file.
+				german:Makro-Datei abspielen.
+	filename.user attributes directory:UserAttributesDirectory
+		german:Benutzer-Attributsverzeichnis
+		doc:Directory with user specific settings files (atr, cint, def). These files have priority\
+			over the settings files in the attribute directory in the installation.
+			german:Verzeichnis mit benutzerspezifischen Einstellungen (atr, cint, def-Dateien).\
+				Diese Dateien haben Vorrang vor den Einstellungen im Attributverzeichnis der\
+				Installation.
+	filename.user application directory:UserApplicationDirectory
+		german:Benutzer-Applikationsverzeichnis
+		doc:Directory where log and session files are created and where settings persistent\
+			over GUI sessions are stored.
+			german:Verzeichnis, in dem Log-Dateien und sitzungsübergreifende GUI-Daten\
+				gespeichert werden.
+	filename.session log file:SessionLogFileName
+		german:Sitzungs-Log-Datei
+		doc:Name of file to log the commands executed in this session.
+			german:Name der Datei, in die die in dieser Sitzung ausgeführten Kommandos\
+				mitgeschrieben werden.
+	filename.session message file:SessionMsgFileName
+		german:Sitzungs-Meldungen-Datei
+		doc:Name of file to log the program messages of this session.
+			german:Name der Datei, in die die Programm-Meldungen dieser Sitzung\
+				mitgeschrieben werden.
+	apply.show messages
+		set:ShowMsgFile
+		german:Meldungen anzeigen
+		doc:Show the recent program messages of this session.
+			german:Letzte Programm-Meldungen dieser Sitzung anzeigen.
+	opr.documentation
+		german:Dokumentation
+		doc:Generate documentation files.
+			german:Dokumentationsdateien erzeugen.
+		string.reference html-file:ReferenceHtmlFile
+			set:ReferenceHtmlFile
+			german:Referenz-HtmlDatei
+			doc:html-file to be used for object- and attribute references.
+				german:html-Datei für Objekt- und Attribut-Referenzen.
+		filename.open explanation html-file
+			set:OpenExplanationFile
+			pattern:*.html
+			mode:w
+			vis:OpenExplanationFileVis
+			german:Erklärungs-htmlDatei öffnen
+			doc:Open an html-file and write command-info to this file if ->Object.ExplainCommands\
+				is switched on and macros are played.\
+				Additionally generate png-files on macro-file-lines "//fig" and reference\
+				them in the html-file.
+				german:html-Datei öffnen in die Erklärungen zu ausgeführten Makro-Befehlen geschrieben\
+					werden falls ->Object.ExplainCommands eingeschaltet ist. Zusätzlich png-Bilddateien\
+					für jede Zeile "//fig" in der Makrodatei erzeugen und in der html-Datei referenzieren.
+		apply.close explanation html-file
+			set:CloseExplanationFile
+			vis:CloseExplanationFileVis
+			german:Erklärungsdatei schließen
+	string.create group
+		set:CreateGroup
+		german:Gruppe erzeugen
+		doc:Create a new group of objects. Used internally for multi-selections.
+			german:Neue, leere Gruppe erzeugen. Wird intern zum gleichzeitigen Editieren\
+				mehrerer Objekte benutzt.
+	apply.close
+		set:Close
+		german:Schließen
+		doc:Close the project, so that a new one can be opened.
+			german:Projekt schließen, so dass ein neues geöffnet werden kann.
+	bool.fly-over help:FlyOverHelp
+		set:FlyOverHelp
+		volatile
+		german:Ballonhilfe
+		doc:If on, a help text is displayed when the cursor rests on a tree-item.
+			german:Wenn an, wird ein Hilfe-Text angezeigt, wenn der Mauszeiger\
+				über einem Baum-Element ruht.
+	float.flag page timeout [s]:FlagPageTimeout
+		german:Startbild-Haltezeit [s]
+		doc:Time in seconds to show the flag page.
+			german:Startbild-Anzeigezeit in Sekunden.
+	bool.disable selecting in viewer:$no_gl_select
+		set:$no_gl_select
+		volatile
+		german:Selektieren im Zeichenfenster deaktivieren
+		doc:If on, selecting objects in the viewer (by double click)\
+			is disabled. On some systems, this might prevent getting stuck when moving the cursor\
+			in the viewer window.
+			german:Wenn an, wird das Selektieren von Objekten (Doppelklick) im Zeichenfenster deaktiviert.\
+				Das kann auf manchen Systemen das "Steckbleiben" nach Mausbewegung\
+				im Zeichenfenster verhindern.

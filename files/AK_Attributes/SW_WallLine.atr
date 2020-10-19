@@ -1,0 +1,53 @@
+obj.WallLine
+	german:Damm
+	doc:A wall or dam can be specified via a polyline and different wall-parameters.\
+		At the wall, the flow is reflected and looses momentum\
+		according to the wall parameters and the restitution coefficient\
+		of the flowing material (->ShallowWaterSimulation.).\
+		The polyline defines the crown-line of the wall. The dam-slope is assumed to\
+		be on the left side along the polyline and is shown in the drawing area.\
+		The orientation of the polyline can be reversed with ->Polyline.Reverse, if needed.
+		german:Ein Damm oder eine Wand kann über einen Polygonzug und Dammparameter vorgegeben werden.\
+			Am Damm wird die Strömung reflektiert und verliert Impuls, je nach den Dammparametern\
+			und den Restitutionskoeffizienten des strömenden Materials (->ShallowWaterSimulation.).\
+			Der Polygonzug definiert die Kronenlinie des Dammes. Die Dammböschung wird auf der linken\
+			Seite entlang des Polgonzuges angenommen und wird in der Zeichenfläche dargestellt.\
+			Gegebenenfalls kann die Orientierung des Polygonzuges mit ->Polyline.Reverse\
+			umgekehrt werden.
+	string.heights:Heights
+		set:Heights
+		german:Höhen
+		doc:Absolute crown heights at the wall line vertices. If only\
+			one value is specified, this is used for all vertices.
+			german:Absolute Kronenhöhen an den Dammlinienpunkten. Wird nur ein\
+				Wert vorgegeben, wird dieser für alle Punkte verwendet.
+	string.slopes [deg]:Slopes
+		set:Slopes
+		german:Böschungswinkel [deg]
+		doc:Slope angles to the horizontal at the wall line vertices. If only\
+			one value is specified, this is used for all vertices.
+			german:Böschungswinkel zur Horizontalen an den Dammlinienpunkten. Wird nur ein\
+				Wert vorgegeben, wird dieser für alle Punkte verwendet.
+	int.selected vertex:SelectedVertex
+		set:SelectedVertex
+		pick world
+		pick world multiple
+		german:gewählter Punkt
+	float.height at slected vertex:AbsHeightAtCurrentVertex
+		german:Höhe am gewählten Punkt
+		doc:Absolute crown height at the selected vertex.
+			german:Absolute Kronenhöhe am gewählten Punkt.
+	float.set height at slected vertex
+		set:AbsHeightAtCurrentVertex
+		german:Höhe am gewählten Punkt setzen
+		doc:Set absolute crown height at the selected vertex.
+			german:Absolute Kronenhöhe am gewählten Punkt setzen.
+	float.slope at slected vertex [deg]:SlopeAngleAtCurrentVertex
+		german:Böschungswinkel [deg] am gewählten Punkt
+		doc:Slope angle to the horizontal at the selected vertex.
+			german:Böschungswinkel zur Horizontalen am gewählten Punkt.
+	float.set slope at slected vertex [deg]
+		set:SlopeAngleAtCurrentVertex
+		german:Böschungswinkel [deg] am gewählten Punkt setzen
+		doc:Set the slope angle to the horizontal at the selected vertex.
+			german:Böschungswinkel zur Horizontalen am gewählten Punkt setzen.

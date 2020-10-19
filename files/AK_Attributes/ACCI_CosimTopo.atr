@@ -1,0 +1,20 @@
+obj.ACCI_CosimTopo
+	string.add component
+		set:CreateACCI_Comp
+	string.add connection
+		set:CreateACCI_Connection
+	float2.add ACCI thermal
+		set:add_acci_thermal
+		pick screen
+	float2.add FIRE reader
+		set:add_fire_reader
+		pick screen
+	float2.add FIRE writer
+		set:add_fire_writer
+		pick screen
+	list.checking positions:$checking_positions
+		set:$checking_positions
+	apply.check interface positions
+		set:$dummy
+	apply.run
+		set:$dummy

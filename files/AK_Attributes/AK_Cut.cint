@@ -1,0 +1,138 @@
+
+
+
+int MAXSTRLEN=512;
+
+
+
+void export_and_show_time_series_at_point(
+	char value[])
+{
+	FILE *fp;
+	double t;
+	char aux[0];
+	int i;
+	resize(aux, MAXSTRLEN);
+	get("../..", "CurrentTimeStep", aux);
+	if(strcmp(aux, "%AK_NULL%") == 0) { resize(aux, 0); return; }
+	if(set("../..", "LoadFirstTimeStep", "") != 0) { resize(aux, 0); return; }
+	fp = fopen(value, "w");
+	if(!fp){
+		sprintf(aux, "cannot open file '%s' for writing", value);
+		set_error(aux);
+		resize(aux, 0);
+		return;
+	}
+	get("", "SelectedPoint", aux);
+	fprintf(fp, "#time\tvalue at %s\n", aux);
+	fprintf(fp, "0.0\t0.0\n");
+	while(1){
+		get("../..", "NextTimeStepVis", aux);
+		if(strcmp(aux, "w") != 0) break;
+		set("../..", "LoadNextTimeStep", "");
+		set("/", "Draw", "");
+		get("../..", "CurrentTimeStep", aux);
+		if(strcmp(aux, "%AK_NULL%") == 0) break;
+		sscanf(aux, "at_%lf", t);
+		get("", "ValueAtPoint", aux);
+		fprintf(fp, "%g\t%s\n", t, aux);
+	}
+	fclose(fp);
+	resize(aux, 0);
+	set("/2dGraphViewer", "Import", value);
+	set("/2dGraphViewer", "Active", "1");
+	set("/Project", "Active", "0");
+}
+
+
+
+char selected_polyline[MAXSTRLEN] = "";
+void selected_polyline_options( char value[]) { get("/Project/Polylines", "GetComponentList", value); }
+void get_selected_polyline( char value[]) { strcpy(value, selected_polyline); }
+void set_selected_polyline( char value[]) { strcpy(selected_polyline, value); }
+
+double subdivision_len = 5.0;
+void subdivision_len_get(char value[]){ sprintf(value, "%g", subdivision_len); }
+void subdivision_len_set(char value[]){ sscanf(value, " %lf", subdivision_len); }
+
+int smoothing_iters = 5;
+void smoothing_iters_get(char value[]){ sprintf(value, "%d", smoothing_iters); }
+void smoothing_iters_set(char value[]){ sscanf(value, " %d", smoothing_iters); }
+
+void export_and_show_values_along_polyline(
+	char value[])
+{
+	FILE *fp;
+	char aux[0], poly[0], unit[16];
+	int i, np, ns, j, nv = 0, mv = 1;
+	double x[3], y[3], z[3], v, f, l[1][4];
+	int iters = smoothing_iters;
+	resize(aux, MAXSTRLEN);
+	fp = fopen(value, "w");
+	if(!fp){
+		sprintf(aux, "cannot open file '%s' for writing", value);
+		set_error(aux);
+		resize(aux, 0);
+		return;
+	}
+	get("", "Attribute", aux);
+	i = istrrchr(aux, ':');
+	if(i < 0)
+		strcpy(unit, "-");
+	else
+		strcpy(unit, aux[i + 1]);
+	resize(poly, MAXSTRLEN);
+	sprintf(poly, "/Project/Polylines/%s", selected_polyline);
+	get(poly, "NumVertices", aux);
+	sscanf(aux, " %d", np);
+	for(i = 1; i <= np; i++){
+		sprintf(aux, "%d", i);
+		set(poly, "SelectedVertex", aux);
+		get(poly, "CoordsOfSelectedVertex", aux);
+		sscanf(aux, " %lf %lf %lf", x[0], x[1], x[2]);
+		if(i > 1 && |x - y| > subdivision_len){
+			ns = |x - y| / subdivision_len + 1.0;
+			for(j = 1; j < ns; j++){
+				f = j / (double) ns;
+				z = y * (1.0 - f) + x * f;
+				sprintf(aux, "%.10g %.10g %.10g", z[0], z[1], z[2]);
+				set("", "SelectedPoint", aux);
+				get("", "ValueAtPoint", aux);
+				sscanf(aux, " %lf", v);
+				if(nv >= mv){ mv *= 2; resize(l, mv); }
+				l[nv][0] = z[0];
+				l[nv][1] = z[1];
+				l[nv][2] = z[2];
+				l[nv][3] = v;
+				nv++;
+			}
+		}
+		sprintf(aux, "%.10g %.10g %.10g", x[0], x[1], x[2]);
+		set("", "SelectedPoint", aux);
+		get("", "ValueAtPoint", aux);
+		sscanf(aux, " %lf", v);
+		if(nv >= mv){ mv *= 2; resize(l, mv); }
+		l[nv][0] = x[0];
+		l[nv][1] = x[1];
+		l[nv][2] = x[2];
+		l[nv][3] = v;
+		nv++;
+		y = x;
+	}
+	while(iters--){
+		for(i = 1; i < nv - 1; i++)
+			l[i][3] = 0.5 * (l[i - 1][3] + l[i + 1][3]);
+	}
+	fprintf(fp, "#x\ty\tz\tvalue\n");
+	fprintf(fp, "#m\tm\tm\t%s\n", unit);
+	for(i = 0; i < nv; i++)
+		fprintf(fp, "%.10g\t%.10g\t%.10g\t%.10g\n", l[i][0], l[i][1], l[i][2], l[i][3]);
+	fclose(fp);
+	resize(l, 1);
+	resize(poly, 0);
+	resize(aux, 0);
+	set("/2dGraphViewer", "Import", value);
+	set("/2dGraphViewer", "Active", "1");
+	set("/Project", "Active", "0");
+}
+

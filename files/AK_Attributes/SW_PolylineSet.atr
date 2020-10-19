@@ -1,0 +1,63 @@
+obj.PolylineSet
+	german:Polygonzugsatz
+	doc:A set of polylines that is handled as single object. Single\
+		polylines can be extracted or deleted from the set.
+		german:Ein Satz von Polygonzügen, der als einzelnes Objekt\
+			behandelt wird. Einzelne Polygonzüge können extrahiert\
+			oder aus dem Satz entfernt werden.
+	filename.import
+		set:Import
+		pattern:*.dxf,*.DXF,*.nxyz,*.ano
+		mode:r
+		german:importieren
+		doc:Import from various file formats (->Polyline.Import).
+			german:Von verschiedenen Dateiformaten (->Polyline.Import) importieren.
+	filename.export selected
+		set:Export
+		pattern:*.dxf,*.DXF,*.nxyz
+		mode:w
+		german:exportieren
+		doc:Export in various file formats (->Polyline.Export).
+			german:In verschiedenen Dateiformaten (->Polyline.Export) exportieren.
+	string.base DHM:BaseMeshName
+		german:Basis-DHM
+	string.add
+		set:Add
+		options:PolylinesList
+		multiselect
+		german:hinzufügen
+		doc:Add a polyline ->Polyline. to the set.
+			german:Polygonzug ->Polyline. zum Satz hinzufügen.
+	string.project onto
+		options:MeshNamesList
+		set:ProjectOnto
+		german:auf DHM projizieren
+	string.select
+		options:DeSelMemberList
+		set:Select
+		multiselect
+		german:auswählen
+	string.de-select
+		options:SelMemberList
+		set:DeSelect
+		multiselect
+		german:abwählen
+	apply.extract selected
+		set:ExtractSelected
+		german:gewählte extrahieren
+		doc:Extract selected polylines as separate polyline objects.
+			german:Gewählte Polygonzüge als separate Polygonzug-Objekte extrahieren.
+	apply.delete selected
+		set:DeleteSelected
+		confirm
+		german:gewählte löschen
+		doc:Delete the selected polylines from the set.
+			german:Gewählte Polygonzüge aus dem Satz löschen.
+	bool.display labels:DisplayLabels
+		set:DisplayLabels
+		german:Bezeichnungen anzeigen
+	string.label font:LabelFont
+		set:LabelFont
+		options:FontList
+		german:Texttype für Bezeichnungen
+

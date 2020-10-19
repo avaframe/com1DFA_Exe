@@ -1,0 +1,27 @@
+double d0 = 1.0; // schneemaechtigkeit [m]
+double altitude = 1000; // referenzseehoehe [m]
+double deltad = 5; // hoehengradient in [cm/100m]
+
+
+void init()
+{
+}
+
+void getpar(
+	char s[])
+{
+	sprintf(s, "d0=%g deltad=%g altitude=%g", d0, deltad, altitude);
+}
+
+void setpar(
+	char s[])
+{
+	sscanf(s, "d0=%lf deltad=%lf altitude=%lf", d0, deltad, altitude);
+}
+
+double depth(
+	double x[3],
+	double n[3])
+{
+	return (d0 + 1.0e-4 * deltad * (x[2] - altitude)) * n[2];
+}

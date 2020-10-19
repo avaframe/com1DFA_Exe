@@ -1,0 +1,5 @@
+obj.ResultOperators
+	filename.import
+		set:Import
+		pattern:*.resops
+		mode:r

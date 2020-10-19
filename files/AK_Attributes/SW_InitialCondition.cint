@@ -1,0 +1,76 @@
+
+void convert_kg_kt(
+	char s[])
+{
+	double v;
+	sscanf(s, "%lf", v);
+	sprintf(s, "%g", 1.0e-6*v);
+}
+void Mass_kt(
+	char s[])
+{
+	get("", "Mass", s);
+	convert_kg_kt(s);
+}
+void Volume(
+	char s[])
+{
+	double mass;
+	double dens;
+	get("", "Mass", s);
+	sscanf(s, "%lf", mass);
+	get("", "Density", s);
+	sscanf(s, "%lf", dens);
+	sprintf(s, "%g", mass/dens);
+}
+
+void set_depth(
+	char s[])
+{
+	double d;
+	char aux[16];
+	set("", "Depth", s);
+	sscanf(s, "%lf", d);
+	if(d > 5.0){
+        	get("", "Language", aux);
+        	if(!strcmp(aux, "german"))
+			message("WARNING: ACHTUNG: Anbruchmaechtigkeit > 5 m!", "ReleaseAreas:set_depth");
+		else
+			message("WARNING: Release snow depth > 5 m!", "ReleaseAreas:set_depth");
+	}
+}
+
+
+
+void set_temperature(char s[])
+{
+	double d; char aux[32];
+	sscanf(s, " %lf", d);
+	d = EnthalpyFromTemperatureAndWaterMassFraction(d, 0.0);
+	sprintf(aux, "%g", d);
+	set("", "Enthalpy", aux);
+}
+void get_temperature(char s[])
+{
+	double d;
+	get("", "Enthalpy", s);
+	sscanf(s, " %lf", d);
+	d = TemperatureFromEnthalpy(d);
+	sprintf(s, "%g", d);
+}
+void set_water_fraction(char s[])
+{
+	double d; char aux[32];
+	sscanf(s, " %lf", d);
+	d = EnthalpyFromTemperatureAndWaterMassFraction(0.0, d);
+	sprintf(aux, "%g", d);
+	set("", "Enthalpy", aux);
+}
+void get_water_fraction(char s[])
+{
+	double d;
+	get("", "Enthalpy", s);
+	sscanf(s, " %lf", d);
+	d = WaterMassFractionFromEnthalpy(d);
+	sprintf(s, "%g", d);
+}

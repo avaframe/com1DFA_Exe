@@ -1,0 +1,186 @@
+obj.Cut
+	german:Schnittfläche
+	doc:A surface cutting the 3D-result-space (numerical mesh) on which\
+		result attributes can be displayed.
+		german:Schnittfläche durch den 3D-Ergebnisraum (Rechennetz) auf der\
+			Ergebnisattribute dargestellt werden können.
+	bool.extrapolate to boundary:Extrapolate
+		set:Extrapolate
+		german:auf Rand extrapolieren
+		doc:If on, result values at the boundary of the 3D mesh are extrapolated\
+			from the first cell layer.\
+			Otherwise, the actual boundary values are shown at the boundary.
+			german:Wenn an, werden die Ergebniswerte am Rand des 3D-Raumes aus\
+				der ersten Randzellschicht extrapoliert. Andernfalls werden\
+				die tatsächlichen Randwerte dargestellt.
+	bool.element values:ElementValues
+		set:ElementValues
+		german:Elementwerte
+		doc:If on, the values in the elements (cells) are shown on cut surface\
+			without interpolation. Otherwise, element values are first\
+			interpolated to the cell nodes and then the cut-values are\
+			interpolated from the node values. This yields "smoother" result values.
+			german:Wenn an, werden die Elementwerte (Zellwerte) auf der Schnittfläche\
+				ohne Interpolation dargestellt. Andernfalls werden die Elementwerte\
+				zunächst auf die Zellknoten interpoliert und dann die Flächenwerte\
+				aus den Knotenwerten interpoliert. Das ergibt eine glattere Verteilung\
+				der Ergebniswerte.
+	bool.vector normal component:VectorNormalComp
+		set:VectorNormalComp
+		vis:VectorNormalCompVisibility
+		german:Vektor-Normalkomponente
+		doc:If on, the result vector component normal to the cut\
+			surface is displayed as scalar.
+			german:Wenn an, wird die Komponente des Ergebnisvektors normal\
+				zur Schnittfläche als Skalar dargestellt.
+	bool.vector projected:VectorProjected
+		set:VectorProjected
+		vis:VectorProjectedVisibility
+		german:Vektor projiziert
+		doc:If on, the result vector component normal to the cut\
+			surfaces is subtracted from the displayed vectors.
+			german:Wenn an, wird die Komponente des Ergebnisvektors normal\
+				zur Schnittfläche von den dargestellten Vektoren abgezogen.
+	bool.display surface:DisplaySurface
+		set:DisplaySurface
+		vis:DisplaySurfaceVis
+		german:Fläche darstellen
+		doc:If on, the cut-surface itself is displayed, also if the result\
+			is shown as vectors.
+			german:Wenn an, wird die Schnittfläche selbst dargestellt,\
+				auch wenn das Ergebnis als Vektoren dargestellt wird.
+	float.display value threshold:MinDisplayValue
+		set:MinDisplayValue
+		german:Ergebnis-Schwellwert
+		doc:Result values below this threshold are not shown.
+			german:Ergebniswerte unter diesem Schwellwert\
+				werden nicht dargestellt.
+	bool.display color mapped field:DisplayColorMapped
+		set:DisplayColorMapped
+		vis:ScalarVis
+		german:Farbfläche
+		doc:If on, the result is displayed as surface colored\
+			according to the values and the colorbar.
+			german:Wenn an, wird das Ergebnis als nach den Werten und\
+				der Farbskalierung eingefärbte Fläche dargestellt.
+	bool.display contour lines:DisplayContourLines
+		set:DisplayContourLines
+		vis:ScalarVis
+		german:Isolinien
+		doc:If on, iso-lines are displayed. The iso-values are\
+			determined by the colorbar. The color of the lines is\
+			determined by ->VisObj.Color, the line width by ->VisObj.LineWidth.
+			german:Wenn an, werden Isolinien dargestellt. Die Iso-Werte\
+				werden von der Farbskalierung bestimmt. Die Linienfarbe wird\
+				durch ->VisObj.Color, die Liniendicke durch ->VisObj.LineWidth\
+				bestimmt.
+	bool.colored contour lines:ContourLinesColored
+		set:ContourLinesColored
+		vis:ScalarVis
+		german:gefärbte Isolinien
+		doc:If on, the iso-lines are colored according to the colorbar.
+			german:Wenn an, werden die Isolinien entsprechend der\
+				Farbskala eingefärbt.
+	opr.export
+		german:exportieren
+		vis:ScalarVis
+		doc:Export the cut-surface-values at raster points or\
+			the cut-isolines as polylines.
+			german:Schnittflächenwerte an Rasterpunkten oder\
+				Isolinien exportieren.
+		string.short id:ShortId
+			german:Kurzbezeichnung
+		filename.export xy-contour lines
+			set:ExportContourLinesWithXYRaster
+			pattern:*.dxf,*.DXF,*.nxyz
+			mode:w
+			german:xy-Isolinien exportieren
+			doc:Export the isolines in various formats. The cut surface\
+				must be projectable into the x-y-plane.
+				german:Isolinine in verschiedenen Formaten\
+					exportieren. Der Schnitt muss in die xy-Ebene\
+					projizierbar sein.
+		filename.export contour lines
+			set:ExportContourLines
+			pattern:*.dxf,*.DXF,*.nxyz
+			mode:w
+			german:Isolinien exportieren
+			doc:Export the isolines in various formats.
+				german:Isolinine in verschiedenen Formaten\
+					exportieren.
+		float.export raster size:ExportRasterSize
+			set:ExportRasterSize
+			german:Export-Rastergröße
+			doc:Side length of the raster-cells for exporting.
+				german:Seitenlänge der Rasterzellen zum Exportieren.
+		bool.export raster auto range:ExportRasterAutoRange
+			set:ExportRasterAutoRange
+			german:Rastergröße angepasst
+			doc:If on, the raster area is automatically adapted\
+				to the size of the cut surface area. Otherwise it\
+				can be specified explicitly.
+				german:Wenn an, wird die Rasterfläche automatisch\
+					der Größe der Schnittfläche angepasst. Andernfalls\
+					kann sie explizit vorgegeben werden.
+		float2.raster lower left corner:ExportRasterLL
+			set:ExportRasterLL
+			vis:ExportRasterRangeVis
+			german:unterer linker Rastereckpunkt
+			doc:Coordinates of the lower left corner of the reaster area.
+				german:Koordinaten des linken unteren Raster-Eckpunktes.
+		int.number of columns:ExportRasterNumColumns
+			set:ExportRasterNumColumns
+			vis:ExportRasterRangeVis
+			german:Anzahl der Spalten
+			doc:Number of raster-columns.
+				german:Anzahl der Raster-Spalten.
+		int.number of rows:ExportRasterNumRows
+			set:ExportRasterNumRows
+			vis:ExportRasterRangeVis
+			german:Anzahl der Reihen
+			doc:Number of raster-rows.
+				german:Anzahl der Raster-Reihen.
+		filename.export field raster to ascii
+			set:ExportFieldRasterAscii
+			pattern:*.asc,*.*
+			mode:w
+			german:Raster exportieren
+			doc:Export cut surface values at raster points\
+				to text file in asc-format.
+				german:Schnittflächenwerte an Rasterpunkten als\
+					Textdatei im asc-Format exportieren.
+	float.value at point:ValueAtPoint
+		german:Punktwert
+		doc:Result value at selected point of the cut surface.
+			german:Ergebniswert am gewählten Punkt der Schnittfläche.
+	float3.selected point:SelectedPoint
+		set:SelectedPoint
+		pick world
+		pick world multiple
+		german:gewählter Punkt
+		doc:Selected point on the cut surface.
+			german:Ausgewählter Punkt auf der Schnittfläche.
+	filename.export and show time series of values at selected point
+		set:export_and_show_time_series_at_point
+		mode:w
+		pattern:*.txt
+		german:Zeitreihe der Werte am gewählten Punkt exportieren und anzeigen
+	string.selected polyline:get_selected_polyline
+		set:set_selected_polyline
+		options:selected_polyline_options
+		german:gewählter Polygonzug
+	float.polyline subdivision length:subdivision_len_get
+		set:subdivision_len_set
+		german:Polygonzug-Unterteilungslaenge
+		doc:The polyline is split into segments of a length not exceeding this value\
+			when values at polyline are exported.
+			german:Der Polygonzug wird in Segmente von max. dieser Laenge unterteilt\
+				bevor die Werte an den Punkten exportiert werden.
+	int.smoothing iterations:smoothing_iters_get
+		set:smoothing_iters_set
+		german:Glaettungs-Iterationen
+	filename.export and show values at points of selected polyline
+		set:export_and_show_values_along_polyline
+		mode:w
+		pattern:*.txt
+		german:Werte an Punkten des gewählten Polygonzuges exportieren und anzeigen

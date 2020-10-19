@@ -1,0 +1,53 @@
+obj.Polylines
+	german:Polygonzüge
+	doc:Container for polylines and polyline-sets.
+		german:Behälter für Polygonzüge und Polygonzugsätze.
+	string.create empty polyline
+		set:Create
+		german:leeren Polygonzug erzeugen
+		doc:Add an empty, new polyline.
+			german:Neuen, leeren Polygonzug anfügen.
+	filename.import
+		pattern:*.shp,*.xy,*.xyz,*.dxf,*.DXF,*.nxyz,*.ano
+		mode:r
+		set:import_polylines
+		multiselect
+		german:importieren
+		doc:Load polylines from various file formats: \
+			*.xy = two blank/tab separated columns for x- and y-coordinates of points of one polyline; \
+			*.xyz = three blank/tab separated columns for x-, y- and z-coordinates of points of one polyline; \
+			*.nxyz = one line with number of points 'n', 'n' lines with blank/tab separated\
+			x, y and z-coordinates of points; such blocks may repeat arbitrary times and for each\
+			a separate polyline is generated; \
+			*.dxf, *.DXF: dxf-file;
+			german:Polygonzüge von Dateien verschiedenen Formats laden: \
+				*.xy = zwei Leerzeichen/Tabulator-getrennte Spalten für x- und y-Koordinaten der Punkte eines Polygonzugs; \
+				*.xyz = drei Leerzeichen/Tabulator-getrennte Spalten für x-, y- und z-Koordinaten der Punkte eines Polygonzugs; \
+				*.nxyz = eine Zeile mit der Punktanzahl 'n', 'n' Zeilen mit Leerzeichen/Tabulator-getrennten\
+				x-, y- und z-Koordinaten der Punkte; solche Blöcke können sich beliebig oft wiederholen,\
+				für jeden wird ein Polygonzug erzeugt; \
+				*.dxf, *.DXF: dxf-Datei;
+	string.create empty polyline set
+		set:CreateSet
+		german:leeren Polygonzugsatz erzeugen
+		doc:Add an empty, new polyline set.
+			german:Neuen, leeren Polygonzugsatz anfügen.
+	filename.import as set
+		pattern:*.dxf,*.DXF,*.nxyz,*.ano
+		mode:r
+		set:ImportSet
+		german:als Polygonzugsatz importieren
+		doc:Load polylines from various file formats into a ->PolylineSet..\
+			Formats as in ->Polylines.Import, except *.xy und *.xyz.
+			german:Polygonzüge von Dateien verschiedenen Formats als ->PolylineSet. laden.\
+				Formate wie in ->Polylines.Import, ausser *.xy und *.xyz.
+	string.base mesh name:BaseMeshName
+		german:Basis-DHM
+		doc:Name of the DHM previously used for projection.
+			german:Name des zuletzt für die Projektion verwendeten DHMs.
+	string.project onto DHM:
+		set:ProjectOnto
+		options:MeshNamesList
+		german:auf DHM projizieren
+		doc:Project all contained polylines onto a DHM.
+			german:Alle enthaltenen Polygonzüge auf ein DHM projizieren.

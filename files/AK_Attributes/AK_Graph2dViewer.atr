@@ -1,0 +1,31 @@
+obj.Graph2dViewer
+	german:Graphenanzeiger2d
+	doc:The Graph2dViewer is a simple viewer for 2D-graphs, i.e. x-y-diagrams;
+		german:Der Graphenanzeiger2d is ein einfacher Anzeiger fuer 2D-Graphen, i.e. z-y-Diagramme.
+	filename.import
+		set:Import
+		mode:r
+		german:importieren
+		doc:Import an ASCII file with n columns of numbers. The first column is interpreted as x-value,\
+			the following columns as y-values for n-1 graphs.\
+			The first two lines of the file may contain tab-separated\
+			names (1st line) and units (2nd line) for the columns.
+			german:Importieren einer ASCII Datei mit n Zahlenspalten. Die erste Spalte wird als\
+				x-Achse interprtiert, die folgenden als y-Werte von n-1 Graphen.\
+				Die ersten beiden Zeilen koennen tab-separierte Namen (1.Zeile)\
+				und Einheiten (2.Zeile) fuer die Spalten enthalten.
+	float2.x0:X0
+		set:X0
+		pick screen
+		doc:Position of the lower left corner of the viewer area in relative screen coordinates.
+			german:Position der linken unteren Anzeiger-Ecke in relativen Bildschirm-Koordinaten.
+	float2.size:Size
+		set:Size
+		german:Groesse
+		doc:Size of the viewer area in relative screen coordinates.
+			german:Groesse des Anzeigers in relativen Bildschirm-Koordinaten.
+	int.subdivisions:NumRasterLines
+		set:NumRasterLines
+		german:Gitterteilung
+		doc:Number of subdivisions for grid.
+			german:Anzahl der Gitterunterteilungen.

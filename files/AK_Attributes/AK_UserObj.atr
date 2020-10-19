@@ -1,0 +1,3 @@
+obj.userObj
+	text.attributes name:AttributesName
+		set:AttributesName

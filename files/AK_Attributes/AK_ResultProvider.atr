@@ -1,0 +1,25 @@
+obj.ResultProvider
+	string.acci server host name:Hostname
+		set:Hostname
+	int.acci server port number:Port
+		set:Port
+	string.acci client id:ClientId
+		set:ClientId
+	float.start time/angle:StartITC
+		set:StartITC
+	float.end time/angle:EndITC
+		set:EndITC
+	bool.cyclic:Cycling
+		set:Cycling
+	float.cycle start:CycleStart
+		set:CycleStart
+	float.cycle end:CycleEnd
+		set:CycleEnd
+	float.cycle speed [1/min]:CycleSpeed
+		set:CycleSpeed
+	float.crank angle at t=0:CycleITC0
+		set:CycleITC0
+	apply.run
+		set:Run
+	string.run with arguments
+		set:RunWithArguments

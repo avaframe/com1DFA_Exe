@@ -1,0 +1,10 @@
+obj.ACCI trafo
+	apply.move up
+		set:move_up
+	apply.move down
+		set:move_down
+	apply.delete
+		set:delete
+	string.type:$type
+	string.parameters:$params
+		set:$params

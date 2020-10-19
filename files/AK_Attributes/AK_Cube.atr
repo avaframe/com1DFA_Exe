@@ -1,0 +1,6 @@
+obj.Cube
+	float3.center:Center
+		set:Center
+		pick world
+	float.size:Size
+		set:Size

@@ -1,0 +1,23 @@
+obj.Attribute formula
+	filename.formula file name:FormulaFileName
+	filename.execute AST_SCI code in file
+		set:ExecuteFile
+		doc:Executes main() in AST_SCI code in specified file.
+	text.execute AST_SCI code
+		set:Execute
+		doc:Executes main() in specified AST_SCI code.
+	opr.encrpytion
+		filename.selected code file:SelectedCode
+		filename.select code
+			set:SelectCode
+			pattern:*.h,*.cint,*.frml,*.enc,*.dec
+			mode:r
+		string.encrypt selected code
+			set:EncryptCode
+			doc:Encrpyt selected code file using a key. With an empty key,\
+				a default key is used. The encrypted file is saved with\
+				extension ".enc".
+		string.decrypt selected code
+			set:DecryptCode
+			doc:Decrypt selected (encrypted) code file, correct key is requested.\
+				The decrypted file is saved with extension ".dec".

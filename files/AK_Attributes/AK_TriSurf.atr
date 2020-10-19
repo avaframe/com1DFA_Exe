@@ -1,0 +1,31 @@
+obj.TriSurf
+	filename.import
+		set:Import
+		pattern:*.tbs,*.tbp
+		mode:r
+	filename.export
+		set:Export
+		pattern:*.tbs,*.tbp
+		mode:w
+	apply.clear
+		set:Clear
+	bool.display triangle borders:DisplayTriBorders
+		set:DisplayTriBorders
+	bool.display labels:DisplayLabels
+		set:DisplayLabels
+	bool.display links:DisplayLinks
+		set:DisplayLinks
+	float3.set open
+		set:Open
+		pick world
+		pick world multiple
+	float.patchify relativ
+		set:PatchifyRel
+	float.patchify absolute
+		set:PatchifyAbs
+	bool.show sub-patches:SubPatches
+		set:SubPatches
+	float.refine long edges with angle
+		set:RefineLongHardEdges
+	apply.display geo info
+		set:DisplayInfo

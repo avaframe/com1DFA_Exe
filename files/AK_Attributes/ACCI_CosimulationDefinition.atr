@@ -1,0 +1,163 @@
+obj.ACCI_CosimulationDefinition
+	directory.FIRE project directory:FIRE_ProjectDir
+		german:FIRE Projektverzeichnis
+		set:FIRE_ProjectDir
+	string.clients list:ClientsList
+	table.clients table:ClientsTable
+	string.add coupling definition
+		set:AddCouplingDef
+	string.run mode:RunMode
+	table.subiterations list:SubIterationTable
+		set:SubIterationTable
+		vis:SteadyVis
+		doc:For each client in steady mode, the number of sub-iteration\
+			between data-exchanges can be specified.
+	table.time offset table:TimeOffsetTable
+		set:TimeOffsetTable
+		vis:UnsteadyVis
+		doc:For each client in transient mode, a time-offset [s] can be specified.\
+			This might if a client is re-started instead of being started from\
+			t = 0 s. In this case, the time-offset for this client must be set\
+			to its restart-time.
+	table.time-cycle table:IterationTimeTable
+		set:IterationTimeTable
+		vis:MixedVis
+		doc:For each client in transient mode, the time-period [s] that shall be mapped\
+			to one coupled-iteration must be specified. This time-period should\
+			cover a reasonable cycle-time, e.g. one or more revolutions of a rotating part etc.\
+			The values from the client are averaged over this period before they are sent\
+			to the other clients (which run in steady mode).
+	bool.explicit coupling time step:CouplingTimeStepExplicit
+		set:CouplingTimeStepExplicit
+		vis:CouplingTimeStepExplicitVis
+	string.time master:TimeMaster
+		set:TimeMaster
+		vis:TimeMasterVis
+		options:TimeMasterOpts
+	bool.enforce time steps of master:TimeMasterStepsEnforced
+		set:TimeMasterStepsEnforced
+		vis:TimeMasterStepsEnforcedVis
+		doc:If switched on, the FIRE master client will send its time/angle step length\
+			to all other FIRE clients, who will use this length instead of the\
+			time/angle step defined in its ssf file. This is necessary if there are\
+			rezones in the master client between its time-steps even if the clients\
+			time steps are synchronous with the master steps. Otherwise, the coupled\
+			simulation will get stuck at the intermediate step for the master-rezone.
+	float.explicit coupling time step:ExplicitCouplingTimeStep
+		set:ExplicitCouplingTimeStep
+		vis:ExplicitCouplingTimeStepVis
+	opr.coordinate transformations
+		doc:Definition of client-specific coordinate-transformations.
+		table.coordinate transformations:CoordinateTransformations
+			set:CoordinateTransformations
+		float3.local origin in global coordinate system:CoordTrafoOrig
+			set:CoordTrafoOrig
+			doc:Origin of coordinate system used by client in the global (coupling)\
+				coordinate system.
+		float3.local x-axis in global coordinate system:CoordTrafoX
+			set:CoordTrafoX
+			doc:X-axis-vector used by client in the global (coupling) coordinate system.
+		float3.local y-axis in global coordinate system:CoordTrafoY
+			set:CoordTrafoY
+			doc:Y-axis-vector used by client in the global (coupling) coordinate system.
+		string.add transformations for a client
+			set:AddCoordTrafoFor
+			options:ClientsList
+		string.remove transformations for a client
+			set:RemoveTrafoOf
+			options:CoordTrafoRemoveClientOptions
+	opr.virtual selections
+		table.virtual selections:VirtualSelections
+			set:VirtualSelections
+		string.client for adding virtual selection:AddVirtualSelectionClient
+			set:AddVirtualSelectionClient
+			options:ClientsList
+		string.selection-1 for defining virtual selection:AddVirtualSelectionSel1
+			set:AddVirtualSelectionSel1
+			options:AddVirtualSelectionSel1Opts
+		string.selection-2 for defining virtual selection:AddVirtualSelectionSel2
+			set:AddVirtualSelectionSel2
+			options:AddVirtualSelectionSel2Opts
+		apply.add virtual selection selection1__OR__selection2
+			set:AddVirtualSelectionOR
+			vis:AddVirtualSelectionClientVis
+	int.reporting level:ReportingLevel
+		set:ReportingLevel
+	int.reconnection trials:ReconnectionTrials
+		set:ReconnectionTrials
+	float.reconnection delay:ReconnectionDelay
+		set:ReconnectionDelay
+	text.additional definitions:AdditionalDefinitions
+		set:AdditionalDefinitions
+	text.definition errors:Errors
+	text.definition string:DefinitionString
+	filename.save definition string
+		set:SaveDefinitionString
+		pattern:*.acci
+		mode:w
+	string.FMU FIRE version:$fire_fmu_vers
+		set:$fire_fmu_vers
+		doc:FIRE version string (for instance 'v2014.1') to be used with\
+			->ACCI_CosimulationDefinition.ExportFMU.
+	string.FMU FIRE arguments:$fire_fmu_args
+		set:$fire_fmu_args
+		doc:Additional FIRE solver arguments (for instance '-mpi -cpu=4') to be used\
+			with ->ACCI_CosimulationDefinition.ExportFMU.
+	directory.Export FMU
+		set:ExportFMU
+		doc:ExportFMU will create an FMU (Functional Mockup Unit) for CoSimulation according to\
+			the FMI 2.0 specification https://www.fmi-standard.org . The FMU file will be\
+			named ACCI_FMU2.fmu and will be generated in the specified directory.\
+			Additionally, an ACCI configuration file acci_fmu2.acci and an ACCI-start-script\
+			acci_fmu2.bat will be generated in the directory. This FMU can only be used on the\
+			same computer and under the same operating system used for generating it.\
+			Additional FIRE solver options (for instance to run FIRE in MPI-mode) may be inserted\
+			in the start command contained in acci_fmu2.bat (or\
+			with 'FMU FIRE arguments').
+	opr.Offline-Mapping
+		vis:OfflineMappingVis
+		string.clients with flipped surfaces:OM_FlippedClients
+			set:OM_FlippedClients
+		string.add client with flipped mesh
+			options:WriteonlyClientsList
+			set:OM_AddFlippedClient
+		string.dummy case names:DummyCaseNames
+			doc:Names of the dummy cases that are be generated by the mapping in the\
+				FIRE project directory. For each mesh of writeonly-cases, one\
+				dummy case is generated, the name being "mapped_to_"<meshName>.\
+				The mapped results will be appended to the existing fl3-file,\
+				if the dummy case already exists.
+		string.run mode:OfflineMappingRunModeInfo
+		opr.mapping time/angle steps
+			vis:OM_TimeAveragingVis
+			bool.arbitrary steps:OM_ArbiSteps
+				set:OM_ArbiSteps
+			string.steps list:OM_StepList
+				doc:List of times or crank angles (according to ->.OfflineMappingRunModeInfo)\
+					at which mapped results should be obtained.
+				set:OM_StepList
+				vis:OM_StepListVis
+			string.steps start,end,delta:OM_Steps
+				doc:Start- and end-time or -crank-angle (according to ->.OfflineMappingRunModeInfo)\
+					together with time- or angle-step that define the time- or angle-raster\
+					for output.
+				set:OM_Steps
+				vis:OM_StepsVis
+			string.use steps of readonly client
+				set:StepsOfReadonlyClient
+				options:ReadonlyClientsList
+		bool.time averaging of mapped results:OM_TimeAveraging
+			set:OM_TimeAveraging
+			vis:OM_TimeAveragingVis
+		string.export format:OM_ExportFormat
+			set:OM_ExportFormat
+			options:OM_ExportFormatOptions
+		string.mapping input:OfflineMappingLaunchCmd
+		filename.save mapping input file
+			set:Save_OfflineMappingLaunchScript
+			doc:Save offline mapping input file and ACCI input file.
+			pattern:*.aom
+	apply.test dump FC_Wrapped
+		set:TestDump_FC_Wrapped
+	string.dump doc for attribute by Id
+		set:PrintDocForAtr

@@ -1,0 +1,127 @@
+
+
+
+int wait_time = 600;
+char aux[4096];
+char msg[1024];
+
+
+void batch_wait_time(char s[]) { sprintf(s, "%d", wait_time); }
+void batch_wait_time_set(char s[]) { sscanf(s, " %d", wait_time); }
+
+
+void batch_sims(char s[])
+{
+	get("", "$batchSims", s);
+}
+
+void batch_sims_set(char s[])
+{
+	set("", "$batchSims", s);
+}
+
+
+
+void batch_add_sim(char s[])
+{
+	int i;
+	get("", "$batchSims", aux);
+	strcat(aux, s);
+	i = strlen(aux) - 1;
+	if(aux[i] == '/' || aux[i] == '\\') aux[i] = 0;
+	strcat(aux, "\n");
+	set("", "$batchSims", aux);
+}
+
+
+
+void batch_delete(char s[])
+{
+	set("", "$batchSims", "");
+}
+
+
+
+
+char projDir[512];
+
+int running(char name[], char sim[])
+{
+	FILE *fp;
+	char fname[512];
+	get(sim, "InteractionTypeWithFluidAbove", fname);
+	if(strcmp(fname, "none") == 0){
+		// DFA
+		get(sim, "Status", fname);
+		if(strcmp(fname, "running") == 0) return 1;
+		return 0;
+	}
+	// PSA
+	strcpy(fname, projDir);
+	add_name(fname, "Project");
+	add_name(fname, "PsaMeshes");
+	add_name(fname, "Calculation");
+	add_name(fname, name);
+	add_name(fname, ".isrunning");
+	print "checking", fname;
+	fp = fopen(fname, "r");
+	if(fp){
+		fclose(fp);
+		sprintf(msg, "%s is running...", name);
+		print msg;
+		return 1;
+	}
+	sprintf(msg, "%s is not running ...", name);
+	print msg;
+	return 0;
+}
+
+void open(char name[])
+{
+	set("..", "Close", "");
+	sprintf(msg, "opening project %s ...", name);
+	message("SW_Workspace:batch", msg);
+	strcpy(projDir, name);
+	set("..", "ProjectDir", name);
+}
+
+void start(char name[])
+{
+	char sim[512], s[64];
+	set("Simulations", "LoadComponent", name);
+	sprintf(sim, "Simulations/%s", name);
+	sprintf(msg, "starting simulation %s ...", name);
+	message("SW_Workspace:batch", msg);
+	print msg;
+	set(sim, "RunInBackground", "");
+	// wait until job is running...
+	while(running(name, sim) == 0) sleep(5.0);
+	// wait until job has finished...
+	while(running(name, sim) == 1) sleep(5.0);
+	sprintf(msg, "waiting %g seconds before continuing ...", wait_time);
+	message("SW_Workspace:batch", msg);
+	sleep(wait_time);
+}
+
+
+
+void batch_start(char s[])
+{
+	char fname[512], x[128], sim[128];
+	int i, j;
+	get("", "$batchSims", aux);
+	i = 0;
+	while(istrchr(aux[i], '\n') >= 0){
+		j = i + istrchr(aux[i], '\n');
+		aux[j] = 0;
+		strcpy(fname, aux[i]);
+		cut_name(fname, x);
+		strcpy(sim, x);
+		cut_name(fname, x);
+		cut_name(fname, x);
+		open(fname);
+		start(sim);
+		i = j + 1;
+	}
+	set("..", "Close", "");
+}

@@ -1,0 +1,127 @@
+
+
+
+int nTypes = 4;
+//                        "wood", "rocks", "mounds", "blocked"
+double       widths[4] = {  0.30,     1.0,     10.0,     10.0 };
+double     spacings[4] = {   5.0,     5.0,     20.0,      1.0 };
+double       coeffs[4] = {   0.5,     2.0,      2.0,     10.0 };
+double   psa_widths[4] = {  0.04,     1.0,     10.0,     10.0 };
+double psa_spacings[4] = {  2.38,     5.0,     20.0,      1.0 };
+double   psa_coeffs[4] = {   0.3,     2.0,      2.0,     10.0 };
+char ids[4][32];
+
+void Init()
+{
+	int i;
+	strcpy(ids[0], "wood");
+	strcpy(ids[1], "rocks");
+	strcpy(ids[2], "mounds");
+	strcpy(ids[3], "blocked");
+}
+void resistance_type_options(
+	char s[])
+{
+	int i;
+	s[0] = 0;
+	for(i = 0; i < nTypes; i++){
+		strcat(s, ids[i]);
+		strcat(s, AK_SEP);
+	}
+	strcat(s, "user");
+	strcat(s, AK_SEP);
+}
+void set_resistance_type(
+	char s[])
+{
+	char x[32];
+	int i;
+	for(i = 0; i < nTypes; i++){
+		if(!strcmp(s, ids[i])){
+			sprintf(x, "%g", widths[i]);
+			set("", "Width", x);
+			sprintf(x, "%g", spacings[i]);
+			set("", "Spacing", x);
+			sprintf(x, "%g", coeffs[i]);
+			set("", "ResistanceCoefficient", x);
+			sprintf(x, "%g", psa_widths[i]);
+			set("", "PsaWidth", x);
+			sprintf(x, "%g", psa_spacings[i]);
+			set("", "PsaSpacing", x);
+			sprintf(x, "%g", psa_coeffs[i]);
+			set("", "PsaResistanceCoefficient", x);
+			return;
+		}
+	}
+	set("", "ResistanceCoefficient", "1");
+}
+void get_resistance_type(
+	char s[])
+{
+	int i;
+	double eps = 0.001;
+	char x[64];
+	double width;
+	double spacing;
+	double coeff;
+	double psa_width;
+	double psa_spacing;
+	double psa_coeff;
+	get("", "Width", x); sscanf(x, " %lf", width);
+	get("", "Spacing", x); sscanf(x, " %lf", spacing);
+	get("", "ResistanceCoefficient", x); sscanf(x, " %lf", coeff);
+	get("", "PsaWidth", x); sscanf(x, " %lf", psa_width);
+	get("", "PsaSpacing", x); sscanf(x, " %lf", psa_spacing);
+	get("", "PsaResistanceCoefficient", x); sscanf(x, " %lf", psa_coeff);
+	strcpy(s, "user");
+	for(i = 0; i < nTypes; i++){
+		if(
+			fabs(width-widths[i]) < eps &&
+			fabs(spacing-spacings[i]) < eps &&
+			fabs(coeff-coeffs[i]) < eps &&
+			fabs(psa_width-psa_widths[i]) < eps &&
+			fabs(psa_spacing-psa_spacings[i]) < eps &&
+			fabs(psa_coeff-psa_coeffs[i]) < eps){
+			strcpy(s, ids[i]);
+			return;
+		}
+	}
+}
+void user_def(
+	char s[])
+{
+	get_resistance_type(s);
+	if(!strcmp(s, "user"))
+		strcpy(s, "w");
+	else
+		strcpy(s, "r");
+}
+
+
+
+void get_cres_dfa(
+	char s[])
+{
+	char x[64];
+	double width;
+	double spacing;
+	double coeff;
+	get("", "Width", x); sscanf(x, " %lf", width);
+	get("", "Spacing", x); sscanf(x, " %lf", spacing);
+	get("", "ResistanceCoefficient", x); sscanf(x, " %lf", coeff);
+	sprintf(s, "%g", width * coeff / (spacing * spacing));
+}
+void get_cres_psa(
+	char s[])
+{
+	double width;
+	double spacing;
+	double coeff;
+	double cres, Pres;
+	get("", "PsaWidth", s); sscanf(s, " %lf", width);
+	get("", "PsaSpacing", s); sscanf(s, " %lf", spacing);
+	get("", "PsaResistanceCoefficient", s); sscanf(s, " %lf", coeff);
+	cres = width * coeff / (spacing * spacing);
+	Pres = 1.0 - pow(1.0 - width / spacing, 1.0 / spacing);
+	sprintf(s, "%g", cres * Pres * 1.0e7);
+}

@@ -1,0 +1,5 @@
+obj.Attribute integrator selection
+	string.selection name:SelectionName
+	filename.formula file name:LastFormulaFileName
+		set:FormulaFileName
+		pattern:*.frml

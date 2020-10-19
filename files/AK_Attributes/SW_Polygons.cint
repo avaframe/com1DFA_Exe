@@ -1,0 +1,64 @@
+void import_polygons(
+	char sin[])
+{
+	char l1[1];
+	char l2[1];
+	char id[64];
+  int windows = 0;
+	char x[1024+0];
+	char cmd[1024+0];
+	char s[1024+0];
+	char argv[256*10];
+	int argc;
+  int lastSlash;
+  char parent[1024];
+  char allp[1024];
+
+
+  // FSO--- get path of executable
+  // find out if we are on windows
+  strcpy(x, "a");
+  add_name(x, "b");
+  if(istrchr(x, '/') < 0) windows = 1;
+
+	get("/", "ArglistSep", argv);
+	argc = list_size(argv);
+
+  // get first element of the first argv list (as this might include
+  // -project or similar)
+  get_list_element(argv[0], 0, allp);
+
+  if(windows){
+    lastSlash = istrrchr(allp, '\\');
+  }else{
+    lastSlash = istrrchr(allp, '/');
+  }
+
+  // FSO--- get string up to lastSlash
+  strncpy(parent, allp,lastSlash+1);
+
+  // FSO--- copy necessary as filename is modified
+  strcpy(s,sin);
+
+	get("", "Id", id);
+	resize(l1, 4096);
+	resize(l2, 4096);
+	get("", "GetComponentList", l1);
+
+  if(istrstr(s, ".shp")> 0) {
+    printf("Found Shape, converting: %s \n", s);
+
+    // FSO--- construct command
+    strcpy(x,parent);
+    add_name(x, "SHPConv.exe");
+    sprintf(cmd, "%s -a import -i %s ",x, s);
+    printf("CMD: %s\n",cmd);
+
+    // FSO--- execute command
+    system(cmd);
+    strcat(s,".nxyz");
+  }
+
+  printf("Import %s\n", s);
+  set("", "Import", s);
+}

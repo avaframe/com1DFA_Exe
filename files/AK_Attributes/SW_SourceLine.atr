@@ -1,0 +1,21 @@
+obj.SourceLine
+	german:Quell-Linie
+	doc:At a source line, a continuous mass source can be specified.
+		german:An einer Quell-Linie kamm eine kontinuierliche Massenquelle spezifiziert werden.
+	float2.start point:StartPoint
+		set:StartPoint
+		pick world
+		german:Startpunkt
+		doc:Start point of the source line.
+			german:Startpunkt der Quell-Linie.
+	float2.end point:EndPoint
+		set:EndPoint
+		pick world
+		german:Endpunkt
+		doc:End point of the source line.
+			german:Endpunkt der Quell-Linie.
+	float.source strength [kg/s]:MassFlow
+		set:MassFlow
+		german:Quellstärke [kg/s]
+		doc:The strength of the source.
+			german:Quellstärke.

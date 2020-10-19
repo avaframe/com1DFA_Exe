@@ -1,0 +1,26 @@
+obj.Controller
+	german:Steuerung
+	doc:Controls the application.
+		german:Steuerung der Anwendung.
+	filename.macro filename:MacroFileName
+		german:Makro-Dateiname
+		set:MacroFileName
+		volatile
+		pattern:*.atr,*.macro,*.cint
+		doc:Attribute or macro filename. atr-files contain set-commands to set attribute\
+			values. macro-files contain arbitrary set- or get-commands. cint-files have to\
+			be in C-syntax (AST-SCI), i.e. with colons at the end of each statement, and must\
+			implement the function "void main()", which is executed on replaying. cint-macros\
+			cannot be recoreded directly.
+			german:Attribut- oder Makrodateiname. atr-Dateien enthalten set-Befehle\
+				zum setzen von Attributwerten. macro-Dateien enthalten beliebige set- oder\
+				get-Befehle. cint-Dateien müssen in C-syntax (AST-SCI) vorliegen, also mit Strichpunkten\
+				am Ende jedes Befehls, und müssen die Funktion "void main()" implementieren.\
+				Diese Funktion wird beim Abspielen ausgeführt. cint-macros können nicht\
+				direkt aufgezeichnet werden.
+	bool.recording to macro:Recording
+		german:In Makrofile aufzeichnen.
+		set:Recording
+	apply.play macro
+		german:Macrofile ausfuehren.
+		set:ExecMacro

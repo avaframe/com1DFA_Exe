@@ -1,0 +1,39 @@
+obj.PlaneCut
+	german:ebener Schnitt
+	doc:A planar cut-surface through the 3D result space.
+		german:Eine ebene Schnittfläche durch den 3D-Ergebnisraum.
+	float3.plane center:PlaneCenter
+		set:PlaneCenter
+		pick world
+		german:Zentrum
+		doc:A point on the cut plane.
+			german:Ein Punkt auf der Schnittebene.
+	float3.plane normal:PlaneNormal
+		set:PlaneNormal
+		vis:ArbiCutVis
+		german:Normalvektor
+		doc:The normal vector of the plane.
+			german:Der Normalenvektor der Ebene.
+	bool.Z-Cut:ZCut
+		set:ZCut
+		german:Z-Ebene
+		doc:If on, the cut plane is parallel to the z-axis\
+			and is defined by a second point in the plane\
+			instead of its normal vector.
+			german:Wenn an, ist die Schnittebene parallel zur z-Achse\
+				und wird durch einen zweiten Punkt in der Ebene definiert\
+				anstatt durch den Normalvektor.
+	float3.second plane point:ZPlane2ndPoint
+		set:ZPlane2ndPoint
+		vis:ZCutVis
+		pick world
+		german:zweiter Ebenenpunkt
+		doc:Point in a z-parallel-plane that defines the plane\
+			together with ->PlaneCut.PlaneCenter.
+			german:Punkt in der z-parallelen-Ebene der die Ebene\
+				zusammen mit ->PlaneCut.PlaneCenter bestimmt.
+	apply.apply:
+		set:SetPlane
+		german:anwenden
+		doc:Modify the cut plane according to the settings.
+			german:Schnittebene entsprechend den Einstellungen modifizieren.

@@ -1,0 +1,15 @@
+obj.SW_HybridMesh
+	opr.Set to regular grid
+		point2.x lower left:Xll
+			set:Xll
+		point2.x upper right:Xor
+			set:Xor
+		float.dx:Dx
+			set:Dx
+		apply.Set
+			set:SetToRegularGrid
+	opr.LoadTbp
+		filename.tbp file name:TbpFileName
+			set:TbpFileName
+		apply.Load
+			set:LoadTbp

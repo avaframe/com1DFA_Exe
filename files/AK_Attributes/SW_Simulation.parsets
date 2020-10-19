@@ -1,0 +1,52 @@
+
+=DFA
+FrictionType=samosAT  
+InternalFrictionAngle=0   
+Density=200.0
+EntrainmentErosionEnergy=5000
+EntrainmentDHMDensity=100
+ReleaseDHMDensity=200
+InteractionTypeWithFluidAbove=none
+MassPerParticleDeterminationMethod=delta-depth per particle
+DeltaDepthPerParticle=0.25
+SubgridMixingFactor=100
+SphMode=1
+DeltaOut=20
+EndTime=400
+set_stop_crit=Energieverhaeltnis
+$stop_crit_pars=Mindestenergie 1 Prozent
+
+=DFA mit Anbruchmaechtigkeitsfunktion rel_dep_msc
+ParameterSet=DFA
+ReleaseAreas:RelDepFuncName=rel_dep_msc
+ReleaseAreas:RelDepFuncPar=d0=1 deltad=5 altitude=1000
+
+=Nassschnee
+ParameterSet=DFA
+FrictionType=Nassschnee
+BedFrictionAngle=11.3
+DynamicFrictionCoefficient=0.01
+Density=400.0
+
+=PSA ohne Entrainment
+ParameterSet=DFA
+InteractionTypeWithFluidAbove=particles suspension
+PsaDirectEntrainment=0
+ParticlesMaterialDensity=900
+ParticlesDiameter=0.0008
+ParticlesRestitutionCoefficient=0.965
+ParticlesDragCoefficient=3.0
+ParticlesReflexionAngle=30
+ParticlesReflexionMinimalVelocity=10
+ParticlesSuspensionCoeff=0.01
+PsaMinRoughness=0.1
+ParcelMass=100
+set_turb_dispersion_factor=1.4
+set_psa_entrainment_min_vel=13.0
+$stop_crit_pars=Mindestenergie 2 Prozent
+
+=PSA mit Entrainment
+ParameterSet=PSA ohne Entrainment
+EntrainmentErosionEnergy=200
+PsaDirectEntrainment=1
+

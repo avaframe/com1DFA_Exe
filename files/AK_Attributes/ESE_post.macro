@@ -1,0 +1,4 @@
+set("ImpressAK", "CreateUserObject", "ESE_post")
+set("ImpressAK/ESE_post", "AttributesName", "ESE_post")
+set("ImpressAK/ESE_post", "$parFileName", "ESE_post.par")
+set("ImpressAK/ESE_post", "Run", "")

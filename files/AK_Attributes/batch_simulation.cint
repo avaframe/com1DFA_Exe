@@ -1,0 +1,83 @@
+
+// This SAMOS-AT-macro must be started in a command-shell:
+// Windows:
+// <path>\samosAT\bin\winnt\samosAT.exe -offscreen batch.cint
+// Linux:
+// <path>/samosAT/bin/linux/samosAT -offscreen batch.cint
+
+
+char projDir[512];
+
+
+
+int running(char name[])
+{
+	FILE *fp;
+	char fname[512];
+	strcpy(fname, projDir);
+	add_name(fname, "Project");
+	add_name(fname, "PsaMeshes");
+	add_name(fname, "Calculation");
+	add_name(fname, name);
+	add_name(fname, ".isrunning");
+	print "checking", fname;
+	fp = fopen(fname, "r");
+	if(fp){
+		fclose(fp);
+		print name, "is running...";
+		return 1;
+	}
+	print name, "is not running...";
+	return 0;
+}
+
+
+
+void open(char name[])
+{
+	set("", "Close", "");
+	print "";
+	print "===>>> opening project", name;
+	print "";
+	strcpy(projDir, name);
+	set("", "ProjectDir", name);
+}
+
+
+
+void start(char name[])
+{
+	char sim[512];
+	set("Project/Simulations", "LoadComponent", name);
+	sprintf(sim, "Project/Simulations/%s", name);
+	print "";
+	print "===>>> starting simulation", sim;
+	print "";
+	set(sim, "RunInBackground", "");
+	// wait until job is running...
+	while(running(name) == 0) sleep(10.0);
+	// wait until job has finished...
+	while(running(name) == 1) sleep(10.0);
+	print "";
+	print "===>>> waiting 10 minutes before continuing ...";
+	sleep(600.0); // 10 min = 600 s
+	print "===>>> continue...";
+}
+
+
+
+void main()
+{
+	// SAMOS project path must be given with backslashes on Windows
+	open("D:\User\samplp\data\test_samos");
+	// under Linux, it would be something like:
+        //open("/users/samplp/data/test_samos");
+
+	// start simulations in the project
+	start("b1");
+	start("b3");
+	start("b2");
+
+	// load / start sequence may be repeated an arbitrary number of times
+}
+

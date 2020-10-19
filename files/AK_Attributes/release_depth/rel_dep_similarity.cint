@@ -1,0 +1,37 @@
+double Pi = acos(-1.0);
+double PlaneIncAngle = 60.0; // in [°]
+double centerx = 185; // x coor reference point [m]
+double centery = 517; // y coor reference point [m]
+double centerz = 1621; // z coor reference point [m]
+double Lx = 150; // x length scale [m]
+double Ly = 150; // y length scale [m]
+double H = 1; // z length scale coor [m]
+
+void init()
+{
+}
+
+void getpar(
+	char s[])
+{
+	sprintf(s, "PlaneIncAngle=%g centerx=%g centery=%g centerz=%g Lx=%g Ly=%g H=%g", PlaneIncAngle, centerx, centery, centerz, Lx, Ly, H);
+	PlaneIncAngle = PlaneIncAngle*Pi/180;
+}
+
+void setpar(
+	char s[])
+{
+	sscanf(s, "PlaneIncAngle=%lf centerx=%lf centery=%lf centerz=%lf Lx=%lf Ly=%lf H=%lf", PlaneIncAngle, centerx, centery, centerz, Lx, Ly, H);
+	PlaneIncAngle = PlaneIncAngle*Pi/180;
+}
+
+double depth(
+	double x[3],
+	double n[3])
+{
+	double Lx2 = Lx * Lx;
+	double Ly2 = Ly*Ly;
+	double x2 = ((x[0]-centerx)*cos(PlaneIncAngle)-(x[2]-centerz)*sin(PlaneIncAngle))*((x[0]-centerx)*cos(PlaneIncAngle)-(x[2]-centerz)*sin(PlaneIncAngle));
+	double y2 = (x[1]-centery)*(x[1]-centery) ;
+	return H*(1-x2/Lx2-y2/Ly2);
+}

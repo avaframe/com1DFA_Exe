@@ -1,0 +1,135 @@
+obj.ACCI_CouplingDefinition
+	string.coupling model:Model
+		set:Model
+		options:ModelOptions
+	text.remarks:Comment
+	string.role of client 1:Client1Role
+	string.client 1:Client1
+		set:Client1
+		options:Client1Options
+	string.role of client 2:Client2Role
+	string.client 2:Client2
+		set:Client2
+		options:Client2Options
+	string.role of client 1 - geometry:Geometry1Role
+	string.client 1 - geometry:Geometry1
+		set:Geometry1
+		options:Geometry1Options
+	string.role of client 2 - geometry:Geometry2Role
+	string.client 2 - geometry:Geometry2
+		set:Geometry2
+		options:Geometry2Options
+	string.role of client 1 - geometry 2:Geometry3Role
+		vis:Geometry3Vis
+	string.client 1 - geometry 2:Geometry3
+		set:Geometry3
+		options:Geometry3Options
+		vis:Geometry3Vis
+	string.role of client 2 - geometry 2:Geometry4Role
+		vis:Geometry4Vis
+	string.client 2 - geometry 2:Geometry4
+		set:Geometry4
+		options:Geometry4Options
+		vis:Geometry4Vis
+	bool.exchange at each iteration:IterationLevel
+		set:IterationLevel
+		vis:IterationLevelVis
+	table.default values:DefaultValues
+		set:DefaultValues
+	float.relative gap size at coupling surfaces:RelativeGapSize
+		set:RelativeGapSize
+		doc:The geometry of coupling interface surfaces (i.e. of coupling interfaces that are surfaces)\
+			will not match exactly, in general. There will be a gap between the surfaces. Where the\
+			gap gets too large, no mapping can be found ACCI.\
+			A maximal permissible gap size can be specified relative to the local size of the faces\
+			of the coupling surface. ACCI will look for matching surface parts within this distance.\
+			The default relative gap size is 1.0, i.e. equals the local face size (face diagonal).\
+			The relative gap size is ignored for coupling-interfaces that are not surfaces.
+	bool.ignore surface orientation:IgnoreSurfaceOrientation
+		set:IgnoreSurfaceOrientation
+		doc:By default, ACCI considers the surface-orientation when mapping coupling interfaces\
+			that are surfaces. This prevents mis-matches between front- and back-sides of surfaces.\
+			In some cases, the surface-meshes of some clients might not be orientated consistently.\
+			In this case, ACCI can be told to ignore the surface-orientation.\
+			The ignore-option is ignored for coupling-interfaces that are not surfaces.
+	opr.symmetric and periodic geometry completions
+		string.add symmetric completion for client 1
+			set:AddSymmetricCompletion1
+			options:SymmetricCompletionOptions1
+		string.add periodic completion for client 1
+			set:AddPeriodicCompletion1
+			options:PeriodicCompletionOptions1
+		string.add symmetric completion for client 2
+			set:AddSymmetricCompletion2
+			options:SymmetricCompletionOptions2
+		string.add periodic completion for client 2
+			set:AddPeriodicCompletion2
+			options:PeriodicCompletionOptions2
+		opr.completions specified explicitly by centers and vectors
+			string.add explicit completion for client 1
+				set:AddExplCompletion1
+				doc:Symmetry plane specified in format 'mirror <center-x> <y> <z> <normal-x> <y> <z>' or\
+					periodicity specified in format 'cycle-<number-of-repetitions> <axis-center-x> <y> <z> <axis-directionx> <y> <z>'.
+			string.add explicit completion for client 2
+				set:AddExplCompletion2
+				doc:Symmetry plane specified in format 'mirror <center-x> <y> <z> <normal-x> <y> <z>' or\
+					periodicity specified in format 'cycle-<number-of-repetitions> <axis-center-x> <y> <z> <axis-directionx> <y> <z>'.
+		table.completion specifications:GeometryCompletions
+			set:GeometryCompletions
+			vis:VisRead
+		apply.clear all completions
+			set:ClearCompletions
+		string.remove completions of client
+			set:RemoveCompletionsOfClient
+	bool.move interface of client 1 to match:MoveToMatch1
+		set:MoveToMatch1
+		doc:If switched on, the interface of client 1 is moved before mapping so that\
+			its center of gravity matches the interface of client 2.\
+			ATTENTION: does not work under MPI yet !!!
+	bool.move interface of client 2 to match:MoveToMatch2
+		set:MoveToMatch2
+		doc:If switched on, the interface of client 2 is moved before mapping so that\
+			its center of gravity matches the interface of client 1.\
+			ATTENTION: does not work under MPI yet !!!
+	bool.client 1 sends initial interface geometry only:Client1KeepsInterfacesStatic
+		set:Client1KeepsInterfacesStatic
+		vis:Client1KeepsInterfacesStaticVis
+		doc:If switched on, client 1 will send the interface geometry only once at start,\
+			even if the geometry is moving.
+	bool.client 2 sends initial interface geometry only:Client2KeepsInterfacesStatic
+		set:Client2KeepsInterfacesStatic
+		vis:Client2KeepsInterfacesStaticVis
+		doc:If switched on, client 2 will send the interface geometry only once at start,\
+			even if the geometry is moving.
+	string.reference selection for matching - client 1:MatchingSelection1
+		set:MatchingSelection1
+		options:MatchingSelection1Opts
+		vis:MatchingSelectionVis
+		doc:If set to unequal to none, the interface mesh is shifted so that the center-of-gravity\
+			of the selection becomes the origin of the coordinate system before the ACCI server\
+			computes the mapping from / to this interface mesh.\
+			If geometric completion by symmetry is specified simultaneously,\
+			the center of gravity is projected into the symmetry-plane.\
+			If periodic geometric completion is specified simultaneously,\
+			the center-of-gravity is projected onto the periodicity-axis.\
+			A reference-selection must also be specified for the other client, so that\
+			the centers-of-gravity match accordingly for the mapping between the interface meshes.\
+			Note that a rotation of the coordinate systems must be specified separately, see\
+			->ACCI_CosimulationDefinition.CoordinateTransformations.
+	string.reference selection for matching - client 2:MatchingSelection2
+		set:MatchingSelection2
+		options:MatchingSelection2Opts
+		vis:MatchingSelectionVis
+		doc:If set to unequal to none, the interface mesh is shifted so that the center-of-gravity\
+			of the selection becomes the origin of the coordinate system before the ACCI server\
+			computes the mapping from / to this interface mesh.\
+			If geometric completion by symmetry is specified simultaneously,\
+			the center of gravity is projected into the symmetry-plane.\
+			If periodic geometric completion is specified simultaneously,\
+			the center-of-gravity is projected onto the periodicity-axis.\
+			A reference-selection must also be specified for the other client, so that\
+			the centers-of-gravity match accordingly for the mapping between the interface meshes.\
+			Note that a rotation of the coordinate systems must be specified separately, see\
+			->ACCI_CosimulationDefinition.CoordinateTransformations.
+	text.definition errors:Errors
+	string.definition string:DefinitionString

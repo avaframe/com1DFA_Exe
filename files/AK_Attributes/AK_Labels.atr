@@ -1,0 +1,3 @@
+obj.Labels
+	string.new label
+		set:Create

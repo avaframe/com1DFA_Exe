@@ -1,0 +1,142 @@
+obj.Simulations
+	german:Simulationen
+	doc:Container for simulation runs ->ShallowWaterSimulation..
+		german:Behälter für Simulationen ->ShallowWaterSimulation..
+	string.new simulation
+		set:CreateSimulation
+		german:neue Simulation
+		doc:Add an empty, new simulation.
+			german:Neue, leere Simulation anfügen.
+	string.clone simulation
+		set:CloneSimulation
+		options:GetComponentList
+		german:Simulation klonen
+		doc:Clone a contained simulation, i.e. append a new simulation\
+			and copy the input-data from an existing simulation.
+			german:Eine enthaltene Simulation klonen, d.h. eine neue\
+				Simulation anfügen und die Eingabe-Daten einer bereits\
+				enthaltenen übernehmen.
+	opr.special cloning operations
+		german:spezielle Klon-Operationen
+		float.cloned release areas depth multiplier:get_rel_depth_mult
+			set:set_rel_depth_mult
+			german:Mächtigkeits-Multiplikationsfaktor geklonter Anbruchgebiete
+		float.cloned release areas depth difference:get_rel_depth_diff
+			set:set_rel_depth_diff
+			german:Mächtigkeitsdifferenz geklonter Anbruchgebiete
+		string.clone simulation and release areas
+			set:clone_simulation_with_relas
+			options:GetComponentList
+			german:Simulation mit Anbruchgebieten klonen
+		float.cloned resistance areas psa obstacle width difference:get_psa_res_width_diff
+			set:set_psa_res_width_diff
+			german:Psa-Widerstandsdurchmesser-Differenz geklonter Widerstandsgebiete
+		float.cloned resistance areas psa spacing difference:get_psa_res_spacing_diff
+			set:set_psa_res_spacing_diff
+			german:Psa-Abstandsdifferenz geklonter Widerstandsgebiete
+		float.cloned resistance areas psa resistance coefficient difference:get_psa_res_coeff_diff
+			set:set_psa_res_coeff_diff
+			german:Psa-Widerstandskoeffizienten-Differenz geklonter Widerstandsgebiete
+		string.clone simulation and resistance areas
+			set:clone_simulation_with_resis
+			options:GetComponentList
+			german:Simulation mit Widerstandsgebieten klonen
+	apply.animate active simulations
+		set:AnimateActive
+		german:aktive Simulationen animieren
+		doc:Animate all active simulations, one after the other.
+			german:Alle aktiven Simulationen nacheinander animieren.
+	apply.load next timestep of active simulations
+		set:NextTimeStepActive
+		german:nächsten Zeitschritt der aktiven Simulationen laden
+	apply.load previous timestep of active simulations
+		set:PrevTimeStepActive
+		german:vorigen Zeitschritt der aktiven Simulationen laden
+	apply.display peak pressures only
+		set:activate_only_peak_pressure_fields
+		german:nur Spitzendruck-Felder zeigen
+		doc:Activate only peak pressure fields of all simulations.\
+			For coupled simulations, only the PSA peak pressure field (PsaCuts) will be activated.
+			german:Nur Spitzendruck-Felder von allen Simulationen aktivieren. Bei gekoppelten\
+				Staub-Simulationen wird nur das Staub-Spitzendruck-Feld (PsaCuts) aktiviert.
+	apply.clean up
+		set:Cleanup
+		confirm
+		german:bereinigen
+		doc:Clean up the simulations. Remove or keep entire simulations\
+			or some time steps of simulations, depending on the value of ->ShallowWaterSimulation.CleanupBehavior.
+			german:Simulationen bereinigen. Simulationen löschen, behalten oder\
+				teilweise behalten, je nach Einstellung von ->ShallowWaterSimulation.CleanupBehavior.
+	string.finished simulations:get_finished_simulations
+		german:beendete Simulationen
+	string.running simulations:get_running_simulations
+		german:laufende Simulationen
+	apply.delete all non-finished and non-running simulations
+		set:delete_all_non_finished
+		confirm
+		german:alle nicht beendeten oder nicht-laufenden Simulationen loeschen
+		doc:Delete all simulations non in status (->ShallowWaterSimulation.Status) finished or running.
+			german:Alle Simulationen loeschen, deren Status (->ShallowWaterSimulation.Status) nicht 'finished' oder 'running' ist.
+	group.start active simulations serially
+		german:aktive Simulationen in Serie starten
+		int.pause time between runs in seconds:PauseTime
+			german:Wartezeit zwischen Simulationen in Sekunden
+			set:PauseTime
+			doc:->Simulations.StartActive waits for this pause time before starting a new simulation.
+				german:Wartezeit fuer ->Simulations.StartActive zwischen den Simulationsrechnungen.
+		apply.start active simulations
+			vis:SimVis
+			set:StartActive
+			confirm
+			german:aktive Simulationen im Hintergrund starten
+			doc:Start all active, contained simulations in background in one batch job,\
+				so that one simulation will be started only ->Simulations.PauseTime seconds after the previous\
+				one has finished.
+				german:Alle aktiven, enthaltenen Simulationen im Hintergrund im Stapel\
+					starten, so dass eine Simulationsrechung erst ->Simulations.PauseTime Sekunden\
+					nach Beendigung der vorigen Rechnung gestartet wird.
+	group.start simulations across projects
+		german:Simulationen projektübergreifend starten
+		directory.add simulation
+			german:Simulation hinzufügen
+			set:schedule_simulation
+			mode:r
+			doc:Select the folder of a Simulation (folder below .../Project/Simulations).
+				german:Simulationsverzeichnis wählen (Verzeichnis unter .../Project/Simulations).
+		string.remove simulation
+			german:Simulation entfernen
+			set:remove_scheduled_simulation
+			options:get_scheduled_sims
+			multiselect
+		apply.remove all simulations
+			german:alle Simulationen entfernen
+			set:clear_scheduled_simulations
+			confirm
+		col.simulations:get_scheduled_sims
+			german:Simulationen
+			set:set_scheduled_sims
+			doc:Scheduled simulations may be deleted by editing this list.
+				german:Vorgemerkte Simulationen können durch Editieren dieser Liste gelöscht werden.
+			volatile
+		int.number of simulations to run in parallel:$num_parallel_simulations
+			german:Anzahl gleichzeitig zu startender Simulationen
+			set:$num_parallel_simulations
+		int.pause time between simulations in seconds:PauseTime
+			german:Wartezeit zwischen Simulationen in Sekunden
+			set:PauseTime
+			doc:->Simulations.StartActive waits for this pause time before starting a new simulation.
+				german:Wartezeit fuer ->Simulations.StartActive zwischen den Simulationsrechnungen.
+		apply.start simulations
+			german:Simulationen starten
+			set:start_simulations
+			confirm
+			vis:SimVis
+		string.simulations state:get_scheduled_sims_state
+			german:Simulationsstati
+		apply.update simulations state
+			german:Simulationsstati aktualisieren
+			set:update_sim_states
+		apply.interrupt simulations
+			german:Simulationen unterbrechen
+			set:interrupt_simulations
+			confirm

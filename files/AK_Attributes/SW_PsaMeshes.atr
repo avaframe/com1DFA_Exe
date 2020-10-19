@@ -1,0 +1,77 @@
+obj.PsaMeshes
+	german:PSA-Netze
+	doc:A container for 3D-computational meshes for the suspension flow (PSA)\
+		and for contour-polygons for the mesh-generation.
+		german:Ein Behälter für dreidimensionale Netze zur Berechnung der\
+			Suspensionsströmung (Staublawine - PSA) und für Konturpolygone\
+			zur Netz-Erzeugung.
+	string.new contour polygon
+		set:CreateContourPolygon
+		german:neues Konturpolygon
+		doc:Append a new, empty contour polygon.
+			german:Neues, leeres Konturpolygon anfügen.
+	string.clone contour polygon
+		set:Clone
+		options:PolygonOptions
+		german:Konturpolygon klonen
+	opr.create 3D raster psa mesh
+		german:3D-Raster-PSA-Netz erzeugen
+		string.base DHM:BaseMesh
+			set:BaseMesh
+			options:BaseMeshOptions
+			german:Basis-DHM
+			doc:DHM that defines the base surface of the 3D-mesh.
+				german:DHM das die Basisfläche des 3D-Netzes definiert.
+		string.contour polygon:ContourPolygon
+			set:ContourPolygon
+			options:PolygonOptions
+			german:Konturpolygon
+			doc:Contour polygon that defines the contour of the 3D-mesh\
+				on the base-DHM. The NW/SW/SE/NE-corners are irrelevant for\
+				this king of mesh-generation!
+				german:Konturpolygon das die Berandung des 3D-Netzes\
+					auf dem Basis-DHM definiert. Die NW/SW/SE/NE-Ecken sind irrelevant\
+					fuer diese Art der Netzgenerierung!
+		float.height:Height
+			set:Height
+			german:Höhe
+			doc:Height of the 3D-mesh.
+				german:Höhe des 3D-Netzes.
+		float.cell size in lateral directions:Dx
+			set:Dx
+			german:Größe der Zellen in Längs- und Querrichtung
+		float.cell size in vertical direction:Dz
+			set:Dz
+			german:Größe der Zellen in senkrechter Richtung
+		int.number of cells in vertical direction:CellsInVertDir
+			german:Anzahl der Zellen in senkrechter Richtung
+		float.cell expansion factor vertical:GridExpansionLH
+			set:GridExpansionLH
+			german:Zell-Expansionsfaktor senkrecht
+			doc:Factor, by which cell-heights are increased from bottom to top\
+				with each cell-layer.
+				german:Faktor, mit dem die Zellhöhen mit jeder Zellschicht\
+					nach oben hin vergrößert werden.
+		int.expected number of cells:get_NumRasterCells
+			german:erwartete Zellanzahl
+		float.tangent of mesh surface inclination limit:$dzMax
+			set:$dzMax
+			german:Tangens der erlaubten Netz-Bodenneigung
+		bool.vertical grid lines:$vertical
+			set:$vertical
+			german:vertikale Gitterlinien
+		float.smooth extrusion directions:$smooth
+			set:$smooth
+			vis:VisNone
+		float.smoothing factor:SmoothingFactor
+			set:SmoothingFactor
+			german:Glättungsfaktor
+			doc:Factor that defines how much the mesh node positions are\
+				smoothed.
+				german:Faktor, der bestimmt wie sehr Netz-Knotenpositionen\
+					geglättet werden.
+		string.create mesh rastered
+			set:CreateRastered
+			german:Raster-Netz erzeugen
+			doc:Actually generate the raster-mesh according to the selected parameters.
+				german:Raster-Netz nach den vorgegebenen Einstellungen erzeugen.

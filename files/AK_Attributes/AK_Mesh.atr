@@ -1,0 +1,275 @@
+obj.Mesh
+	german:3D-Berechnungsnetz
+	doc:Three-dimensional computational mesh that can be used for the\
+		simulation of the suspension flow (powder snow avalanche - PSA).
+		german:Dreidimensionales Berechnungsnetz das für die Simulation\
+			der Suspensionsströmung (Staublawine (PSA)) verwendet\
+			werden kann.
+	opr.info
+		german:Info
+		int.number of cells:NumCells
+			german:Anzahl der Zellen
+			doc:Number of cells in the mesh.
+				german:Anzahl der Zellen im Netz.
+		int.number of vertices:NumVertices
+			german:Anzahl der Knoten
+			doc:Number of vertices in the mesh.
+				german:Anzahl der Knotenpunkte im Netz.
+		string.generation parameter:$dx
+			german:Netzgenerierungsparameter
+		bool.is moving:IsMoving
+			german:bewegt
+			doc:If on, mesh moves of deforms with time.
+				german:Wenn an, bewegt oder deformiert sich das Netz\
+					mit der Zeit.
+	opr.display settings
+		german:Anzeigeeinstellungen
+		color3.inside color:InsideColor
+			set:InsideColor
+			german:Innenfarbe
+			doc:Color for the inside of the cells.
+				german:Farbe der Innenseite der Zellen.
+		bool.draw edges only:DrawEdges
+			set:DrawEdges
+			german:nur Kanten darstellen
+		float.edge angle (deg):EdgeAngle
+			set:EdgeAngle
+			german:Kantenwinkel (deg)
+			vis:edges_vis
+		bool.draw cells:DrawCells
+			set:DrawCells
+			german:Zellen darstellen
+			doc:If switched on, draw all cell's faces, not only the boundary cell faces.
+				german:Wenn an, werden alle Zellflächen gezeichnet, nicht nur\
+					die Randflächen.
+			vis:not_edges_vis
+		bool.draw active faces:DrawActiveFaces
+			set:DrawActiveFaces
+			german:Aktive Zellflächen darstellen
+			doc:If switched on, draw all cell faces between active and inactive cells.\
+				Active cells are determined by ->Mesh.FilterFormula.
+				german:Wenn an, werden alle Zellflächen zwischen aktiven und inaktiven\
+					Zellen dargestellt. Aktive Zellen sind durch ->Mesh.FilterFormula\
+					bestimmt.
+			vis:not_edges_vis
+		bool.display node labels:NodeLabels
+			set:NodeLabels
+			german:Knotennummern anzeigen
+		bool.display cell labels:CellLabels
+			set:CellLabels
+			german:Zellnummern anzeigen
+		bool.display local node and cell numbers:LocalNumbers
+			set:LocalNumbers
+			german:Lokale Knoten- und Zellnummern anzeigen
+		bool.apply cell filter formula:ApplyFormulaFilter
+			set:ApplyFormulaFilter
+			german:Zell-Filter-Formel anwenden
+		filename.cell filter formula file:FilterFormulaFileName
+			set:FilterFormulaFileName
+			pattern:*.frml
+			mode:r
+			german:Zell-Filter-Formel-Datei
+		text.cell filter formula:FilterFormula
+			set:FilterFormula
+			german:Zell-Filter-Formel
+			doc:Must be in the format:\
+				\
+				<global part> \
+				$$init \
+				<init-func-body> \
+				$$formula \
+				<formula-func-body>\
+				\
+				The initialization function has the signature\
+				\
+				void Init()\
+				\
+				and the formula function:\
+				\
+				double F(double x[3], int index)\
+				\
+				The function F is called for all cells (or bnd-faces) with x being the\
+				cell-(bnd-face)-center and index the cell/bnd-face index.\
+				All cells (faces), for which F returns a value\
+				smaller than zero, are selected for drawing.
+		float.element scaling factor:ElementScale
+			set:ElementScale
+			german:Skalierungsfaktor
+			doc:Faces or cells are drawn scaled with this factor about their center\
+				(exploded view).
+				german:Flächen und Zellen werden mit diesem Faktor skaliert\
+					gezeichnet.
+	opr.import
+		german:Import
+		int.dataset number for import:$importDataSetNumber
+			set:$importDataSetNumber
+			doc:Used with flm-import as data set number and with cgns-import as base number.
+		float.scaling factor for import:$importScalingFactor
+			set:$importScalingFactor
+			doc:Only used with import of nas- and stl-files. Coordinates are multiplied by this factor.
+		filename.import
+			set:Import
+			pattern:*.cgns,*.dgr,*.fil,*.flm,*.flma,*.fpmbz,*.grd,*.inp,*.msh,*.nas,*.ntl,*.stl,*.tbp,*.tbs,*.uns,*.wrl
+			mode:r
+			german:importieren
+		string.partial import definition:$partial_read_def
+			set:$partial_read_def
+			german:Import-Teil-Definition
+			doc:options:\
+				\
+				range <startCell> <endCell>\
+				\
+				selection <selectionName> (cell- or face-selection)\
+				\
+				inside <formula> (void Init(), double F(double x[3]) so that F < 0 if x inside)\
+				\
+				intersecting <formula> (void Init(), double F(double x[3]) so that F < 0 if x inside)\
+				.
+				german:Optionen:\
+					\
+					range <startCell> <endCell>\
+					\
+					selection <Selection-Name> (Cell- oder Face-Selection)\
+					\
+					inside <Formel> (void Init(), double F(double x[3]) so dass F < 0 falls x innen)\
+					\
+					intersecting <Formel> (void Init(), double F(double x[3]) so dass F < 0 falls x innen)\
+					.
+		int.import partially buffer layer flag:$partial_read_buf
+			set:$partial_read_buf
+			german:Import-Teil-Buffer-Modus
+			doc:0...no buffer layer, 1...node sharing, 2...face sharing
+		filename.import partially
+			german:Teilimport
+			set:ImportPartial
+			pattern:*.flm
+			mode:r
+			german:teilweise importieren
+		float.time needed for loading (s):$tcpu_loading
+			german:Laufzeit Laden (s)
+	apply.cleanup
+		set:CleanUp
+	filename.export
+		set:ExportFlm
+		pattern:*.flm,*.grd,*.tbp,*.xyz,*.msh
+		mode:w
+		german:exportieren
+	opr.selections
+		german:Selektionen
+		filename.load selection formula
+			set:load_selection_formula
+			pattern:*.frml
+			mode:r
+		text.selection formula:SelectionFormula
+			set:SelectionFormula
+		string.add node selection by formula
+			set:CreateNodeSelection
+		string.add face selection by formula
+			set:CreateFaceSelection
+		string.add cell selection by formula
+			set:CreateCellSelection
+	opr.mesh modification
+		german:Netzmodifikationen
+		filename.load node movement formula
+			set:load_node_movement_formula
+			pattern:*.frml
+			mode:r
+		text.node movement formula:$move_nodes_frml
+			set:$move_nodes_frml
+			doc:Enter formula text in format\
+				// formula scope variables and functions\
+				init // void Init(int n_nodes)\
+				// initialization code\
+				formula // void ModifyCoords(double x[3], int index)\
+				// modify coords x[0], x[1], x[2] of mesh node index
+		filename.save node movement formula
+			set:save_node_movement_formula
+			pattern:*.frml
+			mode:w
+		apply.move nodes by formula
+			set:move_nodes_by_formula
+		bool.make current formula mesh:CurrentFrmlMesh
+			set:CurrentFrmlMesh
+		int.formula object id:FrmlObj
+		bool.old refinement:$oldRefinement
+			set:$oldRefinement
+			vis:VisNone
+		string.specify mesh refinement
+			german:Netzverfeinerung spezifizieren
+			set:RefineMesh
+			doc:Options: \
+				every <n-th> \
+				plane x y z (plane point == normal) \
+				sphere x y z r \
+				.
+				german:Optionen: \
+					every <n-th> \
+					plane x y z (Ebenenpunkt == Normale) \
+					sphere x y z r \
+					.
+		filename.refine cells in file
+			german:Zellen in Datei verfeinern
+			set:RefineMesh
+			pattern:*.txt
+		float.time needed for refinement (s):$tcpu_refinement
+			german:Laufzeit Verfeinerung (s)
+		apply.coarsen finest level
+			german:Feinstes Refinement vergroebern
+			set:CoarsenMesh
+		float.time needed for coarsening (s):$tcpu_coarsening
+			german:Laufzeit Vergroeberung (s)
+		filename.store refinement data
+			german:Verfeinerungsdaten speichern
+			pattern:*.flm
+			mode:w
+			set:SaveRefinement
+		filename.store cell refinement list
+			german:Zell-Verfeinerungsliste speichern
+			pattern:*.txt
+			mode:w
+			set:WriteRefinementList
+		filename.apply cell refinement list
+			german:Zell-Verfeinerungsliste anwenden
+			pattern:*.txt
+			mode:r
+			set:ApplyRefinementList
+	opr.miscellaneous
+		german:Hilfsfunktionen
+		filename.immerse surface
+			german:Oberflaeche einbetten
+			set:ImmerseSurface
+			pattern:*.tbp,*.tbs,*.flm
+			mode:r
+		filename.inside volume fractions
+			german:Innen-Volumsanteile
+			set:InsideVolumeFractions
+			pattern:*.tbp,*.tbs,*.flm
+			mode:r
+		int.decompose
+			german:zerlegen
+			set:Decompose
+		opr.display ntl values
+			german:ntl-Werte anzeigen
+			int.decimation:$decimate
+				set:$decimate
+			int.result value card:$valsNtlCard
+				set:$valsNtlCard
+			filename.ntl result file:$cellColFromNtl
+				set:$cellColFromNtl
+				pattern:*.ntl
+			float.min val:$valNtlMin
+				set:$valNtlMin
+			float.max val:$valNtlMax
+				set:$valNtlMax
+			apply.clear
+				set:$cellColFromNtl
+		apply.compute arbitrary interfaces
+			set:ComputeArbiInterfaces
+		apply.remove arbitrary interfaces
+			set:RemoveArbiInterfaces
+		apply.compare cell center calculation methods
+			set:CompareCellCenterMethods
+	opr.movement
+		vis:vis_movement
+		string.translation axis (x, y, z):$translation_axis
+			set:$translation_axis

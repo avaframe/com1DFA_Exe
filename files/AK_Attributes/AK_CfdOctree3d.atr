@@ -1,0 +1,47 @@
+obj.CfdOctree3d
+	int.min depth:MinOctreeDepth
+		set:MinOctreeDepth
+	int.max depth:MaxOctreeDepth
+		set:MaxOctreeDepth
+	bool.tet-octree:HoneyTree
+		set:HoneyTree
+	apply.reset octree
+		set:Reset
+	apply.refine once
+		set:RefineOnce
+	apply.refine once at surface
+		set:RefineOnceSurf
+	apply.homogenize
+		set:Homogenize
+	apply.refine for local feature size basic
+		set:RefineLfsBasic
+	apply.refine for local feature size
+		set:RefineLfs
+	float.refine for surface feature size
+		set:RefineForSurfLfs
+	string.create octree mesh
+		set:CreateMesh
+	int.number of cells:NumCells
+	int.octree MB:MBytesOctree
+	float.refine surface according to octree spacing
+		set:RefineSurfaceForOctreeSpacing
+	apply.remove outside tets
+		set:TrimTetMesh
+		vis:VisNone
+	string.point generator:PtGenerator
+		set:PtGenerator
+		options:PtGeneratorOptions
+	bool.use surface points:UseSurfacePoints
+		set:UseSurfacePoints
+	float.split edge angle:SurfEdgeAngle
+		set:SurfEdgeAngle
+	apply.create Delaunay triangulation
+		set:CreateDelaunayTriangulation
+	float.relative boundary layer thickness:RelBndLayerThickness
+		set:RelBndLayerThickness
+	float.layer growth factor:LayerGrowth
+		set:LayerGrowth
+	int.max number of layers:MaxLayers
+		set:MaxLayers
+	apply.create Delaunay layer triangulation
+		set:CreateDelaunayLayerTriangulation

@@ -1,0 +1,15 @@
+
+void move_up(char value[])
+{
+	print "move up";
+}
+
+void move_down(char value[])
+{
+	print "move down";
+}
+
+void delete(char value[])
+{
+	print "delete";
+}

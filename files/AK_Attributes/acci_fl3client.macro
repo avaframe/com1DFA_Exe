@@ -1,0 +1,2 @@
+get("/", "Arglist", $line);
+set("ImpressAK/ResultProvider", "RunWithArguments", $line)

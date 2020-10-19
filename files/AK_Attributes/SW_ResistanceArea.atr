@@ -1,0 +1,90 @@
+obj.ResistanceArea
+	german:Widerstandsgebiet
+	doc:A resistance area is an area with increased flow resistance, e.g. due to\
+		obstacles as trees or rocks. The resistance is characterized by an\
+		average obstacle height @@h/@, obstacle width @@w/@, average distance @@s/@ between\
+		the obstacles and an resistance coefficient @@c/@. The resistance force\
+		per area, @@tau/@, is computed for dense flow as\
+		\
+		@@tau = 0.5 * rho * v^2 * c * w * h_eff / s^2\@\
+		\
+		where @@h_eff/@ is the minimum of @@h/@ and actual flow height.\
+		\
+		Different values for s and c can be specified for the dense-flow and suspension-flow.
+		german:Ein Widerstandsgebiet ist ein Gebiet mit erhöhtem Strömungswiderstand bedingt durch\
+			Hindernisse, wie Bäume oder Felsen. Der Widerstand wird charakterisiert durch eine\
+			mittlere Hindernishöhe @@h/@, Hindernisbreite @@w/@, einen mittleren Abstand @@s/@ zwischen\
+			den Hindernissen und einen Widerstandskoeffizienten @@c/@. Die Widerstandskraft pro\
+			Bodenfläche, @@tau/@, wird wie folgt berechnet:\
+			\
+			@@tau = 0.5 * rho * v^2 * c * w * h_eff / s^2/@\
+			\
+			Darin ist @@h_eff/@ das Minimum von @@h/@ und Fließmächtigkeit.\
+			\
+			Verschiedene Werte können für @@s/@ und @@c/@ für Fließströmung und Suspensions-Strömung\
+			vorgegeben werden.
+	string.obstacle type:get_resistance_type
+		options:resistance_type_options
+		set:set_resistance_type
+		german:Widerstandstyp
+		doc:Types of resistance area, for which resistance parameters,\
+			except height, are predefined (see SW_ResistanceArea.cint). Type 'user' allows\
+			explicit specification of all parameters.
+			german:Typ des Widerstandsgebietes. Für diese Typen sind die Widerstandsparameter\
+				(ausser der Höhe) vordefiniert (siehe SW_ResistanceArea.cint). Typ 'user' erlaubt\
+				die explizite Definition aller Parameter. \
+				wood: Wald \
+				rocks: Felsen \
+				mounds: Lawinenbrecher \
+				blocked: undurchdringlich  \
+				user: benutzerdefiniert
+	float.obstacle height:Height
+		set:Height
+		german:Hindernishöhe
+		doc:Characteristic obstacle height (@@h/@).
+			german:Charakteristische Hindernishöhe (@@h/@).
+	float.obstacle width - DFA:Width
+		set:Width
+		vis:user_def
+		german:Hindernisbreite - DFA
+		doc:Characteristic width (normal to flow direction) of the obstacles (@@w/@)\
+			for the DFA.
+			german:Charakteristische Breite (normal zur Anströmrichtung) der Hindernisse (@@w/@)\
+				für die DFA.
+	float.spacing - DFA:Spacing
+		set:Spacing
+		vis:user_def
+		german:Abstand - DFA
+		doc:Average distance between the obstacles (@@s/@) for the DFA.
+			german:Mittlerer Abstand (@@s/@) zwischen den Hindernissen für die DFA.
+	float.resistance coefficient - DFA:ResistanceCoefficient
+		set:ResistanceCoefficient
+		vis:user_def
+		german:Widerstandskoeffizient - DFA
+		doc:Flow resistance coefficient (@@c/@) for the DFA.
+			german:Widerstandskoeffizient (@@c/@) für die DFA.
+	float.obstacle width - PSA:PsaWidth
+		set:PsaWidth
+		vis:user_def
+		german:Hindernisbreite - PSA
+		doc:Characteristic width (@@w/@, normal to flow direction) of the obstacles for the PSA.
+			german:Charakteristische Breite (normal zur Anströmrichtung) der Hindernisse (@@w)\
+				für die PSA.
+	float.spacing - PSA:PsaSpacing
+		set:PsaSpacing
+		vis:user_def
+		german:Abstand - PSA
+		doc:Average distance between the obstacles (@@s/@) for the PSA.
+			german:Mittlerer Abstand (@@s/@) zwischen den Hindernissen für die PSA.
+	float.resistance coefficient - PSA:PsaResistanceCoefficient
+		set:PsaResistanceCoefficient
+		vis:user_def
+		german:Widerstandskoeffizient - PSA
+		doc:Flow resistance coefficient (@@c/@) for the PSA.
+			german:Widerstandskoeffizient (@@c/@) für die PSA
+	float.effective resistance coefficient - DFA:get_cres_dfa
+		german:effektiver Widerstandskoeffizient - DFA
+		doc:DFA - @@w*c/s^2/@.
+	float.effective resistance comparison coefficient - PSA:get_cres_psa
+		german:effektiver Widerstands-Vergleichskoeffizient - PSA
+		doc:PSA - @@w*c/s^2 * (1 - (1 - w/s)^e)/@, @@e = 1/s/@.

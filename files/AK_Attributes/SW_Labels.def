@@ -1,0 +1,8 @@
+set("", "Create", "copyright");
+set("copyright", "Text", " com1Exe AvaFrame 2020 (C) BMNT-WLV 2020. Powered by AVL.")
+set("copyright", "Font", "HELVETICA_10")
+set("copyright", "HorizontalAlignment", "left")
+set("copyright", "VerticalAlignment", "top")
+set("copyright", "Position", "0 1")
+set("copyright", "AutoColored", "0")
+set("copyright", "Color", "0.5 0.5 1")
