@@ -41,10 +41,11 @@ void import_resistance(
   strcpy(s,sin);
 
 	get("", "Id", id);
+  printf("ID %s\n", id);
 	resize(l1, 4096);
 	resize(l2, 4096);
 	get("", "GetComponentList", l1);
-	get("", "Id", s);
+	get("", "Id", id);
 
   if(istrstr(s, ".shp")> 0) {
     printf("Found Shape, converting: %s \n", s);
